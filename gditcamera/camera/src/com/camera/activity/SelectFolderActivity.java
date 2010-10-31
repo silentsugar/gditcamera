@@ -36,16 +36,19 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
         setContentView(R.layout.choosefolder);
         mSdcardPath=Environment.getExternalStorageDirectory().getAbsolutePath();
         //取得界面的控件
-        mFolderListView=(ListView) this.findViewById(R.id.lvFolder);
-        mChoose=(Button) this.findViewById(R.id.btnChoose);
-        mCancel=(Button) this.findViewById(R.id.btnCancel);
+        mFolderListView=(ListView)findViewById(R.id.lvFolder);
+        //mChoose=(Button) this.findViewById(R.id.btnChoose);
+        //mCancel=(Button) this.findViewById(R.id.btnCancel);
+        
         mDefaultFile=new File(mSdcardPath);
         
         mFolders=new ArrayList<FileItem>();
-        mFolderListView=new ListView(this);
+        
         fileListView(mDefaultFile);
         FileListAdapter adapter=new FileListAdapter(this, this.mFolders);
 		mFolderListView.setAdapter(adapter);
+		
+		
     }
 	
 	private void fileListView(File file){
