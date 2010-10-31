@@ -128,12 +128,13 @@ public class CTitleBar extends RelativeLayout {
 	 */
 	public void addLeftView(View mLeftView, LayoutParams lp) {
 		if(lp == null) {
-			lp = new LayoutParams(UnitUtil.formatDipToPx(context, 50), LayoutParams.FILL_PARENT);
+			lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 		}
 		lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		lp.alignWithParent = true;
 		int i = UnitUtil.formatDipToPx(context, 5);
 		lp.setMargins(i, i, i, i);
+		mLeftView.setPadding(i + 2, mLeftView.getPaddingTop(), i + 2, mLeftView.getPaddingBottom());
 		super.addView(mLeftView, -1, lp);
 		this.mLeftView = mLeftView;
 	}
@@ -150,12 +151,13 @@ public class CTitleBar extends RelativeLayout {
 	 */
 	public void addRightView(View mRightView, LayoutParams lp) {
 		if(lp == null) {
-			lp = new LayoutParams(UnitUtil.formatDipToPx(context, 50), LayoutParams.FILL_PARENT);
+			lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
 		}
 		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		lp.alignWithParent = true;
 		int i = UnitUtil.formatDipToPx(context, 5);
 		lp.setMargins(i, i, i, i);
+		mRightView.setPadding(i + 2, mRightView.getPaddingTop(), i + 2, mRightView.getPaddingBottom());
 		super.addView(mRightView, -1, lp);
 		this.mRightView = mRightView;
 	}
@@ -187,13 +189,24 @@ public class CTitleBar extends RelativeLayout {
 	 * @param mTxtTitle
 	 */
 	public void addTitleView(View mTxtTitle, LayoutParams lp) {
-		if(lp == null)
-			lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-		int i = UnitUtil.formatDipToPx(context, 100);
-		lp.setMargins(i, 0, i, 0);
-		TextView txtTitle = (TextView)mTxtTitle;
-		if(txtTitle != null)
-			((TextView)mTxtTitle).setGravity(Gravity.CENTER);
+//		if(lp == null)
+//			lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+//		int i = UnitUtil.formatDipToPx(context, 100);
+//		lp.setMargins(i, 0, i, 0);
+//		TextView txtTitle = (TextView)mTxtTitle;
+//		if(txtTitle != null)
+//			((TextView)mTxtTitle).setGravity(Gravity.CENTER);
+//		super.addView(mTxtTitle, -1, lp);
+//		this.mTitleView = mTxtTitle;
+		
+		if(lp == null) {
+			lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);
+		}
+		lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		lp.alignWithParent = true;
+		int i = UnitUtil.formatDipToPx(context, 5);
+		lp.setMargins(0, i, 0, i);
+		mTxtTitle.setPadding(i + 2, mTxtTitle.getPaddingTop(), i + 2, mTxtTitle.getPaddingBottom());
 		super.addView(mTxtTitle, -1, lp);
 		this.mTitleView = mTxtTitle;
 	}

@@ -159,14 +159,18 @@
 	    	android:textColor="@color/toolbar_btn_color"/>
 	    <Button
 	    	android:id="@+id/btnRight"
-	    	android:text="测试"
+	    	android:text="上传管理"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-	    
-	    <TextView
+	    	
+	    <Button
 	    	android:id="@+id/txtTitle"
-	    	android:textSize="15sp"/>
+	    	android:text="测试服务器"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+
 			
 	</com.camera.widget.CTitleBar>
 </RelativeLayout>
