@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:gdit="http://schemas.android.com/apk/res/com.camera.activity"
+	android:background="@color/darkblue"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<!-- 标题栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/titleBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentTop="true"
+	    android:layout_height="35dip"
+	    android:background="@drawable/title_bg"    
+	    gdit:left_view="@+id/btnLeft"
+	    gdit:right_view="@+id/btnRight"
+	    gdit:title_view="@+id/txtTitle" >
+  
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:text="选择文件夹"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/white"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+			
+	</com.camera.widget.CTitleBar>
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_alignBottom="@+id/titleBar"
+		android:layout_alignTop="@+id/bottomBar"
+		android:background="@color/gray">
+		
+		<ListView
+			android:id="@+id/lvFolder"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
+		
+	</LinearLayout>
+	
+	<!-- 底部工具栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/bottomBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentBottom="true"
+	    android:layout_height="40dip"
+	    android:background="@drawable/blue_toolbar_bg"    
+	    gdit:left_view="@+id/btnLeft"
+	    gdit:right_view="@+id/btnRight"
+	    gdit:title_view="@+id/txtTitle" >
+	    
+	    <Button
+	    	android:id="@+id/btnChoose"
+	    	android:text="选择"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+	    <Button
+	    	android:id="@+id/btnCancel"
+	    	android:text="取消"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+	    
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:textSize="15sp"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+			
+	</com.camera.widget.CTitleBar>
+</RelativeLayout>
