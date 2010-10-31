@@ -49,7 +49,6 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
     }
 	
 	private void fileListView(File file){
-		//List<File> dirs=new ArrayList<File>();
 		this.mFolders.clear();
 		FileItem fileItem;
 		fileItem=new FileItem();
@@ -59,15 +58,12 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 		File[] files=file.listFiles();
 		for(int i=0;i<files.length;i++){
 			if(files[i].isDirectory()){
-				//dirs.add(files[i]);
 				fileItem=new FileItem();
-				//this.getResources().getDrawable(id)
 				fileItem.setTitle(files[i].getName());
 				fileItem.setImageResid(R.drawable.fileicon_dir);
 				this.mFolders.add(fileItem);
 			}
 		}
-		
 		Collections.sort(this.mFolders);
 		
 	}
