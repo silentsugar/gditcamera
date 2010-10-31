@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+	<!-- ============================主题================================= -->
+	
+	<!-- 配置应用程序主题 -->
+    <style name="application_style">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:textSize">18dip</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <!-- ============================样式================================= -->
+    
+    <!-- Main样式-->
+    <style name="conf_textview">
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:paddingLeft">20dip</item>
+        <item name="android:width">110dip</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+    
+    <style name="conf_edittext">
+        <item name="android:layout_marginRight">20dip</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@drawable/input_bg</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+    </style>
+    
+</resources>
