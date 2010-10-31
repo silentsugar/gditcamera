@@ -6,7 +6,24 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	
-
+	<!-- 标题栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/titleBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentTop="true"
+	    android:layout_height="35dip"
+	    android:background="@drawable/title_bg"    
+	    gdit:title_view="@+id/txtTitle" >
+  
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:text="选择文件夹"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/white"
+	    	android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+			
+	</com.camera.widget.CTitleBar>
 	
 
 		
@@ -20,4 +37,28 @@
 		
 
 	
+	<!-- 底部工具栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/bottomBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentBottom="true"
+	    android:layout_height="40dip"
+	    android:background="@drawable/blue_toolbar_bg"    
+	    gdit:left_view="@+id/btnChoose"
+	    gdit:right_view="@+id/btnCancel" >
+	    
+	    <Button
+	    	android:id="@+id/btnChoose"
+	    	android:text="选择"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+	    <Button
+	    	android:id="@+id/btnCancel"
+	    	android:text="取消"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color" />
+	    	
+	</com.camera.widget.CTitleBar>
 </RelativeLayout>
