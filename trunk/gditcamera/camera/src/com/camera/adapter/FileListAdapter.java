@@ -49,8 +49,8 @@ public class FileListAdapter extends BaseAdapter {
 		mTitile=(TextView)view.findViewById(R.id.item_title);
 		mDiscript=(TextView) view.findViewById(R.id.item_discript);
 		fileItem=flieItems.get(location);
-		mImageView.setBackgroundDrawable(fileItem.getDrawable());
-		mTitile.setText(fileItem.getFileName());
+		mImageView.setBackgroundResource(fileItem.getImageResid());
+		mTitile.setText(fileItem.getTitle());
 		mDiscript.setText(fileItem.getDiscript());
 		return view;
 	}
