@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:gdit="http://schemas.android.com/apk/res/com.camera.activity"
+	android:background="@color/darkblue"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<!-- 标题栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/titleBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentTop="true"
+	    android:layout_height="35dip"
+	    android:background="@drawable/title_bg"    
+	    gdit:left_view="@+id/btnLeft"
+	    gdit:right_view="@+id/btnRight"
+	    gdit:title_view="@+id/txtTitle" >
+  
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:text="软件配置"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/white"/>
+			
+	</com.camera.widget.CTitleBar>
+	
+	<View
+		android:layout_alignBottom="@+id/titleBar"
+		android:id="@+id/shadow"
+		android:layout_height="20dip"
+		android:layout_width="fill_parent"
+		android:background="@drawable/shadow" />
+	
+	<!-- 中间布局 -->
+	<ScrollView
+		android:layout_marginTop="35dip"
+		android:layout_marginBottom="40dip"
+		android:background="@color/gray"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:orientation="vertical"
+			android:gravity="center_horizontal"
+			android:paddingTop="20dip">
+		
+			<Button 
+				android:id="@+id/btnServerStart"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="开启服务器"
+				></Button>
+				
+			<Button 
+				android:id="@+id/btnClientStart"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="开启客户端"
+				></Button>
+			
+			<TextView
+				android:id="@+id/tv1"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				></TextView>
+		</LinearLayout>
+	</ScrollView>
+	
+	<!-- 底部工具栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/bottomBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentBottom="true"
+	    android:layout_height="40dip"
+	    android:background="@drawable/blue_toolbar_bg"    
+	    gdit:left_view="@+id/btnLeft"
+	    gdit:right_view="@+id/btnRight"
+	    gdit:title_view="@+id/txtTitle" >
+	    
+	    <Button
+	    	android:id="@+id/btnLeft"
+	    	android:text="退出"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+	    <Button
+	    	android:id="@+id/btnRight"
+	    	android:text="测试"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+	    
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:textSize="15sp"/>
+			
+	</com.camera.widget.CTitleBar>
+</RelativeLayout>
