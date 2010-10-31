@@ -18,13 +18,13 @@ public class FileListAdapter extends BaseAdapter {
 	
 	private List<FileItem> flieItems;
 	FileItem fileItem;
-	//private Context context;
+	private Context context;
 	LayoutInflater l;
 	ImageView mImageView;
 	TextView mTitile;
 	TextView mDiscript;
 	public FileListAdapter(Context context,List<FileItem> filesItems){
-		l=LayoutInflater.from(context);
+		this.context=context;
 		this.flieItems=filesItems;
 	}
 	@Override
@@ -44,6 +44,7 @@ public class FileListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int location, View view, ViewGroup viewGroup) {
+		l=LayoutInflater.from(context);
 		view=l.inflate(R.layout.file_item_list, null);
 		mImageView=(ImageView) view.findViewById(R.id.item_icon);
 		mTitile=(TextView)view.findViewById(R.id.item_title);
