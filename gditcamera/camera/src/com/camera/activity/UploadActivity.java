@@ -18,7 +18,7 @@ import com.camera.util.ServerThread;
  * @author tian
  *
  */
-public class ServerActivity extends Activity implements OnClickListener{
+public class UploadActivity extends Activity implements OnClickListener{
 	
 	/**UI*/
 	private Button btnServerStart;
