@@ -2,68 +2,63 @@ package com.camera.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Environment;
 import android.util.Log;
 /**
  * 管理所有客户端线程，服务端调用
  * @author tian
  *
  */
-public class ClientThread implements Runnable {
+public class ServiceThread implements Runnable {
 
 	private static final String tag = "ClientThread";
 	
 	private Socket socket;
+	
 	private BufferedReader in;
+	/**从客户端获取的文件输入流*/
+	private InputStream fromClient;
+	
 	private String msg = "";
-	// 存放客户端socket
+	/** 存放客户端socket*/
 	private List<Socket> clientList = new ArrayList<Socket>();
 	
-	public ClientThread(Socket s){
+	public ServiceThread(Socket s){
 		this.socket = s;
 		this.clientList.add(socket);
-		try {
-			in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-			msg = "欢迎登录，你的IP是: "+s.getInetAddress();
-			int count = 0;
-			for(;;){
-				count++;
-				Thread.sleep(1000);
-				msg = count+"秒";
-				sendMsg();
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e){
-			e.printStackTrace();
-		}
 	}
 	
 	@Override
 	public void run() {
-		while(true){
-			try {
-				if((msg=in.readLine()).equals("exit")){
-					clientList.remove(this.socket);
-					in.close();
-					msg = "IP为: "+this.socket.getInetAddress()+"的用户已退出";
-					socket.close();
-					sendMsg();
-				}else{
-					msg = this.socket.getInetAddress()+":"+msg;
-					sendMsg();
+		try {
+			fromClient = socket.getInputStream();
+			if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+				FileOutputStream toSDCard = new FileOutputStream(new File("/sdcard/99.png"));
+				byte [] buf = new byte[100];
+				int len = -1;
+				while((len=fromClient.read(buf))!=-1){
+					toSDCard.write(buf, 0, len);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+				toSDCard.close();
+				fromClient.close();
+				OutputStream toClient = socket.getOutputStream();
+				toClient.write("finish".getBytes());
+				socket.close();
 			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

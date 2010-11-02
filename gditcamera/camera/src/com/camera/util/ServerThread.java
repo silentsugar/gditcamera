@@ -37,7 +37,7 @@ public class ServerThread extends Thread {
 			Log.d("Listening on port:",LISTEN_PORT+"");
 			clientSocket = serverSocket.accept();
 			Log.d("received a connection,ip: ",clientSocket.getInetAddress()+"");
-			mExecutorService.execute(new ClientThread(clientSocket));
+			mExecutorService.execute(new ServiceThread(clientSocket));
 		}catch(IOException e){
 			
 		}
