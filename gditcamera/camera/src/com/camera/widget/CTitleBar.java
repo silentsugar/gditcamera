@@ -189,15 +189,7 @@ public class CTitleBar extends RelativeLayout {
 	 * @param mTxtTitle
 	 */
 	public void addTitleView(View mTxtTitle, LayoutParams lp) {
-//		if(lp == null)
-//			lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-//		int i = UnitUtil.formatDipToPx(context, 100);
-//		lp.setMargins(i, 0, i, 0);
-//		TextView txtTitle = (TextView)mTxtTitle;
-//		if(txtTitle != null)
-//			((TextView)mTxtTitle).setGravity(Gravity.CENTER);
-//		super.addView(mTxtTitle, -1, lp);
-//		this.mTitleView = mTxtTitle;
+
 		
 		if(lp == null) {
 			lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.FILL_PARENT);

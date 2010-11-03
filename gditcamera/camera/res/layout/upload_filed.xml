@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:gdit="http://schemas.android.com/apk/res/com.camera.activity"
+	android:background="@color/darkblue"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	
+	<!-- 标题栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/titleBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentTop="true"
+	    android:layout_height="35dip"
+	    android:background="@drawable/title_bg"    
+	    gdit:left_view="@+id/btnLeft"
+	    gdit:right_view="@+id/btnRight"
+	    gdit:title_view="@+id/txtTitle" >
+  
+	    <TextView
+	    	android:id="@+id/txtTitle"
+	    	android:text="图片上传"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/white"/>
+			
+	</com.camera.widget.CTitleBar>
+	
+	<View
+		android:layout_alignBottom="@+id/titleBar"
+		android:id="@+id/shadow"
+		android:layout_height="20dip"
+		android:layout_width="fill_parent"
+		android:background="@drawable/shadow" />
+	
+	<!-- 中间布局 -->
+	<ScrollView
+		android:layout_marginTop="35dip"
+		android:layout_marginBottom="40dip"
+		android:background="@color/gray"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:orientation="vertical" >
+			
+			<TextView
+				android:layout_width="300dip"
+				android:layout_height="300dip"
+				android:background="@drawable/a"
+				/>
+			
+			<Gallery xmlns:android="http://schemas.android.com/apk/res/android" 
+			    android:id="@+id/gallery"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"/>
+				
+		</LinearLayout>
+	</ScrollView>
+	
+	
+	<!-- 底部工具栏 -->
+	<com.camera.widget.CTitleBar
+		android:id="@+id/bottomBar"
+	    android:layout_width="fill_parent"
+	    android:layout_alignParentBottom="true"
+	    android:layout_height="40dip"
+	    android:background="@drawable/blue_toolbar_bg"    
+	    gdit:left_view="@+id/btnUpdate"
+	    gdit:right_view="@+id/btnUpdateAll" >
+	    
+	    <Button
+	    	android:id="@+id/btnUpdate"
+	    	android:text="上传"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+	    	
+	    <Button
+	    	android:id="@+id/btnUpdateAll"
+	    	android:text="上传所有"
+	    	android:background="@drawable/controlbar_button_bg"
+	    	android:textSize="17sp"
+	    	android:textColor="@color/toolbar_btn_color"/>
+	    	
+	    <EditText
+	    	android:id="@+id/txtMessage"
+	    	android:layout_marginLeft="60dip"
+	    	android:layout_marginRight="90dip"
+        	android:background="@drawable/input_bg"
+        	android:paddingLeft="10dip"
+        	android:paddingRight="10dip"
+        	android:singleLine="true"
+        	android:layout_width="fill_parent"/>
+
+			
+	</com.camera.widget.CTitleBar>
+</RelativeLayout>
