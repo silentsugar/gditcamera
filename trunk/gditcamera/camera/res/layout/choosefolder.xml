@@ -29,11 +29,13 @@
 		
 		<ListView
 			android:id="@+id/lvFolder"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
+			android:layout_width="fill_parent" 
+			android:layout_height="fill_parent" 
+			android:cacheColorHint="#00000000" 
+			android:choiceMode="singleChoice"
 			android:layout_marginTop="35dip"
 			android:layout_marginBottom="40dip"
-			android:background="@color/gray" />
+			android:dividerHeight="0.0px"/>
 		
 
 	
