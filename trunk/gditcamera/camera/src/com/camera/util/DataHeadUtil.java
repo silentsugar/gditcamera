@@ -32,11 +32,18 @@ public class DataHeadUtil {
 		}
 	}
 
+	/**
+	 * 长度为2(默认)的byte转换成整数
+	 * @param b
+	 * @return
+	 */
 	public static int bytes2int(byte[] b) {
+		int byteLen = (b.length>=4 ? 4 : 2);
 		int mask = 0xff;//1111 1111
 		int temp = 0;
 		int res = 0;
-		for (int i = 0; i < 4; i++) {
+		
+		for (int i = 0; i < byteLen; i++) {
 			res <<= 8;
 			temp = b[i] & mask;
 			res |= temp;
@@ -44,16 +51,22 @@ public class DataHeadUtil {
 		return res;
 	}
 
+	/**
+	 * 整数(max=65535(默认))转换成长度为2(默认)的byte数组
+	 * @param num
+	 * @return
+	 */
 	public static byte[] int2bytes(int num) {
-		byte[] b = new byte[4];
-		for (int i = 0; i < 4; i++) {
-			b[i] = (byte) (num >>> (24 - (i<<3)));
-//			b[i] = (byte) (num >>> (24 - i * 8));
+		int byteLen = 2;//如果数据长度值为4，则可以转换到最大整数值Integer.MAX_VALUE
+		int offset = (byteLen-1)*8;
+		
+		byte[] b = new byte[byteLen];
+		for (int i = 0; i < byteLen; i++) {
+			b[i] = (byte) (num >>> (offset - (i<<3)));
 		}
 		return b;
 	}
 	
-
 	public static byte[] dataHead2Byte(DataHead dataHead)throws Exception{
 		byte [] result = new byte[122];
 		int offset1 = 0;
@@ -83,40 +96,40 @@ public class DataHeadUtil {
 		offset1 = tem.length;
 		System.out.println(tem.length);
 
-		tem = DataHeadUtil.int2bytes(year1);
-		result[offset1++] = tem[3];
+		tem = int2bytes(year1);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(year2);
-		result[offset1++] = tem[3];
+		tem = int2bytes(year2);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(month);
-		result[offset1++] = tem[3];
+		tem = int2bytes(month);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(day);
-		result[offset1++] = tem[3];
+		tem = int2bytes(day);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(hour);
-		result[offset1++] = tem[3];
+		tem = int2bytes(hour);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(minute);
-		result[offset1++] = tem[3];
+		tem = int2bytes(minute);
+		result[offset1++] = tem[1];
 		
-		tem = DataHeadUtil.int2bytes(second);
-		result[offset1++] = tem[3];
+		tem = int2bytes(second);
+		result[offset1++] = tem[1];
 
 		result[offset1++] = (byte)dataHead.getCameraId();
 
-		tem = DataHeadUtil.int2bytes(dataHead.getCurrentPackage());
-		result[offset1++] = tem[2];
-		result[offset1++] = tem[3];
+		tem = int2bytes(dataHead.getCurrentPackage());
+		result[offset1++] = tem[0];
+		result[offset1++] = tem[1];
 
-		tem = DataHeadUtil.int2bytes(dataHead.getTotalPackage());
-		result[offset1++] = tem[2];
-		result[offset1++] = tem[3];
+		tem = int2bytes(dataHead.getTotalPackage());
+		result[offset1++] = tem[0];
+		result[offset1++] = tem[1];
 
-		tem = DataHeadUtil.int2bytes(dataHead.getDataLength());
-		result[offset1++] = tem[2];
-		result[offset1++] = tem[3];
+		tem = int2bytes(dataHead.getDataLength());
+		result[offset1++] = tem[0];
+		result[offset1++] = tem[1];
 
 		return result;
 	}
@@ -126,26 +139,44 @@ public class DataHeadUtil {
 		int offset = 0;
 		try {
 			d.setPho(new String(subByteArray(b,offset,4),"GB2312"));
+			Log.d(offset+"dataHead:pho", d.getPho());
 			offset+=4;
 			d.setSubStation(new String(subByteArray(b, offset, 16)));
+			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
 			offset+=16;
 			String s = new String(subByteArray(b, offset, 16));
 			d.setSurveyStation(s);
+			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
 			offset+=16;
 			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
+			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
 			offset+=64;
 			d.setStationCode(new String(subByteArray(b, offset,8)));
+			Log.d(offset+"dataHead:StationCode", d.getStationCode());
 			offset+=8;
-			d.setDataTime(dataTimeString2Date(new String(subByteArray(b, offset, 7))));
-			offset+=7;
-			d.setCameraId(Byte.parseByte(new String(subByteArray(b, offset, 1))));
+			String dataString = "";
+//			print(subByteArray(b, offset, 7));
+			for(int i=0;i<7;i++){
+				if(i==0)
+					dataString+=(b[offset++]);
+				else
+					dataString+=(b[offset++]+"#");
+			}
+			d.setDataTime(dataTimeString2Date(dataString));
+			Log.d(offset+"dataHead:Date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(d.getDataTime()));
+			d.setCameraId(b[offset]);
+			Log.d(offset+"dataHead:CameraId", d.getCameraId()+"");
 			offset+=1;
-			d.setCurrentPackage(Byte.parseByte(new String(subByteArray(b, offset, 2))));
+			d.setCurrentPackage(bytes2int(subByteArray(b, offset, 2)));
+			Log.d(offset+"dataHead:CurrentPackage", d.getCurrentPackage()+"");
 			offset+=2;
-			d.setTotalPackage(Byte.parseByte(new String(subByteArray(b, offset, 2))));
+			d.setTotalPackage(bytes2int(subByteArray(b, offset, 2)));
+			Log.d(offset+"dataHead:TotalPackage", d.getTotalPackage()+"");
+			offset+=2;
+			d.setDataLength(bytes2int(subByteArray(b, offset, 2)));
+			Log.d(offset+"dataHead:dataLength", d.getDataLength()+"");
 
-			Log.d("dataHead:pho", d.getPho());
-			Log.d("dataHead:subStation", d.getSubStation());
+			return d;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -153,7 +184,7 @@ public class DataHeadUtil {
 	}
 	
 	public static byte [] subByteArray(byte []b,int start,int length){
-		if(length>b.length||start<0||start>=length||(start+length)>b.length)
+		if(length>b.length||start<0||(start+length)>b.length)
 			return null;
 		byte [] result = new byte[length];
 		for(int i=0;i<length;i++){
@@ -168,7 +199,7 @@ public class DataHeadUtil {
 	 * @return
 	 */
 	public static Date dataTimeString2Date(String dataTimeString){
-		SimpleDateFormat dataFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy#MM#dd#HH#mm#ss#");
 		Date d;
 		try {
 			d = dataFormat.parse(dataTimeString);
