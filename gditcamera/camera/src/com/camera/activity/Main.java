@@ -38,9 +38,9 @@ public class Main extends TabActivity implements OnClickListener {
 	
 	@Override
 	public void onClick(View v) {
-		Intent intent = new Intent();
 		switch(v.getId()) {
 		case R.id.btnUpdateManager:
+			Intent intent = new Intent();
 			intent.setClass(this, UploadFileActivity.class);
 			this.startActivity(intent);
 			break;
@@ -48,8 +48,9 @@ public class Main extends TabActivity implements OnClickListener {
 			this.finish();
 			break;
 		case R.id.btnTestService:
-			intent.setClass(this, SelectFolderActivity.class);
-			this.startActivity(intent);
+			Intent intent2 = new Intent();
+			intent2.setClass(this, SelectFolderActivity.class);
+			this.startActivity(intent2);
 			break;
 		}
 	}
