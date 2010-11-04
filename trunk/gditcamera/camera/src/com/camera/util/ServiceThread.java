@@ -1,19 +1,13 @@
 package com.camera.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
-import android.util.Log;
+import android.os.Environment;
 /**
  * 服务线程: 管理所有客户端
  * @author tian
@@ -33,7 +27,7 @@ public class ServiceThread implements Runnable {
 	public void run() {
 		try {
 			InputStream fromClient = this.socket.getInputStream();
-			FileOutputStream toSdCard = new FileOutputStream(new File("/mnt/sdcard/99.png"));
+			FileOutputStream toSdCard = new FileOutputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/99.png"));
 			byte [] dataHead = new byte[122];
 			fromClient.read(dataHead);
 			DataHeadUtil.byte2DataHead(dataHead);
