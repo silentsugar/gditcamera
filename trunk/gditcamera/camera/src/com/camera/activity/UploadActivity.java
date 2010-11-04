@@ -10,6 +10,7 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -56,7 +57,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void run() {
-			startUpload("/mnt/sdcard/8.png");
+			startUpload(Environment.getExternalStorageDirectory().getAbsolutePath()+"/8.png");
 		}
 	};
 
