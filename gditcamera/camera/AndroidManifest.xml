@@ -17,7 +17,11 @@
             </intent-filter>
         </activity> 
         
-        <action android:name=".UploadFileActivity" />
+        <activity
+        	android:name=".UploadFileActivity" /> 
+        	
+        <activity
+        	android:name=".UploadActivity" /> 
         
         <!--选择文件夹Activity-->
        <activity

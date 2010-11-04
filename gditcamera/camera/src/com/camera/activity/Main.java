@@ -33,7 +33,7 @@ public class Main extends TabActivity implements OnClickListener {
 		mBtnTestService = (Button)this.findViewById(R.id.btnTestService);
 		mBtnExit.setOnClickListener(this);
 		mBtnUpdateManager.setOnClickListener(this);
-		mBtnUpdateManager.setOnClickListener(this);
+		mBtnTestService.setOnClickListener(this);
 	}
 	
 	@Override
