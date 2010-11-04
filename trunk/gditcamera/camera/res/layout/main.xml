@@ -190,25 +190,25 @@
 	    android:layout_alignParentBottom="true"
 	    android:layout_height="40dip"
 	    android:background="@drawable/blue_toolbar_bg"    
-	    gdit:left_view="@+id/btnLeft"
-	    gdit:right_view="@+id/btnRight"
-	    gdit:title_view="@+id/txtTitle" >
+	    gdit:left_view="@+id/btnExit"
+	    gdit:right_view="@+id/btnUpdateManager"
+	    gdit:title_view="@+id/btnTestService" >
 	    
 	    <Button
-	    	android:id="@+id/btnLeft"
+	    	android:id="@+id/btnExit"
 	    	android:text="退出"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
 	    <Button
-	    	android:id="@+id/btnRight"
+	    	android:id="@+id/btnUpdateManager"
 	    	android:text="上传管理"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
 	    	
 	    <Button
-	    	android:id="@+id/txtTitle"
+	    	android:id="@+id/btnTestService"
 	    	android:text="测试服务器"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
