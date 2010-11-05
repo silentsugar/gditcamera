@@ -21,11 +21,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.camera.util.ClientThread;
+import com.camera.util.Constant;
 import com.camera.util.ServerThread;
 import com.camera.vo.DataHead;
 
 /**
- * 服务端界面
+ * 上传测试界面
  * 
  * @author tian
  * 
@@ -94,23 +95,35 @@ public class UploadActivity extends Activity implements OnClickListener {
 		new ServerThread(handler).start();
 	}
 
+	/**
+	 * 传入文件路径，连接服务器，开启客户端上传线程...
+	 * @param fileName 文件路径
+	 */
 	private void startUpload(String fileName) {
 		DataHead dataHead = new DataHead();
-		dataHead.setPho("apho");
-		dataHead.setSubStation("1234567890123456");
-		dataHead.setSurveyStation("6543210987654321");
-		dataHead.setPhoDesc("三十二个字符，六十四字节。三十二个字符，六十四字节，一二三四五六");
-		dataHead.setStationCode("12345678");
-		dataHead.setDataTime(new Date());
-		dataHead.setCameraId((byte)1);
-		dataHead.setCurrentPackage(22);
-		dataHead.setTotalPackage(2049);
-		dataHead.setDataLength(10000);
 		
 		try {
 			Socket s = new Socket(HOST,PORT);
 			FileInputStream fromSDcard = new FileInputStream(new File(fileName));
 			ClientThread clientThread = new ClientThread(s,dataHead,new DataInputStream(fromSDcard));
+			
+			dataHead.setPho("apho");
+			dataHead.setSubStation("1234567890123456");
+			dataHead.setSurveyStation("6543210987654321");
+			dataHead.setPhoDesc("三十二个字符，六十四字节。三十二个字符，六十四字节，一二三四五六");
+			dataHead.setStationCode("12345678");
+			dataHead.setDataTime(new Date());
+			dataHead.setCameraId((byte)1);
+			dataHead.setCurrentPackage(22);
+			
+			int packages = fromSDcard.available()/Constant.PACKAGE_SIZE;
+			if(fromSDcard.available()%Constant.PACKAGE_SIZE!=0){
+				packages++;
+			}
+			
+			dataHead.setTotalPackage(packages);
+			dataHead.setDataLength(fromSDcard.available()+Constant.DATA_HEAD_SIZE);
+			
 			clientThread.start();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
