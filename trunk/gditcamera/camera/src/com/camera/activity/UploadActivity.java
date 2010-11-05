@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.Date;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -48,7 +49,8 @@ public class UploadActivity extends Activity implements OnClickListener {
 			Bundle dataBundle = msg.getData();
 			Log.d(tag, "dataBundle size:" + dataBundle.size() + "");
 			if (tv1 != null) {
-				tv1.setText(dataBundle.getString("result"));
+				Log.d("#success", dataBundle.getBoolean("success")+"");
+				tv1.setText((dataBundle.getBoolean("success"))? "上传成功" : "上传失败" );
 			}
 		}
 	};
@@ -71,6 +73,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 		btnServerStart.setOnClickListener(this);
 		btnClientStart.setOnClickListener(this);
 		tv1 = (TextView) findViewById(R.id.tv1);
+		tv1.setTextColor(Color.BLACK);
 	}
 
 	@Override
@@ -88,7 +91,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 	}
 
 	private void startServerSocket() {
-		new ServerThread().start();
+		new ServerThread(handler).start();
 	}
 
 	private void startUpload(String fileName) {
