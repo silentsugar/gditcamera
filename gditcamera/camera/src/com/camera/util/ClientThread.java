@@ -7,6 +7,11 @@ import java.net.Socket;
 
 import com.camera.vo.DataHead;
 
+/**
+ * 客户端线程，开启该线程上传文件
+ * @author tian
+ *
+ */
 public class ClientThread extends Thread {
 	
 	private Socket clientSocket;
@@ -15,6 +20,12 @@ public class ClientThread extends Thread {
 	private DataHead dataHead;
 	private DataInputStream dataIn;
 	
+	/**
+	 * 构造函数
+	 * @param socket 与服务端连接的socket
+	 * @param dataHead 每个数据包的包头
+	 * @param dataIn 所上传的文件的数据流
+	 */
 	public ClientThread(Socket socket,DataHead dataHead,DataInputStream dataIn){
 		this.clientSocket = socket;
 		this.dataHead = dataHead;
