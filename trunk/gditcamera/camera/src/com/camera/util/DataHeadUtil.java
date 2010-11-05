@@ -139,20 +139,20 @@ public class DataHeadUtil {
 		int offset = 0;
 		try {
 			d.setPho(new String(subByteArray(b,offset,4),"GB2312"));
-			Log.d(offset+"dataHead:pho", d.getPho());
+//			Log.d(offset+"dataHead:pho", d.getPho());
 			offset+=4;
 			d.setSubStation(new String(subByteArray(b, offset, 16)));
-			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
+//			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
 			offset+=16;
 			String s = new String(subByteArray(b, offset, 16));
 			d.setSurveyStation(s);
-			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
+//			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
 			offset+=16;
 			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
-			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
+//			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
 			offset+=64;
 			d.setStationCode(new String(subByteArray(b, offset,8)));
-			Log.d(offset+"dataHead:StationCode", d.getStationCode());
+//			Log.d(offset+"dataHead:StationCode", d.getStationCode());
 			offset+=8;
 			String dataString = "";
 //			print(subByteArray(b, offset, 7));
@@ -163,18 +163,18 @@ public class DataHeadUtil {
 					dataString+=(b[offset++]+"#");
 			}
 			d.setDataTime(dataTimeString2Date(dataString));
-			Log.d(offset+"dataHead:Date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(d.getDataTime()));
+//			Log.d(offset+"dataHead:Date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(d.getDataTime()));
 			d.setCameraId(b[offset]);
 			Log.d(offset+"dataHead:CameraId", d.getCameraId()+"");
 			offset+=1;
 			d.setCurrentPackage(bytes2int(subByteArray(b, offset, 2)));
-			Log.d(offset+"dataHead:CurrentPackage", d.getCurrentPackage()+"");
+//			Log.d(offset+"dataHead:CurrentPackage", d.getCurrentPackage()+"");
 			offset+=2;
 			d.setTotalPackage(bytes2int(subByteArray(b, offset, 2)));
-			Log.d(offset+"dataHead:TotalPackage", d.getTotalPackage()+"");
+//			Log.d(offset+"dataHead:TotalPackage", d.getTotalPackage()+"");
 			offset+=2;
 			d.setDataLength(bytes2int(subByteArray(b, offset, 2)));
-			Log.d(offset+"dataHead:dataLength", d.getDataLength()+"");
+//			Log.d(offset+"dataHead:dataLength", d.getDataLength()+"");
 
 			return d;
 		} catch (UnsupportedEncodingException e) {
