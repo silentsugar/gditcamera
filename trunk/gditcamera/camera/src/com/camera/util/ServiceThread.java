@@ -1,5 +1,6 @@
 package com.camera.util;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,11 +21,11 @@ public class ServiceThread implements Runnable {
 
 	private static final String tag = "ClientThread";
 	
-	private Socket socket;
+	private Socket serverSocket;
 	private ReturnActionListener returnActionListener;
 
-	public ServiceThread(Socket s){
-		this.socket = s;
+	public ServiceThread(Socket socket){
+		this.serverSocket = socket;
 	}
 	
 	@Override
@@ -35,8 +36,7 @@ public class ServiceThread implements Runnable {
 		DataHead dataHead ;
 		
 		try {
-			InputStream fromClient = this.socket.getInputStream();
-			uploadSize = fromClient.available();
+			InputStream fromClient = this.serverSocket.getInputStream();
 			Log.d("uploadSize", uploadSize+"");
 			FileOutputStream toSdCard = new FileOutputStream(new File(savePath));
 
@@ -44,6 +44,7 @@ public class ServiceThread implements Runnable {
 			byte [] dataHeadBytes = new byte[122];
 			finishBytes+=fromClient.read(dataHeadBytes);
 			dataHead = DataHeadUtil.byte2DataHead(dataHeadBytes);
+			uploadSize = dataHead.getDataLength();
 
 			//再读取上传文件的数据
 			byte [] b = new byte[1024];
@@ -52,14 +53,17 @@ public class ServiceThread implements Runnable {
 				toSdCard.write(b, 0, len);
 				finishBytes+=len;
 			}
-			Log.d("finishBytes", finishBytes+"");
+			Log.d("Upload Success !!finishBytes", finishBytes+"");
+			DataOutputStream toClient = new DataOutputStream(serverSocket.getOutputStream());
+			toClient.write("上传成功".getBytes("GB2312"));
+			toClient.close();
 			
 			//判断是否上传成功
 			if(returnActionListener!=null){
 				returnActionListener.OnReturnAction(savePath, dataHead, (finishBytes==uploadSize ? true : false));
 			}
 			toSdCard.close();
-			socket.close();
+			serverSocket.close();
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

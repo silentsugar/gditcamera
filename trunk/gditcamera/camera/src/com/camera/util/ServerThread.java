@@ -55,13 +55,13 @@ public class ServerThread extends Thread {
 					@Override
 					public void OnReturnAction(String savedPath, DataHead dataHead,
 							boolean success) {
-						Message msg = handler.obtainMessage();
-						Bundle toUiData = new Bundle();
-						toUiData.putString("savedPath", savedPath);
-						toUiData.putBoolean("success", success);
-						toUiData.putSerializable("dataHead", dataHead);
-						msg.setData(toUiData);
-						handler.sendMessage(msg);
+//						Message msg = handler.obtainMessage();
+//						Bundle toUiData = new Bundle();
+//						toUiData.putString("savedPath", savedPath);
+//						toUiData.putBoolean("success", success);
+//						toUiData.putSerializable("dataHead", dataHead);
+//						msg.setData(toUiData);
+//						handler.sendMessage(msg);
 					}
 				});
 				mExecutorService.execute(service);
