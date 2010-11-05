@@ -46,6 +46,7 @@ public class ClientThread extends Thread {
 	public void run() {
 			try {
 			toServer = clientSocket.getOutputStream();
+			fromServer = clientSocket.getInputStream();
 			byte [] b = new byte[1024];
 			int len = -1;
 			
@@ -54,10 +55,11 @@ public class ClientThread extends Thread {
 			while((len = dataIn.read(b))!=-1){
 				toServer.write(b, 0, len);
 			}
+			toServer.close();
 			
 			//再获取服务器回应
 			Log.d("waitting for server...", ".....");
-			dataFromServer = new InputStreamReader(clientSocket.getInputStream(),"GB2312");
+			dataFromServer = new InputStreamReader(fromServer,"GB2312");
 			BufferedReader buf = new BufferedReader(dataFromServer);
 			String data = null;
 			String result = "";
@@ -74,7 +76,6 @@ public class ClientThread extends Thread {
 			handler.sendMessage(msg);
 			
 			dataIn.close();
-			toServer.close();
 //			clientSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();

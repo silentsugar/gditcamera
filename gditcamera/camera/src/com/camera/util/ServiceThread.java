@@ -53,6 +53,8 @@ public class ServiceThread implements Runnable {
 				toSdCard.write(b, 0, len);
 				finishBytes+=len;
 			}
+			fromClient.close();
+			
 			Log.d("Upload Success !!finishBytes", finishBytes+"");
 			DataOutputStream toClient = new DataOutputStream(serverSocket.getOutputStream());
 			toClient.write("上传成功".getBytes("GB2312"));
