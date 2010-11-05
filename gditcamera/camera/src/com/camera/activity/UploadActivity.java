@@ -51,7 +51,8 @@ public class UploadActivity extends Activity implements OnClickListener {
 			Log.d(tag, "dataBundle size:" + dataBundle.size() + "");
 			if (tv1 != null) {
 				Log.d("#success", dataBundle.getBoolean("success")+"");
-				tv1.setText((dataBundle.getBoolean("success"))? "上传成功" : "上传失败" );
+//				tv1.setText((dataBundle.getBoolean("success"))? "上传成功" : "上传失败" );
+				tv1.setText(dataBundle.getString("result"));
 			}
 		}
 	};
@@ -105,7 +106,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 		try {
 			Socket s = new Socket(HOST,PORT);
 			FileInputStream fromSDcard = new FileInputStream(new File(fileName));
-			ClientThread clientThread = new ClientThread(s,dataHead,new DataInputStream(fromSDcard));
+			ClientThread clientThread = new ClientThread(s,handler,dataHead,new DataInputStream(fromSDcard));
 			
 			dataHead.setPho("apho");
 			dataHead.setSubStation("1234567890123456");
