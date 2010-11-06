@@ -105,6 +105,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 		
 		try {
 			Socket s = new Socket(HOST,PORT);
+			Log.d("secondly", "client connect to server on "+PORT+" where ip address is "+HOST);
 			FileInputStream fromSDcard = new FileInputStream(new File(fileName));
 			ClientThread clientThread = new ClientThread(s,handler,dataHead,new DataInputStream(fromSDcard));
 			
