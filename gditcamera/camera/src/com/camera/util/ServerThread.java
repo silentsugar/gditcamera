@@ -46,9 +46,10 @@ public class ServerThread extends Thread {
 		Socket clientSocket = null;
 		try{
 			while(true){
-				Log.d("Listening on port:",LISTEN_PORT+"");
+				Log.d("firstly", "Server listening on port "+LISTEN_PORT);
 				clientSocket = serverSocket.accept();
-				Log.d("received a connection,ip: ",clientSocket.getInetAddress()+"");
+				Log.d("thirdly", "Server received the connection ");
+				
 				service = new ServiceThread(clientSocket);
 				service.setReturnActionListener(new ReturnActionListener() {
 					

@@ -37,36 +37,48 @@ public class ServiceThread implements Runnable {
 		
 		try {
 			InputStream fromClient = this.serverSocket.getInputStream();
-			Log.d("uploadSize", uploadSize+"");
 			FileOutputStream toSdCard = new FileOutputStream(new File(savePath));
 
-			//先读取头部数据
-			byte [] dataHeadBytes = new byte[122];
-			finishBytes+=fromClient.read(dataHeadBytes);
-			dataHead = DataHeadUtil.byte2DataHead(dataHeadBytes);
-			uploadSize = dataHead.getDataLength();
-
-			//再读取上传文件的数据
-			byte [] b = new byte[1024];
+			boolean finished = false;
+			boolean readHead = false;
+			byte [] b = new byte[122];
 			int len = -1;
-			while((len=fromClient.read(b))!=-1){
-				toSdCard.write(b, 0, len);
-				finishBytes+=len;
+//			finishBytes+=fromClient.read(dataHeadBytes);
+
+			//等待客户端上传数据，完毕后退出循环
+			while(true){
+				
+				if(!finished){
+					//再读取上传文件的数据
+					while((len=fromClient.read(b))!=-1){
+						//先读取头部数据
+						if(!readHead){
+							dataHead = DataHeadUtil.byte2DataHead(b);
+							uploadSize = dataHead.getDataLength();
+							Log.d("uploadSize", uploadSize+"");
+							readHead = true;
+						}else{
+							toSdCard.write(b, 0, len);
+//							Log.d("Upload Success !!finishBytes", finishBytes+"");
+							DataOutputStream toClient = new DataOutputStream(serverSocket.getOutputStream());
+							toClient.write("上传成功".getBytes("GB2312"));
+							toClient.flush();
+						}
+						finishBytes+=len;
+					}
+				}else{
+					//do other thing
+					try {
+						Thread.sleep(2000);
+						Log.d("waitting", ".....");
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
 			}
-			fromClient.close();
 			
-			Log.d("Upload Success !!finishBytes", finishBytes+"");
-			DataOutputStream toClient = new DataOutputStream(serverSocket.getOutputStream());
-			toClient.write("上传成功".getBytes("GB2312"));
-			toClient.close();
-			
-			//判断是否上传成功
-			if(returnActionListener!=null){
-				returnActionListener.OnReturnAction(savePath, dataHead, (finishBytes==uploadSize ? true : false));
-			}
-			toSdCard.close();
-			serverSocket.close();
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

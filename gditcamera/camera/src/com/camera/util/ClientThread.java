@@ -49,34 +49,54 @@ public class ClientThread extends Thread {
 			fromServer = clientSocket.getInputStream();
 			byte [] b = new byte[1024];
 			int len = -1;
-			
-			//先写入数据头
-			toServer.write(DataHeadUtil.dataHead2Byte(this.dataHead));
-			while((len = dataIn.read(b))!=-1){
-				toServer.write(b, 0, len);
-			}
-			toServer.close();
-			
-			//再获取服务器回应
-			Log.d("waitting for server...", ".....");
-			dataFromServer = new InputStreamReader(fromServer,"GB2312");
-			BufferedReader buf = new BufferedReader(dataFromServer);
 			String data = null;
 			String result = "";
-			while((data = buf.readLine()) != null){
-				result += data;
+			boolean finished = false;
+			boolean posted = false;
+			
+			//向服务端传输数据，完毕后退出循环
+			while(true){
+				if(!finished){
+					if(!posted){
+						//先写入数据头
+						toServer.write(DataHeadUtil.dataHead2Byte(this.dataHead));
+						while((len = dataIn.read(b))!=-1){
+							toServer.write(b, 0, len);
+						}
+						//再写入数据体
+//						while((len = dataIn.read(b))!=-1){
+//							toServer.write(b, 0, len);
+//						}
+						toServer.flush();
+						posted = true;
+					}else{
+						//再获取服务器回应
+						dataFromServer = new InputStreamReader(fromServer,"GB2312");
+						BufferedReader buf = new BufferedReader(dataFromServer);
+						while((data = buf.readLine()) != null){
+							result += data;
+						}
+						Log.d("finish for server...", "OK");
+						finished = true;
+						//最后返回数据到Ui界面
+						Bundle dataBundle = new Bundle();
+						Message msg = handler.obtainMessage();
+						dataBundle.putString("result", result);
+						msg.setData(dataBundle);
+						handler.sendMessage(msg);
+					}
+					
+				}else{
+					//do other thing
+					
+				}
+				if(result.equals("end")){
+					dataIn.close();
+					toServer.close();
+					clientSocket.close();
+					break;
+				}
 			}
-			Log.d("finish for server...", "OK");
-			
-			//最后返回数据到Ui界面
-			Bundle dataBundle = new Bundle();
-			Message msg = handler.obtainMessage();
-			dataBundle.putString("result", result);
-			msg.setData(dataBundle);
-			handler.sendMessage(msg);
-			
-			dataIn.close();
-//			clientSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
