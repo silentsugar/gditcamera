@@ -106,6 +106,7 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 			String path=this.curreentFile.getPath();
 			intent.putExtra(path, this.curreentFile.getAbsolutePath());
 			startActivity(intent);
+			this.finish();
 
 		}else{
 			this.finish();

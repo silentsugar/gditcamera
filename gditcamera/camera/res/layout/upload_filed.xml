@@ -46,15 +46,21 @@
 			android:orientation="vertical" >
 			
 			<TextView
-				android:layout_width="300dip"
-				android:layout_height="300dip"
+				android:id="@+id/img"
+				android:layout_width="250dip"
+				android:layout_height="250dip"
 				android:background="@drawable/a"
+				android:layout_gravity="center_horizontal"
+				android:layout_marginTop="10dip"
+			    android:layout_marginBottom="10dip"
 				/>
 			
 			<Gallery xmlns:android="http://schemas.android.com/apk/res/android" 
 			    android:id="@+id/gallery"
 			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"/>
+			    android:layout_height="80dip"
+			    android:layout_marginTop="5dip"
+			    android:layout_marginBottom="5dip"/>
 				
 		</LinearLayout>
 	</ScrollView>

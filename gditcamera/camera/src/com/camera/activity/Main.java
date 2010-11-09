@@ -14,6 +14,7 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.camera.util.IniControl;
+import com.camera.widget.CEditTextButton;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
 
@@ -22,11 +23,13 @@ public class Main extends TabActivity implements OnClickListener {
 	private Button mBtnExit;
 	private Button mBtnUpdateManager;
 	private Button mBtnTestService;
+	private CEditTextButton btnBrowse;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		this.findViewById(R.id.btnBrowse).setOnClickListener(this);
 		//初始化应用程序
 		try {
 			IniControl.initConfiguration(this);
@@ -51,6 +54,11 @@ public class Main extends TabActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
+		case R.id.btnBrowse:
+			Intent intent3 = new Intent();
+			intent3.setClass(this, SelectFolderActivity.class);
+			this.startActivity(intent3);
+			break;
 		case R.id.btnUpdateManager:
 			Intent intent = new Intent();
 			intent.setClass(this, UploadFileActivity.class);

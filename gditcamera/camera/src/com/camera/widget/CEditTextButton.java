@@ -2,6 +2,7 @@ package com.camera.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,12 +20,12 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	/** Button控件的宽度,单位为px像素*/
 	private static final int BTN_WIDTH  = 58;
 	/** Button控件的padding大小*/
-	private static final int[] BUTTON_PADDING = {2, 2, 2, 2};
+	private static final int[] BUTTON_PADDING = {0, 0, 0, 0};
 	/** 默认Button背景样式*/
 	private static final int BUTTON_BACKGROUND_RESOURCE = 0;
 	
 	/** EditText控件的padding大小*/
-	private static final int[] EDITTEXT_PADDING = {2, 2, 2, 2};
+	private static final int[] EDITTEXT_PADDING = {10, 2, 2, 2};
 	/** 默认EditText背景样式*/
 	private static final int EDITTEXT_BACKGROUND_RESOURCE = 0;
 	/** 默认EditText的margin大小*/
@@ -32,7 +33,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	
 	
 	/** 控件默认的高度，单位为dip*/
-	private static final int HEIGHT = 40;
+	private static final int HEIGHT = 30;
 	/** 默认的背景样式*/
 	private static final int BACKGROUND_RESOURCE = R.drawable.edittext_button;
 	/** 默认padding大小*/
@@ -69,9 +70,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	private void initLayout() {
 		int i[] = PADDING;
 		this.setPadding(i[0], i[1], i[2], i[3]);
-		LayoutParams lp = new LayoutParams(200, 
-				 HEIGHT);
-		this.setLayoutParams(lp);
+		LayoutParams lp = null;
 		
 		//加入EditText
 		mEditText = new EditText(mContext);
@@ -89,6 +88,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		lp.alignWithParent = true;
 		mBtn.setBackgroundResource(BUTTON_BACKGROUND_RESOURCE);
+		mBtn.setGravity(Gravity.CENTER);
 		this.addView(mBtn, lp);
 	}
 	
@@ -97,7 +97,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	 */
 	private void initProperties() {
 		
-		this.setFocusable(true);
+		this.setFocusable(false);
 		this.setBackgroundResource(BACKGROUND_RESOURCE);
 		
 		mEditText.setSingleLine();
@@ -107,14 +107,16 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 		i = BUTTON_PADDING;
 		mBtn.setPadding(i[0], i[1], i[2], i[3]);
 		mBtn.setOnClickListener(this);
-		mBtn.setText("按钮");
+		mBtn.setFocusable(true);
+		mBtn.setFocusableInTouchMode(true);
+		mBtn.setText("浏览");
 		
 	}
 	
 	@Override
 	public void onClick(View v) {
 		if(mOnClickListener != null) {
-			mOnClickListener.onClick(v);
+			mOnClickListener.onClick(this);
 		}
 	}
 
@@ -138,8 +140,9 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 		return mOnClickListener;
 	}
 
-	public void setOnClickListener(OnClickListener mOnClickListener) {
-		this.mOnClickListener = mOnClickListener;
+	@Override
+	public void setOnClickListener(OnClickListener l) {
+		this.mOnClickListener = l;
 	}
-
+	
 }

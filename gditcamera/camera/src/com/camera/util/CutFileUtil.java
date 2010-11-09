@@ -56,7 +56,7 @@ public class CutFileUtil {
 	 */
 	private void cutFile() {
 		try {
-			InputStream in = context.openFileInput(filePath);
+			FileInputStream in = new FileInputStream(filePath);
 			fileSize = in.available();
 			byte[] buf = new byte[pieceSize];
 			while(true) {
@@ -82,7 +82,7 @@ public class CutFileUtil {
 	 */
 	private void packagePiece(byte[] buf) throws IOException {
 		String pieceName = filePath + pieceNum + ".txt";
-		FileOutputStream out = context.openFileOutput(pieceName, Context.MODE_WORLD_WRITEABLE);
+		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
 		//out.write(packageHead);
 		out.write(buf);
@@ -101,7 +101,7 @@ public class CutFileUtil {
 			return -1;
 		String fileName = pieceFiles.get(nCurrentPiece);
 		
-		InputStream in = context.openFileInput(fileName);
+		FileInputStream in = new FileInputStream(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
 		nCurrentPiece ++;
@@ -119,7 +119,7 @@ public class CutFileUtil {
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return -1;
-		InputStream in = context.openFileInput(fileName);
+		FileInputStream in = new FileInputStream(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
 		return pieceSize;
