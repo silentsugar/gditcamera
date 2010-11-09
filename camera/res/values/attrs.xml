@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 记得在每个属性上面写上注释，如果属性有默认值时，也要加上相应注释-->
+
+<!-- ==============================郑澍璋================================== -->
+<resources>
+<declare-styleable name="CTitleBar"><!-- 控件名称-->
+  <!-- 配置左边控件的ID，如"@+id/idName" -->
+  <attr name="left_view" format="string"/><!-- 属性名称，类型-->
+  <!-- 配置标题控件的ID，如"@+id/idName" -->
+  <attr name="title_view" format="string"/><!-- 属性名称，类型-->
+  <!-- 配置右边控件的ID，如"@+id/idName" -->
+  <attr name="right_view" format="string"/><!-- 属性名称，类型-->
+</declare-styleable>
+
+<declare-styleable name="CImageTextView">
+  <!-- 图像资源-->
+  <attr name="image" format="string"/>
+  <!-- 文本资源-->
+  <attr name="text" format="string"/>
+  <!-- 文本字体大小-->
+  <attr name="textSize" format="dimension"/>
+  <!-- 图片所用的空间大小，默认30dip当布局为垂直布局时则为顶部的高度，当布局为水平布局时则为左边的宽度-->
+  <attr name="imageSpace" format="dimension"/>
+  <!-- 图片的宽度，默认为30dip-->
+  <attr name="image_width" format="dimension"/>
+  <!-- 图片的高度，默认为30dip-->
+  <attr name="image_height" format="dimension"/>
+  <!-- 设置布局为垂直布局还是水平布局-->
+  <attr name="orientation" format="boolean"/>
+  <!-- 控件被点击后显示的样式-->
+  <attr name="selectedBackground" format="string"/>
+  <!-- 控件被点击后是否显示selectedStyle的样式-->
+  <attr name="isShowSelectedBackground" format="boolean"/>
+</declare-styleable>
+
+ <declare-styleable name="HelloGallery">
+     <attr name="android:galleryItemBackground" />
+ </declare-styleable>
+
+</resources>
