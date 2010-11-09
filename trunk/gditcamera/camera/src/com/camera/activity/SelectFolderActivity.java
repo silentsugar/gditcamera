@@ -38,7 +38,6 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
         mSdcardPath=Environment.getExternalStorageDirectory().getAbsolutePath();
         //取得界面的控件
         mFolderListView=(ListView)findViewById(R.id.lvFolder);
-        mFolderListView.setDividerHeight(0);
         mFolderListView.setOnItemClickListener(this);
         mChoose=(Button) this.findViewById(R.id.btnChoose);
         mCancel=(Button) this.findViewById(R.id.btnCancel);
@@ -71,14 +70,14 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 				} 
 			}
 		}
-			
+		Collections.sort(mFolders);	
 		if (file.getParentFile() != null&&!(file.getAbsolutePath().equals(mSdcardPath))) {
 			fileItem = new FileItem();
 			fileItem.setTitle("返回上级");
 			fileItem.setImageResid(R.drawable.fileicon_back);
 			mFolders.add(0, fileItem);
 		}
-		Collections.sort(mFolders);
+		
 
 		adapter = new FileListAdapter(this, this.mFolders);
 		mFolderListView.setAdapter(adapter);
@@ -104,7 +103,8 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 		if(v==mChoose){
 			//返回文件名
 			Intent intent = new Intent(this,Main.class );
-			intent.putExtra("path", this.curreentFile.getAbsolutePath());
+			String path=this.curreentFile.getPath();
+			intent.putExtra(path, this.curreentFile.getAbsolutePath());
 			startActivity(intent);
 
 		}else{
