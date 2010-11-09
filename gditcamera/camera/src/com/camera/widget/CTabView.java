@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.camera.activity.R;
-import com.camera.util.UnitUtil;
 
 /**
  * 选项卡标签控件，支持垂直和水平布局，所有选项卡标签控件都必须
@@ -104,8 +103,8 @@ public class CTabView extends RelativeLayout {
 				if(!tv.equals(v))
 					tv.setBackgroundResource(CTabViewFactory.this.mBackgroundResource);
 				else {
-					((CTabView)v).mInnerOnClickListener.onClick(v);
 					v.setBackgroundResource(CTabViewFactory.this.mClickedBackground);
+					((CTabView)v).mInnerOnClickListener.onClick(v);
 				}
 			}
 		}
@@ -113,8 +112,7 @@ public class CTabView extends RelativeLayout {
 		private void initConext() {
 			LayoutParams lp = null;
 			//总体设置
-			int j = UnitUtil.formatDipToPx(mContext, mHeight);
-			LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, j, 1);
+			LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, mHeight, 1);
 			mTabView.setLayoutParams(lp2);
 			
 			//设置图像属性
@@ -132,34 +130,32 @@ public class CTabView extends RelativeLayout {
 			if(mOrientation) {
 				//水平状态下
 				if(mIsShowImage) {
-					int[] i = UnitUtil.formatDipToPx(mContext, mImageSize);
+					int[] i = mImageSize;
 					lp =  new LayoutParams(i[0], i[1]);
-					int k = UnitUtil.formatDipToPx(mContext, 
-							(mImageSpace - mImageSize[0]) / 2);
+					int k = (mImageSpace - mImageSize[0]) / 2;
 					lp.setMargins(k, 0, 0, 0);
 					lp.addRule(RelativeLayout.CENTER_VERTICAL);
 					
 					mTabView.addView(imgView, lp);
 				}
 				lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-				lp.setMargins(UnitUtil.formatDipToPx(mContext, mImageSpace), 0, 0, 0);
+				lp.setMargins(mImageSpace, 0, 0, 0);
 				textView.setGravity(Gravity.CENTER_VERTICAL);
 				mTabView.addView(textView, lp);
 				
 			} else {
 				//竖直状态下
 				if(mIsShowImage) {
-					int[] i = UnitUtil.formatDipToPx(mContext, mImageSize);
+					int[] i = mImageSize;
 					lp =  new LayoutParams(i[0], i[1]);
-					int k = UnitUtil.formatDipToPx(mContext, 
-							(mImageSpace - mImageSize[1]) / 2);
+					int k = (mImageSpace - mImageSize[1]) / 2;
 					lp.setMargins(0, k, 0, 0);
 					lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
 					mTabView.addView(imgView, lp);
 				}
 				textView.setGravity(Gravity.CENTER);
 				lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-				lp.setMargins(0, UnitUtil.formatDipToPx(mContext, mImageSpace), 0, 0);
+				lp.setMargins(0, mImageSpace, 0, 0);
 				mTabView.addView(textView, lp);
 			}
 		}
