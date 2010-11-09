@@ -42,6 +42,7 @@ public class CutFileUtil {
 	
 	public CutFileUtil(Context context, String filePath) throws Exception {
 		this.context = context;
+		this.filePath = filePath;
 		file = new File(filePath);
 		if(!file.exists()) {
 			throw new Exception("File not exist!");
