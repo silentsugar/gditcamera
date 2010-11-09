@@ -5,15 +5,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 文件操作类
+ * @author 郑澍璋
+ */
 public class FileUtil {
 
-	public static InputStream file2Stream(String filePath){
-		try{
-			return new FileInputStream(new File(filePath));
-			
-		}catch(IOException e){
-			e.printStackTrace();
-			return null;
-		}
+	/**
+	 * 创建文件夹
+	 */
+	public void createFolder(String fileName) {
+		
 	}
+	
+	public void createFile() {
+		
+	}
+	
+	public void delete() {
+		
+	}
+	
 }

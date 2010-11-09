@@ -1,5 +1,7 @@
 package com.camera.activity;
 
+import java.io.IOException;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -9,7 +11,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.Toast;
 
+import com.camera.util.IniControl;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
 
@@ -23,6 +27,14 @@ public class Main extends TabActivity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		//初始化应用程序
+		try {
+			IniControl.initConfiguration(this);
+			Toast.makeText(this, "初始化出现成功！", Toast.LENGTH_SHORT);
+		} catch (IOException e) {
+			Toast.makeText(this, "初始化出现异常！", Toast.LENGTH_SHORT);
+			e.printStackTrace();
+		}
 		createTab();
 		setListener();
 	}

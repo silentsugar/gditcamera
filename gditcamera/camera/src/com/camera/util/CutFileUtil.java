@@ -5,8 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.content.Context;
 
 
 public class CutFileUtil {
@@ -34,7 +37,11 @@ public class CutFileUtil {
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
 	
-	public CutFileUtil(String filePath) throws Exception {
+	/** Context对象*/
+	private Context context;
+	
+	public CutFileUtil(Context context, String filePath) throws Exception {
+		this.context = context;
 		file = new File(filePath);
 		if(!file.exists()) {
 			throw new Exception("File not exist!");
@@ -48,7 +55,7 @@ public class CutFileUtil {
 	 */
 	private void cutFile() {
 		try {
-			FileInputStream in = new FileInputStream(file);
+			InputStream in = context.openFileInput(filePath);
 			fileSize = in.available();
 			byte[] buf = new byte[pieceSize];
 			while(true) {
@@ -74,7 +81,7 @@ public class CutFileUtil {
 	 */
 	private void packagePiece(byte[] buf) throws IOException {
 		String pieceName = filePath + pieceNum + ".txt";
-		FileOutputStream out = new FileOutputStream(pieceName);
+		FileOutputStream out = context.openFileOutput(pieceName, Context.MODE_WORLD_WRITEABLE);
 		pieceFiles.add(pieceName);
 		//out.write(packageHead);
 		out.write(buf);
@@ -93,7 +100,7 @@ public class CutFileUtil {
 			return -1;
 		String fileName = pieceFiles.get(nCurrentPiece);
 		
-		FileInputStream in = new FileInputStream(fileName);
+		InputStream in = context.openFileInput(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
 		nCurrentPiece ++;
@@ -111,7 +118,7 @@ public class CutFileUtil {
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return -1;
-		FileInputStream in = new FileInputStream(fileName);
+		InputStream in = context.openFileInput(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
 		return pieceSize;
