@@ -1,6 +1,6 @@
 package com.camera.vo;
 
-import java.util.List;
+import java.util.Map;
 
 /**
  * 配置信息实体
@@ -17,7 +17,10 @@ public class Preferences {
 	private String surveyStation;
 	/**站码(8byte)*/
 	private String stationCode;
-	/**服务器地址列表，格式:http://192.168.1.1:8080或http://www.baidu.com:8080,默认使用80端口*/
-	private List<String> hostList;
+	/**
+	 * 服务器地址列表，
+	 * 格式:http://192.168.1.1:8080 或 http://www.baidu.com:8080,默认使用80端口
+	 */
+	private Map<String,String> hostList;
 	
 }
