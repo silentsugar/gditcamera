@@ -48,8 +48,10 @@
 								style="@style/conf_textview"
 								android:id="@+id/text1"
 								android:text="图片目录:"/>
-							<EditText
+							<com.camera.widget.CEditTextButton
+								android:id="@+id/btnBrowse"
 								style="@style/conf_edittext"
+								android:layout_height="36dip"
 								android:layout_toRightOf="@+id/text1"/>
 								
 						</RelativeLayout>

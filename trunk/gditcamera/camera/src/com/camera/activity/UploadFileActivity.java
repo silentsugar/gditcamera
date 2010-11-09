@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -18,12 +19,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private Button mBtnUpdate;
 	private Button mBtnUpdateAll;
 	private EditText mTxtMessage;
+	private TextView mImg;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.upload_filed);
-		
+		mImg = (TextView)this.findViewById(R.id.img);
 		getComponents();
 		
 	}
@@ -39,6 +41,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	    g.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+	            UploadFileActivity.this.mImg.setBackgroundResource(ImageAdapter.mImageIds[position]);
 	        }
 	    });
 	}

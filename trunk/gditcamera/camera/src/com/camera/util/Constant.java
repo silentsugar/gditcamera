@@ -13,8 +13,8 @@ public class Constant {
 	public static final int PACKAGE_SIZE = 1024;
 	
 	/** 应用程序目录*/
-	public static final String APP_FOLDER = "/mnt/sdcard/camera/";
+	public static final String APP_FOLDER = "camera/";
 	/** 应用程序图片切片目录*/
-	public static final String PIECE_FOLDER = "/mnt/sdcard/camera/wUpload";
+	public static final String PIECE_FOLDER = "camera/wUpload";
 	
 }

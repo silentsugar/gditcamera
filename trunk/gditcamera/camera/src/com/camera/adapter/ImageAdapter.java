@@ -15,7 +15,7 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
 
 
-    private Integer[] mImageIds = {
+    public static Integer[] mImageIds = {
             R.drawable.a,
             R.drawable.b,
             R.drawable.c,
