@@ -34,8 +34,6 @@ public class CTitleBar extends RelativeLayout {
 		this.context = context;
 		TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.CTitleBar);
-		System.out.println("left_view: " + a.getString(R.styleable.CTitleBar_left_view));
-		System.out.println("right_view: " + a.getString(R.styleable.CTitleBar_right_view));
 		mLeftViewId = a.getResourceId(R.styleable.CTitleBar_left_view, 0);
 		mRightViewId = a.getResourceId(R.styleable.CTitleBar_right_view, 0);
 		mTitleViewId = a.getResourceId(R.styleable.CTitleBar_title_view, 0);
