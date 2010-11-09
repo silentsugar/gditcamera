@@ -1,23 +1,23 @@
 package com.camera.widget;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.camera.activity.R;
-import com.camera.util.UnitUtil;
 
 /**
  * EditText和 Button的结合控件
  * @author 郑澍璋
  */
-public class CEditTextButton extends RelativeLayout {
+public class CEditTextButton extends RelativeLayout implements OnClickListener {
 
 	/** Button控件的宽度,单位为px像素*/
-	private static final int BTN_WIDTH  = 60;
+	private static final int BTN_WIDTH  = 58;
 	/** Button控件的padding大小*/
 	private static final int[] BUTTON_PADDING = {2, 2, 2, 2};
 	/** 默认Button背景样式*/
@@ -40,8 +40,12 @@ public class CEditTextButton extends RelativeLayout {
 	
 	/** EditText控件*/
 	private EditText mEditText;
+	
 	/** Button控件*/
 	private Button mBtn;
+	/** Button的单击事件*/
+	private OnClickListener mOnClickListener;
+	
 	/** Context对象*/
 	private Context mContext;
 
@@ -63,10 +67,10 @@ public class CEditTextButton extends RelativeLayout {
 	 * 初始化布局跟配置
 	 */
 	private void initLayout() {
-		int i[] = UnitUtil.formatDipToPx(mContext, PADDING);
+		int i[] = PADDING;
 		this.setPadding(i[0], i[1], i[2], i[3]);
 		LayoutParams lp = new LayoutParams(200, 
-				UnitUtil.formatDipToPx(mContext, HEIGHT));
+				 HEIGHT);
 		this.setLayoutParams(lp);
 		
 		//加入EditText
@@ -94,20 +98,48 @@ public class CEditTextButton extends RelativeLayout {
 	private void initProperties() {
 		
 		this.setFocusable(true);
-		this.setBackgroundColor(Color.RED);
+		this.setBackgroundResource(BACKGROUND_RESOURCE);
 		
 		mEditText.setSingleLine();
-		int i[] = UnitUtil.formatDipToPx(mContext, EDITTEXT_PADDING);
+		int i[] = EDITTEXT_PADDING;
 		mEditText.setPadding(i[0], i[1], i[2], i[3]);
 		
-		i = UnitUtil.formatDipToPx(mContext, BUTTON_PADDING);
+		i = BUTTON_PADDING;
 		mBtn.setPadding(i[0], i[1], i[2], i[3]);
-		
+		mBtn.setOnClickListener(this);
 		mBtn.setText("按钮");
-		mBtn.setBackgroundColor(Color.GRAY);
-		mEditText.setBackgroundColor(Color.YELLOW);
-		this.setBackgroundResource(BACKGROUND_RESOURCE);
+		
+	}
+	
+	@Override
+	public void onClick(View v) {
+		if(mOnClickListener != null) {
+			mOnClickListener.onClick(v);
+		}
 	}
 
-	
+	public EditText getEditText() {
+		return mEditText;
+	}
+
+	public void setEditText(EditText mEditText) {
+		this.mEditText = mEditText;
+	}
+
+	public Button getBtn() {
+		return mBtn;
+	}
+
+	public void setBtn(Button mBtn) {
+		this.mBtn = mBtn;
+	}
+
+	public OnClickListener getOnClickListener() {
+		return mOnClickListener;
+	}
+
+	public void setOnClickListener(OnClickListener mOnClickListener) {
+		this.mOnClickListener = mOnClickListener;
+	}
+
 }

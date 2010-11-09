@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.camera.activity.R;
-import com.camera.util.UnitUtil;
 
 /**
  * 顶部标题栏控件
@@ -75,7 +74,7 @@ public class CTitleBar extends RelativeLayout {
 		//加入标题TextView控件
 		if(title != null) {
 			lp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-			int i = UnitUtil.formatDipToPx(context, 100);
+			int i = 100;
 			lp.setMargins(i, 0, i, 0);
 			TextView txtTitle = new TextView(this.getContext());
 			txtTitle.setGravity(Gravity.CENTER);
@@ -87,10 +86,10 @@ public class CTitleBar extends RelativeLayout {
 		}
 		//加入左边的Button控件
 		if(txtBtnLeft != null) {
-			lp = new LayoutParams(UnitUtil.formatDipToPx(context, 50), LayoutParams.FILL_PARENT);
+			lp = new LayoutParams(50, LayoutParams.FILL_PARENT);
 			lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			lp.alignWithParent = true;
-			int i = UnitUtil.formatDipToPx(context, 5);
+			int i = 5;
 			lp.setMargins(i, i, i, i);
 			mLeftView = new Button(this.getContext());
 			((TextView)mLeftView).setText(txtBtnLeft);
@@ -98,10 +97,10 @@ public class CTitleBar extends RelativeLayout {
 		}
 		//加入右边的Button控件
 		if(txtBtnRight != null) {
-			lp = new LayoutParams(UnitUtil.formatDipToPx(context, 50), LayoutParams.FILL_PARENT);
+			lp = new LayoutParams(50, LayoutParams.FILL_PARENT);
 			lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 			lp.alignWithParent = true;
-			int i = UnitUtil.formatDipToPx(context, 5);
+			int i = 5;
 			lp.setMargins(i, i, i, i);
 			mRightView = new Button(this.getContext());
 			((TextView)mRightView).setText(txtBtnLeft);
@@ -132,7 +131,7 @@ public class CTitleBar extends RelativeLayout {
 		}
 		lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		lp.alignWithParent = true;
-		int i = UnitUtil.formatDipToPx(context, 5);
+		int i = 5;
 		lp.setMargins(i, i, i, i);
 		mLeftView.setPadding(i + 2, mLeftView.getPaddingTop(), i + 2, mLeftView.getPaddingBottom());
 		super.addView(mLeftView, -1, lp);
@@ -155,7 +154,7 @@ public class CTitleBar extends RelativeLayout {
 		}
 		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 		lp.alignWithParent = true;
-		int i = UnitUtil.formatDipToPx(context, 5);
+		int i = 5;
 		lp.setMargins(i, i, i, i);
 		mRightView.setPadding(i + 2, mRightView.getPaddingTop(), i + 2, mRightView.getPaddingBottom());
 		super.addView(mRightView, -1, lp);
@@ -196,7 +195,7 @@ public class CTitleBar extends RelativeLayout {
 		}
 		lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		lp.alignWithParent = true;
-		int i = UnitUtil.formatDipToPx(context, 5);
+		int i = 5;
 		lp.setMargins(0, i, 0, i);
 		mTxtTitle.setPadding(i + 2, mTxtTitle.getPaddingTop(), i + 2, mTxtTitle.getPaddingBottom());
 		super.addView(mTxtTitle, -1, lp);

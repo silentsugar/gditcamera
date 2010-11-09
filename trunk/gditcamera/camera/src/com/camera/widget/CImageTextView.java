@@ -1,6 +1,7 @@
 package com.camera.widget;
 
 import java.util.List;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -10,8 +11,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.camera.activity.R;
-import com.camera.util.UnitUtil;
 
 /**
  * 图像文本控件，支持垂直和水平布局
@@ -21,6 +22,8 @@ public class CImageTextView extends RelativeLayout implements OnClickListener {
 	
 	/** 默认padding大小*/
 	private static final int[] PADDING = {5, 10, 0, 10};
+	/** 默认背景样式*/
+	private static final int BACKGROUND_RESOURCE = R.drawable.button_bg;
 
 	
 	/** 图像资源ID*/
@@ -142,9 +145,10 @@ public class CImageTextView extends RelativeLayout implements OnClickListener {
 	 */
 	public void setDefaultPropertie(boolean orientation) {
 		this.setFocusable(true);
-		int i[] = UnitUtil.formatDipToPx(mContext, PADDING);
+		int i[] = PADDING;
 		this.setPadding(i[0], i[1], i[2], i[3]);
 		super.setOnClickListener(this);
+		this.setBackgroundResource(BACKGROUND_RESOURCE);
 	}
 	
 	/**
@@ -238,12 +242,12 @@ public class CImageTextView extends RelativeLayout implements OnClickListener {
 		//切换到水平布局
 		if(mOrientation) {
 			lp.addRule(RelativeLayout.ALIGN_RIGHT);
-			lp.setMargins(UnitUtil.formatDipToPx(mContext, mImageSpace), 0, 0, 0);
+			lp.setMargins(mImageSpace, 0, 0, 0);
 			mTextView.setGravity(Gravity.CENTER_VERTICAL);
 		} else {
 			lp.addRule(RelativeLayout.ALIGN_BOTTOM);
 			lp.alignWithParent = true;
-			lp.setMargins(0, UnitUtil.formatDipToPx(mContext, mImageSpace), 0, 0);
+			lp.setMargins(0, mImageSpace, 0, 0);
 			mTextView.setGravity(Gravity.CENTER);
 		}
 		this.addView(mTextView, lp);
@@ -263,8 +267,8 @@ public class CImageTextView extends RelativeLayout implements OnClickListener {
 	public void setImageView(View mImageView) {
 
 		LayoutParams lp = new LayoutParams(
-				UnitUtil.formatDipToPx(mContext, mImageSize[0]), 
-				UnitUtil.formatDipToPx(mContext, mImageSize[1]));
+				mImageSize[0], 
+				mImageSize[1]);
 		lp.alignWithParent = true;
 		//切换到水平布局
 		if(mOrientation) {
