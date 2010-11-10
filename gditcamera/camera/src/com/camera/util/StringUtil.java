@@ -29,11 +29,11 @@ public class StringUtil {
 	}
 	
 	/**
-	 * 检查站码名称是否合法
+	 * 检查站码是否合法
 	 * @param stationCode
 	 * @return
 	 */
-	public static final String isCorrectStation(String stationCode){
+	public static final String isCorrectStationCode(String stationCode){
 		if(stationCode == null || stationCode.length()<=0){
 			return "不允许为空";
 		}
