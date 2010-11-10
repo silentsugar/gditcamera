@@ -33,7 +33,7 @@ public class PictureUtil {
 	 * @param folderPath 目录路径
 	 * @return 文件列表
 	 */
-	public List<String> getFilesFromFolder(String folderPath) throws Exception {
+	public List<String> getFilePathsFromFolder(String folderPath) throws Exception {
 		List<String> filePaths = null;
 		File folder = new File(folderPath);
 		if(!folder.exists() || !folder.isDirectory()) {
@@ -57,7 +57,7 @@ public class PictureUtil {
 	 * @return 如果获取不到任何资源，则返回NULL，否则返回图片资源列表
 	 */
 	public List<Bitmap> getPicturesByFolderPath(String folderPath) throws Exception {
-		List<String> paths = getFilesFromFolder(folderPath);
+		List<String> paths = getFilePathsFromFolder(folderPath);
 		return getPictureThumbnail(paths);
 	}
 	
@@ -83,11 +83,16 @@ public class PictureUtil {
 	
 	/**
 	 * 通过路径获取图片的缩略图
-	 * @param path
-	 * @return
+	 * @param path 图片资源路径
+	 * @return 如果获取不到图片，则返回NULL
 	 */
 	public Bitmap getPictureThumbnail(String path) {
-		//if(path)
+		Bitmap bitmap = null;
+		if(path == null)
+			return bitmap;
+		File file = new File(path);
+		if(!file.exists())
+			return bitmap;
 		return BitmapFactory.decodeFile(path);
 	}
 

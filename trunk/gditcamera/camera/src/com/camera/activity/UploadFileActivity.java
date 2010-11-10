@@ -51,7 +51,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public void getComponents() {
 		mBtnUpdate = (Button)this.findViewById(R.id.btnUpdate);
 		mBtnUpdateAll = (Button)this.findViewById(R.id.btnUpdateAll);
-		mTxtMessage = (EditText)this.findViewById(R.id.txtMessage);
+		//mTxtMessage = (EditText)this.findViewById(R.id.txtMessage);
 		mImageView = (ImageView)this.findViewById(R.id.img);
 		mGallery = (Gallery) findViewById(R.id.gallery);
 	}
@@ -60,16 +60,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 加载图片资源到Gallery
 	 */
 	public void loadPicture() {
-		PictureUtil pictureUtil = new PictureUtil();
-		List<Bitmap> bitmaps = null;
-		try {
-			bitmaps = pictureUtil.getPicturesByFolderPath(PICTURE_FOLDER);
-			Log.d(TAG, "bitmaps size : " + bitmaps.size());
-		} catch (Exception e) {
-			Toast.makeText(this, "加载图片失败！", Toast.LENGTH_SHORT);
-			e.printStackTrace();
-		}
-		mGallery.setAdapter(new ImageAdapter(this, bitmaps));
+		mGallery.setAdapter(new ImageAdapter(this, PICTURE_FOLDER));
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
