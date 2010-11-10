@@ -10,22 +10,22 @@ public class StringUtil {
 	/**
 	 * 检查分局名称是否合法
 	 * @param subStation
-	 * @return
+	 * @return 错误信息
 	 */
-	public static final boolean isCorrectSubStation(String subStation){
-		if(subStation == null){
-			return false;
+	public static final String isCorrectSubStation(String subStation){
+		if(subStation == null || subStation.length()<=0){
+			return "不允许为空";
 		}
-		if(subStation.length()>16 || subStation.length()<=0){
-			return false;
+		if(subStation.length()>16){
+			return "不能超过16个字符";
 		}
 		char [] cArray = subStation.toCharArray();
 		for(char c : cArray){
 			if(!isValidateChar(c)){
-				return false;
+				return "请输入数字或英文字母";
 			}
 		}
-		return true;
+		return null;
 	}
 	
 	/**
@@ -33,20 +33,20 @@ public class StringUtil {
 	 * @param stationCode
 	 * @return
 	 */
-	public static final boolean isCorrectStation(String stationCode){
-		if(stationCode == null){
-			return false;
+	public static final String isCorrectStation(String stationCode){
+		if(stationCode == null || stationCode.length()<=0){
+			return "不允许为空";
 		}
-		if(stationCode.length()>8 || stationCode.length()<=0){
-			return false;
+		if(stationCode.length()>8){
+			return "不能超过8个字符";
 		}
 		char [] cArray = stationCode.toCharArray();
 		for(char c : cArray){
 			if(!isValidateChar(c)){
-				return false;
+				return "请输入数字或英文字母";
 			}
 		}
-		return true;
+		return null;
 	}
 	
 	/**
@@ -54,20 +54,20 @@ public class StringUtil {
 	 * @param surveyStation
 	 * @return
 	 */
-	public static final boolean isCorrectSurveyStation(String surveyStation){
-		if(surveyStation == null){
-			return false;
+	public static final String isCorrectSurveyStation(String surveyStation){
+		if(surveyStation == null || surveyStation.length()<=0){
+			return "不允许为空";
 		}
-		if(surveyStation.length()>16 || surveyStation.length()<=0){
-			return false;
+		if(surveyStation.length()>16){
+			return "不能超过16个字符";
 		}
 		char [] cArray = surveyStation.toCharArray();
 		for(char c : cArray){
 			if(!isValidateChar(c)){
-				return false;
+				return "请输入数字或英文字母";
 			}
 		}
-		return true;
+		return null;
 	}
 	
 	/**
