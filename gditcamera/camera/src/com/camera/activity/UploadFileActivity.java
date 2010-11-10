@@ -1,6 +1,7 @@
 package com.camera.activity;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +29,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private Button mBtnUpdateAll;
 	private EditText mTxtMessage;
 	private Gallery mGallery;
+	private ImageAdapter adapter;
 	
 	/** 图片预览控件*/
 	private ImageView mImageView;
@@ -58,17 +60,20 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public void loadPicture() {
 		//生成缩略图
 		PictureUtil pictureUtil = new PictureUtil();
-		try {
-			pictureUtil.createThumbnails(PICTURE_FOLDER);
-		} catch (Exception e) {
-			Toast.makeText(this, "生成缩略图出错！！", Toast.LENGTH_SHORT);
-			e.printStackTrace();
-		}
-		mGallery.setAdapter(new ImageAdapter(this, PICTURE_FOLDER));
+//		try {
+//			pictureUtil.createThumbnails(PICTURE_FOLDER);
+//		} catch (Exception e) {
+//			Toast.makeText(this, "生成缩略图出错！！", Toast.LENGTH_SHORT);
+//			e.printStackTrace();
+//		}
+		adapter = new ImageAdapter(this, PICTURE_FOLDER);
+		mGallery.setAdapter(adapter);
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
-	            //UploadFileActivity.this.mImageView.setBackgroundResource(ImageAdapter.mImageIds[position]);
+	            PictureUtil pictureUtil = new PictureUtil();
+	            Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(position));
+	            mImageView.setImageBitmap(bitmap);
 	        }
 	    });
 	}
