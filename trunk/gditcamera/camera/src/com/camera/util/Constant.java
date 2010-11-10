@@ -17,4 +17,15 @@ public class Constant {
 	/** 应用程序图片切片目录*/
 	public static final String PIECE_FOLDER = "camera/wUpload";
 	
+	/**配置文件里面的属性名：图片目录*/
+	public static final String IMAGE_DIR = "ImgDir";
+	/**配置文件里面的属性名：服务器主机地址列表(如：主机1，配置文件里的属性名为host_1)*/
+	public static final String HOST_LIST = "host_";
+	/**配置文件里面的属性名：站码*/
+	public static final String STATION_CODE = "stationCode";
+	/**配置文件里面的属性名：分站*/
+	public static final String STATION_SUB = "subStation";
+	/**配置文件里面的属性名：测站*/
+	public static final String STATION_SURVEY = "surveyStation";
+	
 }
