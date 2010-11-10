@@ -153,13 +153,13 @@ public class PictureUtil {
 		//创建缩略
 		bitmap = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth, thumbnailHeight);
 		//保存缩略图到指定目录
-		thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".jpeg";
+		thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
 		File bitmapFile = new File(thumbnailPath);
 		if (bitmapFile.exists()) {
 			bitmapFile.delete();
 		}
 		FileOutputStream bitmapWtriter = new FileOutputStream(bitmapFile);
-		if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapWtriter)) {
+		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapWtriter)) {
 			throw new Exception("Can't save the thumbnail file!");
 		}
 		return thumbnailPath;
