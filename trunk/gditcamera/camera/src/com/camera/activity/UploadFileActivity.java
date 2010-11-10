@@ -1,11 +1,7 @@
 package com.camera.activity;
 
-import java.util.List;
-
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -17,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.camera.adapter.ImageAdapter;
-import com.camera.util.PictureUtil;
+import com.camera.picture.PictureUtil;
 
 /**
  * 图片上传管理模块
@@ -60,6 +56,14 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 加载图片资源到Gallery
 	 */
 	public void loadPicture() {
+		//生成缩略图
+		PictureUtil pictureUtil = new PictureUtil();
+		try {
+			pictureUtil.createThumbnails(PICTURE_FOLDER);
+		} catch (Exception e) {
+			Toast.makeText(this, "生成缩略图出错！！", Toast.LENGTH_SHORT);
+			e.printStackTrace();
+		}
 		mGallery.setAdapter(new ImageAdapter(this, PICTURE_FOLDER));
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {

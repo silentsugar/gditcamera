@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.camera.activity.R;
-import com.camera.util.PictureUtil;
+import com.camera.picture.PictureUtil;
 
 /**
  * Gallary图片适配器
@@ -41,16 +41,14 @@ public class ImageAdapter extends BaseAdapter {
     	this.mFolderPath = folderPath;
         mContext = context;
         
-        //获取图片资源的路径
+        //获取图片缩略图资源的路径
         pictureUtil = new PictureUtil();
         try {
         	mPaths = pictureUtil.getFilePathsFromFolder(folderPath);
-			Log.d(TAG, "bitmaps size : " + mPaths.size());
 		} catch (Exception e) {
-			Toast.makeText(mContext, "加载图片失败！", Toast.LENGTH_SHORT);
+			Toast.makeText(mContext, "查找缩略图文件时出错！", Toast.LENGTH_SHORT);
 			e.printStackTrace();
 		}
-        
         TypedArray a = mContext.obtainStyledAttributes(R.styleable.HelloGallery);
         mGalleryItemBackground = a.getResourceId(
                 R.styleable.HelloGallery_android_galleryItemBackground, 0);
@@ -87,12 +85,11 @@ public class ImageAdapter extends BaseAdapter {
         imageView.setBackgroundResource(mGalleryItemBackground);
         
         //获取图片资源
-        Bitmap bitmap = pictureUtil.getPictureThumbnail(mPaths.get(position));
+        Bitmap bitmap = pictureUtil.getBitmap(mPaths.get(position));
         if(bitmap == null)
         	return null;
         imageView.setImageBitmap(bitmap);
         imageView.setAdjustViewBounds(true);
-
         return imageView;
     }
 }
