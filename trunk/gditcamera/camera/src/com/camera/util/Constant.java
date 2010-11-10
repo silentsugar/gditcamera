@@ -1,5 +1,7 @@
 package com.camera.util;
 
+import android.os.Environment;
+
 /**
  * 存放常量值
  * @author tian
@@ -7,15 +9,22 @@ package com.camera.util;
  */
 public class Constant {
 
+	/** SDCARD路径*/
+	public static final String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+	
 	/**每个包头大小*/
 	public static final int DATA_HEAD_SIZE = 122;
 	/**每个数据包大小*/
 	public static final int PACKAGE_SIZE = 1024;
 	
 	/** 应用程序目录*/
-	public static final String APP_FOLDER = "camera/";
+	public static final String APP_FOLDER = SDCARD_PATH + "/camera/";
 	/** 应用程序图片切片目录*/
-	public static final String PIECE_FOLDER = "camera/wUpload";
+	public static final String PIECE_FOLDER = SDCARD_PATH + "/camera/wUpload/";
+	
+	
+	/** 缩略图保存目录*/
+	public static final String THUMBNAIL_FOLDER = SDCARD_PATH + "/thumbnail/";
 	
 	/**配置文件里面的属性名：图片目录*/
 	public static final String IMAGE_DIR = "ImgDir";
