@@ -102,13 +102,14 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 	public void onClick(View v) {
 		if(v==mChoose){
 			//返回文件名
-			Intent intent = new Intent(this,Main.class );
+			Intent intent = new Intent();
 			String path=this.curreentFile.getPath();
-			intent.putExtra(path, this.curreentFile.getAbsolutePath());
-			startActivity(intent);
+			intent.putExtra("path", path);
+			setResult(Activity.RESULT_OK, intent);
 			this.finish();
-
 		}else{
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_CANCELED, intent);
 			this.finish();
 		}
 		
