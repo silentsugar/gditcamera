@@ -16,7 +16,7 @@ public class DataHead implements Serializable{
 	private String id;
 	/**$PHO(4byte)*/
 	private String pho;
-	/**分站名称(16byte)*/
+	/**分局名称(16byte)*/
 	private String subStation;
 	/**测站名称(16byte)*/
 	private String surveyStation;
