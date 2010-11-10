@@ -27,7 +27,8 @@ public class ImageAdapter extends BaseAdapter {
     /** Gallery背景*/
     private int mGalleryItemBackground;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, List<Bitmap> bitmaps) {
+    	this.mBitmaps = bitmaps;
         mContext = c;
         TypedArray a = mContext.obtainStyledAttributes(R.styleable.HelloGallery);
         mGalleryItemBackground = a.getResourceId(
@@ -45,6 +46,15 @@ public class ImageAdapter extends BaseAdapter {
 
     public long getItemId(int position) {
         return position;
+    }
+    
+    /**
+     * 通过位置获取索引获取图片
+     * @param position 位置索引
+     * @return 图片资源
+     */
+    public Bitmap getBitmap(int position) {
+    	return mBitmaps.get(position);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

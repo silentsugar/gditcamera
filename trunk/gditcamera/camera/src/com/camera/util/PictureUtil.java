@@ -66,7 +66,7 @@ public class PictureUtil {
 	 * @param picturePaths 图片路径列表
 	 * @return 如果获取不到任何资源，则返回NULL，否则返回图片资源列表
 	 */
-	private List<Bitmap> getPictureThumbnail(List<String> picturePaths) {
+	public List<Bitmap> getPictureThumbnail(List<String> picturePaths) {
 		List<Bitmap> bitmaps = null;
 		Bitmap bitmap = null;
 		if(picturePaths == null || picturePaths.size() < 0) 
@@ -79,6 +79,16 @@ public class PictureUtil {
 			bitmaps.add(bitmap);
 		}
 		return bitmaps;
+	}
+	
+	/**
+	 * 通过路径获取图片的缩略图
+	 * @param path
+	 * @return
+	 */
+	public Bitmap getPictureThumbnail(String path) {
+		//if(path)
+		return BitmapFactory.decodeFile(path);
 	}
 
 	
