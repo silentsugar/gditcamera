@@ -44,7 +44,7 @@ public class ImageAdapter extends BaseAdapter {
         //获取图片缩略图资源的路径
         pictureUtil = new PictureUtil();
         try {
-        	mPaths = pictureUtil.getFilePathsFromFolder(folderPath);
+        	mPaths = pictureUtil.getThumbnailPathsByFolder(folderPath);
 		} catch (Exception e) {
 			Toast.makeText(mContext, "查找缩略图文件时出错！", Toast.LENGTH_SHORT);
 			e.printStackTrace();
@@ -78,7 +78,6 @@ public class ImageAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
     	ImageView imageView = null;
-		Log.e(TAG, "convertView == null ");
 		imageView = new ImageView(mContext);
         imageView.setLayoutParams(new Gallery.LayoutParams(100, 100));
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
