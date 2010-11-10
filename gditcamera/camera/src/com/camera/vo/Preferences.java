@@ -21,6 +21,37 @@ public class Preferences {
 	 * 服务器地址列表，
 	 * 格式:http://192.168.1.1:8080 或 http://www.baidu.com:8080,默认使用80端口
 	 */
-	private Map<String,String> hostList;
+	private Map<Integer,String> hostList;
+	
+	public String getDefaultImgDir() {
+		return defaultImgDir;
+	}
+	public void setDefaultImgDir(String defaultImgDir) {
+		this.defaultImgDir = defaultImgDir;
+	}
+	public String getSubStation() {
+		return subStation;
+	}
+	public void setSubStation(String subStation) {
+		this.subStation = subStation;
+	}
+	public String getSurveyStation() {
+		return surveyStation;
+	}
+	public void setSurveyStation(String surveyStation) {
+		this.surveyStation = surveyStation;
+	}
+	public String getStationCode() {
+		return stationCode;
+	}
+	public void setStationCode(String stationCode) {
+		this.stationCode = stationCode;
+	}
+	public Map<Integer, String> getHostList() {
+		return hostList;
+	}
+	public void setHostList(Map<Integer, String> hostList) {
+		this.hostList = hostList;
+	}
 	
 }
