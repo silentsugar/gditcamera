@@ -32,8 +32,9 @@ public class IniControl {
 	}
 	
 	public static void cutFile(Context context) {
+
 		String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camera/wUpload/a.txt";
-		System.out.println(Environment.getExternalStorageDirectory().getAbsolutePath() + "/camera/wUpload/a.txt");
+
 		try {
 			CutFileUtil cutFileUtil = new CutFileUtil(context, filePath);
 			byte[] buf = new byte[CutFileUtil.pieceSize];

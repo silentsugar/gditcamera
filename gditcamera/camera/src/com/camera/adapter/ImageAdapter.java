@@ -1,12 +1,16 @@
 package com.camera.adapter;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
+
 import com.camera.activity.R;
 
 /**
@@ -15,20 +19,13 @@ import com.camera.activity.R;
  */
 public class ImageAdapter extends BaseAdapter {
 	
-	int mGalleryItemBackground;
+    /** Í¼Æ¬×ÊÔ´*/
+    private static List<Bitmap> mBitmaps;
+    
     private Context mContext;
-
-
-    public static Integer[] mImageIds = {
-            R.drawable.a,
-            R.drawable.b,
-            R.drawable.c,
-            R.drawable.d,
-            R.drawable.e,
-            R.drawable.f,
-            R.drawable.g,
-            R.drawable.h
-    };
+    
+    /** Gallery±³¾°*/
+    private int mGalleryItemBackground;
 
     public ImageAdapter(Context c) {
         mContext = c;
@@ -39,7 +36,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return mImageIds.length;
+        return mBitmaps.size();
     }
 
     public Object getItem(int position) {
@@ -51,13 +48,11 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-    	
-        ImageView i = new ImageView(mContext);
-        i.setImageResource(mImageIds[position]);
-        i.setLayoutParams(new Gallery.LayoutParams(150, 100));
-        i.setScaleType(ImageView.ScaleType.FIT_XY);
-        i.setBackgroundResource(mGalleryItemBackground);
-
-        return i;
+        ImageView imageView = new ImageView(mContext);
+        imageView.setImageBitmap(mBitmaps.get(position));
+        imageView.setLayoutParams(new Gallery.LayoutParams(150, 100));
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setBackgroundResource(mGalleryItemBackground);
+        return imageView;
     }
 }

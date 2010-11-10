@@ -45,7 +45,7 @@
 			android:layout_height="fill_parent"
 			android:orientation="vertical" >
 			
-			<TextView
+			<ImageView
 				android:id="@+id/img"
 				android:layout_width="250dip"
 				android:layout_height="250dip"
