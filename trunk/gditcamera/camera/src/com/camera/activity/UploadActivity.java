@@ -20,9 +20,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.camera.util.ClientThread;
+import com.camera.net.ClientThread;
+import com.camera.net.ServerThread;
 import com.camera.util.Constant;
-import com.camera.util.ServerThread;
 import com.camera.vo.DataHead;
 
 /**
