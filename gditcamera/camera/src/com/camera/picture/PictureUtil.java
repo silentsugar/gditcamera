@@ -103,7 +103,7 @@ public class PictureUtil {
 	 */
 	public List<String> getThumbnailPathsByFolder(String folderPath) throws Exception {
 		List<String> filePaths = null;
-		File folder = new File(folderPath);
+		File folder = new File(Constant.THUMBNAIL_FOLDER);
 		if(!folder.exists() || !folder.isDirectory()) {
 			throw new Exception("Cant not find the folder");
 		}
