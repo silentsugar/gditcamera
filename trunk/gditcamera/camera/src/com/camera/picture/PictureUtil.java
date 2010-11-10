@@ -24,6 +24,10 @@ public class PictureUtil {
 	private int thumbnailWidth = 100;
 	/** 图片缩略图的高度*/
 	private int thumbnailHeight = 100;
+	/** 图片缩略图的宽度*/
+	private int thumbnailWidth2 = 300;
+	/** 图片缩略图的高度*/
+	private int thumbnailHeight2 = 300;
 	
 	/**
 	 * 获取目录下面的文件
@@ -113,7 +117,7 @@ public class PictureUtil {
 		for(File file : files) {
 			String path = file.getAbsolutePath();
 			Log.d(TAG, "file path : " + path);
-			if(path.contains(thumbnailFolderPath)) {
+			if(path.contains(thumbnailFolderPath) && !path.contains(".big")) {
 				filePaths.add(path);
 			}
 		}
@@ -151,17 +155,30 @@ public class PictureUtil {
 		if (bitmap == null) 
 			throw new Exception("Can't get the file!");
 		//创建缩略
-		bitmap = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth, thumbnailHeight);
-		//保存缩略图到指定目录
+		Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth, thumbnailHeight);
+		//保存小的缩略图到指定目录
 		thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
 		File bitmapFile = new File(thumbnailPath);
 		if (bitmapFile.exists()) {
 			bitmapFile.delete();
 		}
 		FileOutputStream bitmapWtriter = new FileOutputStream(bitmapFile);
-		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bitmapWtriter)) {
+		if (!bitmap1.compress(Bitmap.CompressFormat.JPEG, 20, bitmapWtriter)) {
 			throw new Exception("Can't save the thumbnail file!");
 		}
+		bitmapWtriter.close();
+		//保存大的缩略图到指定目录
+		Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth2, thumbnailHeight2);
+		String thumbnailPath2 = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
+		File bitmapFile2 = new File(thumbnailPath2);
+		if (bitmapFile2.exists()) {
+			bitmapFile2.delete();
+		}
+		bitmapWtriter = new FileOutputStream(bitmapFile2);
+		if (!bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, bitmapWtriter)) {
+			throw new Exception("Can't save the thumbnail file!");
+		}
+		bitmapWtriter.close();
 		return thumbnailPath;
 			
 	}

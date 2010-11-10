@@ -72,7 +72,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
 	            PictureUtil pictureUtil = new PictureUtil();
-	            Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(position));
+	            Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(position) + ".big");
 	            mImageView.setImageBitmap(bitmap);
 	        }
 	    });
