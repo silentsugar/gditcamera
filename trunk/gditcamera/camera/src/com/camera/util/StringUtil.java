@@ -1,12 +1,22 @@
 package com.camera.util;
 
 /**
- * 字符串工具
- * @author yaotian
- *
+ * 字符串工具类
+ * @author 郑澍璋
  */
 public class StringUtil {
 
+	/**
+	 * 把文件路径的"/"号替换成"_",如/mnt/abc/将转换成mnt_abc_
+	 * @param filePath 文件夹
+	 * @return 转换后的字符串
+	 */
+	public static String convertFolderPath(String filePath) {
+		if(filePath.charAt(0) == '/')
+			filePath = filePath.substring(1);
+		return filePath.replace("_", "/");
+	}
+	
 	/**
 	 * 检查分局名称是否合法
 	 * @param subStation
