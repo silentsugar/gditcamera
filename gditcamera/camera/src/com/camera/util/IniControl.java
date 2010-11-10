@@ -33,7 +33,7 @@ public class IniControl {
 	
 	public static void cutFile(Context context) {
 
-		String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/camera/wUpload/a.txt";
+		String filePath = Constant.SDCARD_PATH + "/camera/wUpload/a.txt";
 
 		try {
 			CutFileUtil cutFileUtil = new CutFileUtil(context, filePath);
