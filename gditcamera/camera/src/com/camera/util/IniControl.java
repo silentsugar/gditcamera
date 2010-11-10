@@ -27,6 +27,10 @@ public class IniControl {
 		if(!file.exists()) {
 			file.mkdir();
 		}
+		file = new File(Constant.THUMBNAIL_FOLDER);
+		if(!file.exists()) {
+			file.mkdir();
+		}
 		cutFile(context);
 		return true;
 	}
