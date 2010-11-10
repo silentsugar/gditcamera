@@ -22,14 +22,21 @@ import com.camera.vo.FileItem;
 
 public class SelectFolderActivity extends Activity implements OnItemClickListener,Button.OnClickListener{
 	
+	/**显示文件夹列表*/
 	private ListView mFolderListView;
+	/**选择按钮*/
 	private Button mChoose;
+	/**取消按钮*/
 	private Button mCancel;
+	/**存储文件夹*/
 	private List<FileItem> mFolders;
+	/**sdcard路径*/
 	private String mSdcardPath;
+	/**默认打开路径*/
 	private File mDefaultFile;
+	/**当前文件夹*/
 	private File curreentFile;
-	FileListAdapter adapter;
+	FileListAdapter mAdapter;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,16 +50,17 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
         mCancel=(Button) this.findViewById(R.id.btnCancel);
         mChoose.setOnClickListener(this);
         mCancel.setOnClickListener(this);
-        
+        //取得默认文件，现在暂时默认SD卡
         mDefaultFile=new File(mSdcardPath);
         curreentFile=mDefaultFile;
         mFolders=new ArrayList<FileItem>();
-        
-        fileListView(mDefaultFile);
-		
-		
+        fileListView(mDefaultFile);//填充文件夹
     }
 	
+	/**
+	 * 填充文件夹
+	 * @param file
+	 */
 	private void fileListView(File file){
 		this.mFolders.clear();
 		FileItem fileItem;
@@ -77,11 +85,8 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 			fileItem.setImageResid(R.drawable.fileicon_back);
 			mFolders.add(0, fileItem);
 		}
-		
-
-		adapter = new FileListAdapter(this, this.mFolders);
-		mFolderListView.setAdapter(adapter);
-		
+		mAdapter = new FileListAdapter(this, this.mFolders);
+		mFolderListView.setAdapter(mAdapter);	
 	}
 	
 	@Override
@@ -105,7 +110,7 @@ public class SelectFolderActivity extends Activity implements OnItemClickListene
 			Intent intent = new Intent();
 			String path=this.curreentFile.getPath();
 			intent.putExtra("path", path);
-			setResult(Activity.RESULT_OK, intent);
+			setResult(Activity.RESULT_OK, intent);//给父Activity放回值
 			this.finish();
 		}else{
 			Intent intent = new Intent();

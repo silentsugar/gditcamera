@@ -2,6 +2,7 @@ package com.camera.activity;
 
 import java.io.IOException;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -20,10 +21,13 @@ import com.camera.widget.CTabView.CTabViewFactory;
 
 public class Main extends TabActivity implements OnClickListener {
 	
+	private final static int REQUESTCODE_FOLDER = 1;//定义转动选择文件的请求代号
+	
 	private Button mBtnExit;
 	private Button mBtnUpdateManager;
 	private Button mBtnTestService;
 	private CEditTextButton btnBrowse;
+	private String path;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class Main extends TabActivity implements OnClickListener {
 		case R.id.btnBrowse:
 			Intent intent3 = new Intent();
 			intent3.setClass(this, SelectFolderActivity.class);
-			this.startActivity(intent3);
+			this.startActivityForResult(intent3, REQUESTCODE_FOLDER);
 			break;
 		case R.id.btnUpdateManager:
 			Intent intent = new Intent();
@@ -94,5 +98,20 @@ public class Main extends TabActivity implements OnClickListener {
 	    tabHost.addTab(spec);
 	    tabHost.setCurrentTab(0);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode){
+		case REQUESTCODE_FOLDER:
+			if(resultCode==Activity.RESULT_OK){
+				path=data.getStringExtra("path");
+				Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+			}
+			break;
+		}
+	}
+	
+	
 
 }
