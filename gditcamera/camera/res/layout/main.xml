@@ -57,6 +57,7 @@
 						</RelativeLayout>
 						
 						<RelativeLayout
+							android:id="@+id/layoutSubStation"
 							android:layout_height="42dip"
 							android:layout_width="fill_parent"
 							android:gravity="center_vertical">
@@ -66,12 +67,14 @@
 								android:id="@+id/text4"
 								android:text="分局名称:"/>
 							<EditText
+								android:id="@+id/etSubStation"
 								style="@style/conf_edittext"
 								android:layout_toRightOf="@+id/text4" />
 								
 						</RelativeLayout>
 						
 						<RelativeLayout
+							android:id="@+id/layoutSurveyStation"
 							android:layout_height="42dip"
 							android:layout_width="fill_parent"
 							android:gravity="center_vertical">
@@ -81,12 +84,14 @@
 								android:id="@+id/text5"
 								android:text="测站名称:"/>
 							<EditText
+								android:id="@+id/etSurveyStation"
 								style="@style/conf_edittext"
 								android:layout_toRightOf="@+id/text5" />
 								
 						</RelativeLayout>
 						
 						<RelativeLayout
+							android:id="@+id/layoutStationCode"
 							android:layout_height="42dip"
 							android:layout_width="fill_parent"
 							android:gravity="center_vertical">
@@ -96,8 +101,28 @@
 								android:id="@+id/text6"
 								android:text="测站编码:"/>
 							<EditText
+								android:id="@+id/etStationCode"
 								style="@style/conf_edittext"
 								android:layout_toRightOf="@+id/text6" />
+								
+						</RelativeLayout>
+						
+						<RelativeLayout
+							android:id="@+id/layoutStationCode"
+							android:layout_height="42dip"
+							android:layout_width="fill_parent"
+							android:gravity="center_vertical">
+							
+						    <Button
+						    	android:id="@+id/btnSave"
+						    	android:text="保存"
+						    	android:textColor="@color/white"
+						    	android:layout_width="60dip"
+						    	android:layout_height="wrap_content"
+						    	android:layout_alignParentRight="true"
+						    	android:layout_marginRight="20dip"
+						    	android:background="@drawable/button_bg"
+						    	android:textSize="17sp"/>
 								
 						</RelativeLayout>
 						
@@ -107,77 +132,117 @@
 			    <!-- 中间布局 -->
 				<ScrollView
 					android:id="@+id/tab_2" 
-					android:layout_marginTop="35dip"
+					android:padding="20dip"
 					android:background="@color/gray"
 					android:layout_width="fill_parent"
 					android:layout_height="fill_parent">
 					
-					<LinearLayout
+					<TableLayout
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
-						android:orientation="vertical"
-						android:gravity="center_horizontal"
-						android:paddingTop="20dip">
-						<RelativeLayout
-							android:layout_height="42dip"
-							android:layout_width="fill_parent"
-							android:gravity="center_vertical">
-							
-							<TextView
-								style="@style/conf_textview"
-								android:id="@+id/text2"
-								android:text="IP地址一:"/>
-							<EditText
-								style="@style/conf_edittext"
-								android:layout_toRightOf="@+id/text2"/>
-								
-						</RelativeLayout>
+						android:stretchColumns="2">
 						
-						<RelativeLayout
-							android:layout_height="42dip"
-							android:layout_width="fill_parent"
-							android:gravity="center_vertical">
-							
-							<TextView
-								style="@style/conf_textview"
-								android:id="@+id/text3"
-								android:text="端口一:"/>
-							<EditText
-								style="@style/conf_edittext"
-								android:layout_toRightOf="@+id/text3" />
-								
-						</RelativeLayout>
 						
-						<RelativeLayout
-							android:layout_height="42dip"
-							android:layout_width="fill_parent"
-							android:gravity="center_vertical">
-							
-							<TextView
-								style="@style/conf_textview"
-								android:id="@+id/text2"
-								android:text="IP地址二:"/>
-							<EditText
-								style="@style/conf_edittext"
-								android:layout_toRightOf="@+id/text2"/>
-								
-						</RelativeLayout>
+						    <TableRow>
+						        <TextView
+						            android:layout_column="0"
+						            android:text="服务器地址1:"
+						            android:textColor="@color/black"
+						            android:padding="3dip" />
+						        <TextView
+						            android:layout_column="1"
+						            android:text="端口:"
+						            android:textColor="@color/black"
+						            android:padding="3dip" />
+						    </TableRow>
 						
-						<RelativeLayout
-							android:layout_height="42dip"
-							android:layout_width="fill_parent"
-							android:gravity="center_vertical">
-							
-							<TextView
-								style="@style/conf_textview"
-								android:id="@+id/text3"
-								android:text="端口二:"/>
-							<EditText
-								style="@style/conf_edittext"
-								android:layout_toRightOf="@+id/text3" />
-								
-						</RelativeLayout>
-					</LinearLayout>
+						    <TableRow
+						    		>
+						        <EditText
+						            android:layout_column="0"
+						        	android:gravity="left"
+						        	android:layout_width="190dip"
+						        	android:layout_height="wrap_content"
+						        	android:singleLine="true"
+						        	android:hint="eg:192.168.1.1"/>
+						        <EditText
+						        	android:layout_marginTop="3dip"
+						            android:layout_column="1"
+						        	android:layout_width="90dip"
+						        	android:layout_height="wrap_content"
+						        	android:singleLine="true"
+						        	android:hint="eg:8080"/>
+						        	
+						    </TableRow>
+						
+						    <View
+						        android:layout_height="2dip"
+						        android:background="#FF909090" />
+						        
+						    <TableRow
+						    		android:gravity="right">
+							    <Button
+						            android:layout_column="1"
+							    	android:id="@+id/btnTest2"
+							    	android:text="测试"
+							    	android:textColor="@color/white"
+							    	android:layout_width="50dip"
+							    	android:layout_height="wrap_content"
+							    	android:background="@drawable/button_bg"
+							    	android:textSize="17sp"/>
+						        
+						    </TableRow>
+						
+						    <TableRow>
+						        <TextView
+						            android:layout_column="0"
+						            android:text="服务器地址2:"
+						            android:textColor="@color/black"
+						            android:padding="3dip" />
+						        <TextView
+						            android:layout_column="1"
+						            android:text="端口:"
+						            android:textColor="@color/black"
+						            android:padding="3dip" />
+						    </TableRow>
+						
+						    <TableRow
+						    		>
+						        <EditText
+						            android:layout_column="0"
+						        	android:gravity="left"
+						        	android:layout_width="190dip"
+						        	android:layout_height="wrap_content"
+						        	android:singleLine="true"
+						        	android:hint="eg:192.168.1.1"/>
+						        <EditText
+						        	android:layout_marginTop="3dip"
+						            android:layout_column="1"
+						        	android:layout_width="90dip"
+						        	android:layout_height="wrap_content"
+						        	android:singleLine="true"
+						        	android:hint="eg:8080"/>
+						        	
+						    </TableRow>
+						
+						    <View
+						        android:layout_height="2dip"
+						        android:background="#FF909090" />
+						
+						    <TableRow
+						    		android:gravity="right">
+							    <Button
+						            android:layout_column="1"
+							    	android:id="@+id/btnTest2"
+							    	android:text="测试"
+							    	android:textColor="@color/white"
+							    	android:layout_width="50dip"
+							    	android:layout_height="wrap_content"
+							    	android:background="@drawable/button_bg"
+							    	android:textSize="17sp"/>
+						        
+						    </TableRow>
+					</TableLayout>
 						
 				</ScrollView>
 	            
@@ -208,14 +273,14 @@
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-	    	
+	    	<!-- 
 	    <Button
 	    	android:id="@+id/btnTestService"
 	    	android:text="测试服务器"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-
+ -->
 			
 	</com.camera.widget.CTitleBar>
 </RelativeLayout>
