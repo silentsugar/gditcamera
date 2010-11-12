@@ -62,8 +62,8 @@ public class ServiceThread implements Runnable {
 				public void action() {
 					try {
 						toClient.write("Msg:[Server=>Client]".getBytes("GB2312"));
-						Log.d("中文server:", "sending data to Client...");
-						Thread.sleep(1000);
+//						Log.d("server:", "sending data to Client...");
+						Thread.sleep(10000);
 					}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -73,15 +73,15 @@ public class ServiceThread implements Runnable {
 
 			//获取客户端传来到信息
 			new RecipientThread(){
-				byte [] b = new byte[1024];
+				byte [] b = new byte[138];
 				int len = -1;
 				
 				@Override
 				public void action() {
 					try {
-						while((len=fromClient.read(b))!=-1){
-							Log.d("msg from Server", new String(b,0,len,"GB2312"));
-						}
+						len=fromClient.read(b);
+						Log.e("=======Received the data:=====","");
+						System.out.println(DataHeadUtil.byte2DataHead(b));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -89,6 +89,9 @@ public class ServiceThread implements Runnable {
 				
 			}.start();
 
+//			fromClient.read(b);
+//			DataHeadUtil.byte2DataHead(b);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
