@@ -109,11 +109,13 @@ public class UploadActivity extends Activity implements OnClickListener {
 			FileInputStream fromSDcard = new FileInputStream(new File(fileName));
 			ClientThread clientThread = new ClientThread(s,handler,dataHead,new DataInputStream(fromSDcard));
 			
-			dataHead.setPho("apho");
+			byte [] bPho = new byte[]{97,98,99,100};
+			dataHead.setPho(bPho);
 			dataHead.setSubStation("1234567890123456");
 			dataHead.setSurveyStation("6543210987654321");
 			dataHead.setPhoDesc("三十二个字符，六十四字节。三十二个字符，六十四字节，一二三四五六");
 			dataHead.setStationCode("12345678");
+			dataHead.setCommand("1234567812345678");
 			dataHead.setDataTime(new Date());
 			dataHead.setCameraId((byte)1);
 			dataHead.setCurrentPackage(22);
