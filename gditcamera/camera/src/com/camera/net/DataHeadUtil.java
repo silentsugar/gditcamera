@@ -7,6 +7,7 @@ import java.util.Date;
 
 import android.util.Log;
 
+import com.camera.util.StringUtil;
 import com.camera.vo.Data;
 import com.camera.vo.DataHead;
 
@@ -82,19 +83,41 @@ public class DataHeadUtil {
 		int second = Integer.parseInt(arr[5]);
 		
 		byte[] tem;
-		StringBuffer fieldStr = new StringBuffer();
-		//Òª°´Ë³Ðò
-		fieldStr.append(dataHead.getPho());
-		fieldStr.append(dataHead.getSubStation());
-		fieldStr.append(dataHead.getSurveyStation());
-		fieldStr.append(dataHead.getPhoDesc());
-		fieldStr.append(dataHead.getStationCode());
-		tem = fieldStr.toString().getBytes("GB2312");
-		for(int i=0;i<tem.length;i++){
-			result[i] = tem[i];
+
+		/**$PHO(4byte)*/
+		String pho = dataHead.getPho();
+		byte [] phoByte = StringUtil.getByteArrayByLength(pho, "GB2312", 4);
+		for(int i=0;i<4;i++){
+			result[offset1++] = phoByte[i];
 		}
-		offset1 = tem.length;
-		System.out.println(tem.length);
+		/**·Ö¾ÖÃû³Æ(16byte)*/
+		String subStation = dataHead.getSubStation();
+		byte [] subStationByte = StringUtil.getByteArrayByLength(subStation, "GB2312", 16);
+		for(int i=0;i<16;i++){
+			result[offset1++] = subStationByte[i];
+		}
+		/**²âÕ¾Ãû³Æ(16byte)*/
+		String surveyStation = dataHead.getSurveyStation();
+		byte [] surveyStationByte = StringUtil.getByteArrayByLength(surveyStation, "GB2312", 16);
+		for(int i=0;i<16;i++){
+			result[offset1++] = surveyStationByte[i];
+		}
+		/**ÕÕÆ¬ÃèÊö,Unicode(32char=64byte)*/
+		String phoDesc = dataHead.getPhoDesc();
+//		Log.e("phoDesc", phoDesc.getBytes("GB2312").length+"");
+		byte [] phoDescByte = StringUtil.getByteArrayByLength(phoDesc, "GB2312", 64);
+		for(int i=0;i<64;i++){
+			result[offset1++] = phoDescByte[i];
+		}
+		/**Õ¾Âë(8byte)*/
+		String stationCode = dataHead.getStationCode();
+		byte [] stationCodeByte =StringUtil.getByteArrayByLength(stationCode, "GB2312", 8);
+		for(int i=0;i<8;i++){
+			result[offset1++] = stationCodeByte[i];
+		}
+
+		offset1 = phoByte.length+subStationByte.length+surveyStationByte.length+phoDescByte.length+stationCodeByte.length;
+//		System.out.println(offset1);
 
 		tem = int2bytes(year1);
 		result[offset1++] = tem[1];
@@ -131,6 +154,10 @@ public class DataHeadUtil {
 		result[offset1++] = tem[0];
 		result[offset1++] = tem[1];
 
+		for(int i=0;i<result.length;i++){
+			Log.e("result["+i+"]=",result[i]+"");
+		}
+		
 		return result;
 	}
 	
@@ -138,20 +165,21 @@ public class DataHeadUtil {
 		DataHead d = new DataHead();
 		int offset = 0;
 		try {
+			Log.e("####PHO",new String(subByteArray(b,offset,4),"GB2312"));
 			d.setPho(new String(subByteArray(b,offset,4),"GB2312"));
-//			Log.d(offset+"dataHead:pho", d.getPho());
+			Log.d(offset+"dataHead:pho", d.getPho());
 			offset+=4;
-			d.setSubStation(new String(subByteArray(b, offset, 16)));
+//			d.setSubStation(new String(subByteArray(b, offset, 16)));
 //			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
 			offset+=16;
-			String s = new String(subByteArray(b, offset, 16));
-			d.setSurveyStation(s);
+//			String s = new String(subByteArray(b, offset, 16));
+//			d.setSurveyStation(s);
 //			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
 			offset+=16;
-			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
+//			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
 //			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
 			offset+=64;
-			d.setStationCode(new String(subByteArray(b, offset,8)));
+//			d.setStationCode(new String(subByteArray(b, offset,8)));
 //			Log.d(offset+"dataHead:StationCode", d.getStationCode());
 			offset+=8;
 			String dataString = "";
@@ -163,18 +191,18 @@ public class DataHeadUtil {
 					dataString+=(b[offset++]+"#");
 			}
 			d.setDataTime(dataTimeString2Date(dataString));
-//			Log.d(offset+"dataHead:Date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(d.getDataTime()));
+			Log.d(offset+"dataHead:Date", new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(d.getDataTime()));
 			d.setCameraId(b[offset]);
 			Log.d(offset+"dataHead:CameraId", d.getCameraId()+"");
 			offset+=1;
 			d.setCurrentPackage(bytes2int(subByteArray(b, offset, 2)));
-//			Log.d(offset+"dataHead:CurrentPackage", d.getCurrentPackage()+"");
+			Log.d(offset+"dataHead:CurrentPackage", d.getCurrentPackage()+"");
 			offset+=2;
 			d.setTotalPackage(bytes2int(subByteArray(b, offset, 2)));
-//			Log.d(offset+"dataHead:TotalPackage", d.getTotalPackage()+"");
+			Log.d(offset+"dataHead:TotalPackage", d.getTotalPackage()+"");
 			offset+=2;
 			d.setDataLength(bytes2int(subByteArray(b, offset, 2)));
-//			Log.d(offset+"dataHead:dataLength", d.getDataLength()+"");
+			Log.d(offset+"dataHead:dataLength", d.getDataLength()+"");
 
 			return d;
 		} catch (UnsupportedEncodingException e) {
