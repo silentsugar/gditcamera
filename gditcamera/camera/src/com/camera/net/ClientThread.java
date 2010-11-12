@@ -30,6 +30,7 @@ public class ClientThread extends Thread {
 	/**
 	 * 构造函数
 	 * @param socket 与服务端连接的socket
+	 * @param handler 返回信息给界面
 	 * @param dataHead 每个数据包的包头
 	 * @param dataIn 所上传的文件的数据流
 	 */
@@ -55,14 +56,32 @@ public class ClientThread extends Thread {
 				
 				@Override
 				public void action() {
+//					try {
+//						toServer.write("[Client=>Server]".getBytes("GB2312"));
+//						toServer.flush();
+//						Thread.sleep(1000);
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+				}
+				@Override
+				public void run(){
 					try {
-						toServer.write("Msg:[Client=>Server]".getBytes("GB2312"));
-						Thread.sleep(1000);
-					}catch (Exception e) {
+						byte [] byDatahead = DataHeadUtil.dataHead2Byte(dataHead);
+						toServer.write(byDatahead);
+						Log.e("finished bytes:",byDatahead.length+"Bytes");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}.start();
+			
 			
 			//获取服务器回应信息
 			new RecipientThread(){
