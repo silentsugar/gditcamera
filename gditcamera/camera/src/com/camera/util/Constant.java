@@ -13,7 +13,7 @@ public class Constant {
 	public static final String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
 	
 	/**每个包头大小*/
-	public static final int DATA_HEAD_SIZE = 122;
+	public static final int DATA_HEAD_SIZE = 138;
 	/**每个数据包大小*/
 	public static final int PACKAGE_SIZE = 1024;
 	
