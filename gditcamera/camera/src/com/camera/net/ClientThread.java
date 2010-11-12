@@ -71,7 +71,9 @@ public class ClientThread extends Thread {
 					try {
 						byte [] byDatahead = DataHeadUtil.dataHead2Byte(dataHead);
 						toServer.write(byDatahead);
-						Log.e("finished bytes:",byDatahead.length+"Bytes");
+//						for(int i=1;i<10;i++)
+							toServer.write(new byte[]{1,13});
+						Log.e("=>finished bytes:",byDatahead.length+"Bytes");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -91,8 +93,10 @@ public class ClientThread extends Thread {
 				@Override
 				public void action() {
 					try {
-						while((len=fromServer.read(b))!=-1){
-							Log.d("msg from Server", new String(b,0,len,"GB2312"));
+						len=fromServer.read(b);
+						for(int i=0;i<len;i++){
+							System.out.printf("b["+i+"]=0x%x", b[i]);
+							Log.e("b["+i+"]=", Integer.toHexString((int)b[i]));
 						}
 					} catch (IOException e) {
 						e.printStackTrace();

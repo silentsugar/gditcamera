@@ -34,8 +34,8 @@ import com.camera.vo.DataHead;
 public class UploadActivity extends Activity implements OnClickListener {
 
 	private static final String tag = "ServerActivity";
-	private static final String HOST = "127.0.0.1";
-	private static final int PORT = 9999;
+	private static final String HOST = "112.125.33.161";
+	private static final int PORT = 10808;
 
 	/** UI */
 	private Button btnServerStart;
@@ -109,11 +109,11 @@ public class UploadActivity extends Activity implements OnClickListener {
 			FileInputStream fromSDcard = new FileInputStream(new File(fileName));
 			ClientThread clientThread = new ClientThread(s,handler,dataHead,new DataInputStream(fromSDcard));
 			
-			byte [] bPho = new byte[]{97,98,99,100};
+			byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
 			dataHead.setPho(bPho);
-			dataHead.setSubStation("1234567890123456");
-			dataHead.setSurveyStation("6543210987654321");
-			dataHead.setPhoDesc("三十二个字符，六十四字节。三十二个字符，六十四字节，一二三四五六");
+			dataHead.setSubStation("changzhou");
+			dataHead.setSurveyStation("xiaohezhan");
+			dataHead.setPhoDesc("一号河流");
 			dataHead.setStationCode("12345678");
 			dataHead.setCommand("1234567812345678");
 			dataHead.setDataTime(new Date());
