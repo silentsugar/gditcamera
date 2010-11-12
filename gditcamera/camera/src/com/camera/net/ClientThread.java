@@ -1,6 +1,8 @@
 package com.camera.net;
 
 import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,6 +53,7 @@ public class ClientThread extends Thread {
 			boolean finished = false;
 			boolean posted = false;
 			
+			
 			//向服务端传输数据
 			new SenderThread() {
 				
@@ -66,14 +69,42 @@ public class ClientThread extends Thread {
 //						e.printStackTrace();
 //					}
 				}
+				
+				public byte[] getFileBytes() {
+					byte[] buf = null;
+					FileInputStream in;
+					try {
+						in = new FileInputStream("/mnt/sdcard/8.png");
+						int fileSize = in.available();
+						buf = new byte[fileSize];
+						in.read(buf, 0, fileSize);
+						in.close();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					return buf;
+					
+				}
+				
 				@Override
 				public void run(){
 					try {
+//						dataHead.setDataLength(3);
 						byte [] byDatahead = DataHeadUtil.dataHead2Byte(dataHead);
-						toServer.write(byDatahead);
+						byte[] bufImg = getFileBytes();
+						byte[] buf = new byte[byDatahead.length + bufImg.length];
+						for(int i = 0; i < byDatahead.length; i ++) {
+							buf[i] = byDatahead[i];
+						}
+						for(int i = byDatahead.length; i < bufImg.length + byDatahead.length; i ++) {
+							buf[i] = bufImg[i - byDatahead.length];
+						}
+						dataHead.setDataLength(bufImg.length);
+						toServer.write(buf);
 //						for(int i=1;i<10;i++)
-							toServer.write(new byte[]{1,13});
-						Log.e("=>finished bytes:",byDatahead.length+"Bytes");
+							//toServer.write(new byte[]{1,13});
+						Log.e("=>finished bytes:",buf.length+"Bytes");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -95,7 +126,7 @@ public class ClientThread extends Thread {
 					try {
 						len=fromServer.read(b);
 						for(int i=0;i<len;i++){
-							System.out.printf("b["+i+"]=0x%x", b[i]);
+							//System.out.printf("b["+i+"]=0x%x", b[i]);
 							Log.e("b["+i+"]=", Integer.toHexString((int)b[i]));
 						}
 					} catch (IOException e) {

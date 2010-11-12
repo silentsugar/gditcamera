@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.camera.activity.R;
 import com.camera.vo.FileItem;
 
-public class FileListAdapter extends BaseAdapter {
+public class FileListAdapter extends BaseAdapter { 
 
 	private List<FileItem> flieItems;
 	FileItem fileItem;
