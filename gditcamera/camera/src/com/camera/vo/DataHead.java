@@ -138,4 +138,27 @@ public class DataHead implements Serializable{
 		this.command = command;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer strb = new StringBuffer();
+		strb.append("$pho="+printByteArray(this.pho)+"\n");
+		strb.append("subStation="+this.subStation+"\n");
+		strb.append("surveyStation="+this.surveyStation+"\n");
+		strb.append("phoDesc="+this.phoDesc+"\n");
+		strb.append("stationCode="+this.stationCode+"\n");
+		strb.append("command="+this.command+"\n");
+		strb.append("dataTime="+this.dataTime+"\n");
+		strb.append("cameraId="+this.cameraId+"\n");
+		strb.append("currentPackage="+this.currentPackage+"\n");
+		strb.append("totalPackage="+this.totalPackage+"\n");
+		return strb.toString();
+	}
+
+	public String printByteArray(byte [] b){
+		StringBuffer strb = new StringBuffer();
+		for(byte by : b){
+			strb.append(by+",");
+		}
+		return strb.toString();
+	}
 }
