@@ -21,7 +21,7 @@ import com.camera.picture.PictureUtil;
  * GallaryÍ¼Æ¬ÊÊÅäÆ÷
  * @author Ö£äøè°
  */
-public class ImageAdapter extends BaseAdapter {
+public class ImageAdapter extends BaseAdapter { 
 	
 	public static final String TAG = "ImageAdapter";
 	
