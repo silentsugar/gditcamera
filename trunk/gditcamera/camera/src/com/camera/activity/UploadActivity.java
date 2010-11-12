@@ -118,15 +118,16 @@ public class UploadActivity extends Activity implements OnClickListener {
 			dataHead.setCommand("1234567812345678");
 			dataHead.setDataTime(new Date());
 			dataHead.setCameraId((byte)1);
-			dataHead.setCurrentPackage(22);
+			dataHead.setCurrentPackage(1);
+			dataHead.setDataLength(0);
 			
-			int packages = fromSDcard.available()/Constant.PACKAGE_SIZE;
-			if(fromSDcard.available()%Constant.PACKAGE_SIZE!=0){
-				packages++;
-			}
+//			int packages = fromSDcard.available()/Constant.PACKAGE_SIZE;
+//			if(fromSDcard.available()%Constant.PACKAGE_SIZE!=0){
+//				packages++;
+//			}
 			
-			dataHead.setTotalPackage(packages);
-			dataHead.setDataLength(fromSDcard.available()+Constant.DATA_HEAD_SIZE);
+			dataHead.setTotalPackage(1);
+			//dataHead.setDataLength(fromSDcard.available()+Constant.DATA_HEAD_SIZE);
 			
 			clientThread.start();
 		} catch (UnknownHostException e) {

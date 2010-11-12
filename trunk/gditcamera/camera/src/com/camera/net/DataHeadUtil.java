@@ -75,7 +75,7 @@ public class DataHeadUtil {
 	 * @throws Exception
 	 */
 	public static byte[] dataHead2Byte(DataHead dataHead)throws Exception{
-		byte [] result = new byte[138];
+		byte [] result = new byte[90];
 		int offset1 = 0;
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
@@ -110,8 +110,8 @@ public class DataHeadUtil {
 		/**’’∆¨√Ë ˆ,Unicode(32char=64byte)*/
 		String phoDesc = dataHead.getPhoDesc();
 //		Log.e("phoDesc", phoDesc.getBytes("GB2312").length+"");
-		byte [] phoDescByte = StringUtil.getByteArrayByLength(phoDesc, "GB2312", 64);
-		for(int i=0;i<64;i++){
+		byte [] phoDescByte = StringUtil.getByteArrayByLength(phoDesc, "GB2312", 32);
+		for(int i=0;i<32;i++){
 			result[offset1++] = phoDescByte[i];
 		}
 		/**’æ¬Î(8byte)*/
@@ -121,11 +121,11 @@ public class DataHeadUtil {
 			result[offset1++] = stationCodeByte[i];
 		}
 		/**ø⁄¡Ó(16byte)*/
-		String command = dataHead.getCommand();
-		byte [] commandByte =StringUtil.getByteArrayByLength(command, "GB2312",16);
-		for(int i=0;i<16;i++){
-			result[offset1++] = commandByte[i];
-		}
+//		String command = dataHead.getCommand();
+//		byte [] commandByte =StringUtil.getByteArrayByLength(command, "GB2312",16);
+//		for(int i=0;i<16;i++){
+//			result[offset1++] = commandByte[i];
+//		}
 
 		tem = int2bytes(year1);
 		result[offset1++] = tem[1];
@@ -161,10 +161,14 @@ public class DataHeadUtil {
 		tem = int2bytes(dataHead.getDataLength());
 		result[offset1++] = tem[0];
 		result[offset1++] = tem[1];
-//
-//		for(int i=0;i<result.length;i++){
-//			Log.e("result["+i+"]=",result[i]+"");
-//		}
+		Log.e("10 : ", "10");
+		for(int i=0;i<result.length;i++){
+			Log.e("result["+i+"]=", result[i] + "");
+		}
+		Log.e("16 : ", "16");
+		for(int i=0;i<result.length;i++){
+			Log.e("result["+i+"]=", Integer.toHexString(result[i]));
+		}
 		
 		return result;
 	}
