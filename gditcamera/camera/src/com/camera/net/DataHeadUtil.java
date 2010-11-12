@@ -68,8 +68,14 @@ public class DataHeadUtil {
 		return b;
 	}
 	
+	/**
+	 * 把数据包头实体类转换成byte数组
+	 * @param dataHead
+	 * @return
+	 * @throws Exception
+	 */
 	public static byte[] dataHead2Byte(DataHead dataHead)throws Exception{
-		byte [] result = new byte[122];
+		byte [] result = new byte[138];
 		int offset1 = 0;
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
@@ -85,8 +91,7 @@ public class DataHeadUtil {
 		byte[] tem;
 
 		/**$PHO(4byte)*/
-		String pho = dataHead.getPho();
-		byte [] phoByte = StringUtil.getByteArrayByLength(pho, "GB2312", 4);
+		byte [] phoByte = dataHead.getPho();
 		for(int i=0;i<4;i++){
 			result[offset1++] = phoByte[i];
 		}
@@ -115,9 +120,12 @@ public class DataHeadUtil {
 		for(int i=0;i<8;i++){
 			result[offset1++] = stationCodeByte[i];
 		}
-
-		offset1 = phoByte.length+subStationByte.length+surveyStationByte.length+phoDescByte.length+stationCodeByte.length;
-//		System.out.println(offset1);
+		/**口令(16byte)*/
+		String command = dataHead.getCommand();
+		byte [] commandByte =StringUtil.getByteArrayByLength(command, "GB2312",16);
+		for(int i=0;i<16;i++){
+			result[offset1++] = commandByte[i];
+		}
 
 		tem = int2bytes(year1);
 		result[offset1++] = tem[1];
@@ -161,27 +169,33 @@ public class DataHeadUtil {
 		return result;
 	}
 	
+	/**
+	 * 把byte数组转换成数据包头实体类DataHead
+	 */
 	public static DataHead byte2DataHead(byte [] b){
 		DataHead d = new DataHead();
 		int offset = 0;
 		try {
-			Log.e("####PHO",new String(subByteArray(b,offset,4),"GB2312"));
-			d.setPho(new String(subByteArray(b,offset,4),"GB2312"));
-			Log.d(offset+"dataHead:pho", d.getPho());
+			Log.e("##################PHO=","");
+			print(subByteArray(b,offset,4));
+			d.setPho(subByteArray(b,offset,4));
 			offset+=4;
-//			d.setSubStation(new String(subByteArray(b, offset, 16)));
-//			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
+			d.setSubStation(new String(subByteArray(b, offset, 16)));
+			Log.d(offset+"dataHead:subStaticon", d.getSubStation());
 			offset+=16;
-//			String s = new String(subByteArray(b, offset, 16));
-//			d.setSurveyStation(s);
-//			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
+			String s = new String(subByteArray(b, offset, 16));
+			d.setSurveyStation(s);
+			Log.d(offset+"dataHead:SurveyStation", d.getSurveyStation());
 			offset+=16;
-//			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
-//			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
+			d.setPhoDesc(new String(subByteArray(b, offset, 64),"GB2312"));
+			Log.d(offset+"dataHead:Desc", d.getPhoDesc());
 			offset+=64;
-//			d.setStationCode(new String(subByteArray(b, offset,8)));
-//			Log.d(offset+"dataHead:StationCode", d.getStationCode());
+			d.setStationCode(new String(subByteArray(b, offset,8)));
+			Log.d(offset+"dataHead:StationCode", d.getStationCode());
 			offset+=8;
+			d.setCommand(new String(subByteArray(b, offset,16)));
+			Log.d(offset+"dataHead:Command", d.getCommand());
+			offset+=16;
 			String dataString = "";
 //			print(subByteArray(b, offset, 7));
 			for(int i=0;i<7;i++){
