@@ -14,8 +14,8 @@ public class DataHead implements Serializable{
 	
 	/**id:备用*/
 	private String id;
-	/**$PHO(4byte)*/
-	private String pho;
+	/**$PHO ASCII码(4byte)*/
+	private byte [] pho;
 	/**分局名称(16byte)*/
 	private String subStation;
 	/**测站名称(16byte)*/
@@ -24,6 +24,8 @@ public class DataHead implements Serializable{
 	private String phoDesc;
 	/**站码(8byte)*/
 	private String stationCode;
+	/**口令(16byte)*/
+	private String command;
 	/**时间(7byte)*/
 	private Date dataTime;
 	/**摄像头ID(1byte)*/
@@ -36,7 +38,7 @@ public class DataHead implements Serializable{
 	private int dataLength;
 	
 	public DataHead(){
-		
+		pho = new byte[4];
 	}
 	
 	//=========Getter and Setter
@@ -48,11 +50,11 @@ public class DataHead implements Serializable{
 		this.id = id;
 	}
 
-	public String getPho() {
+	public byte [] getPho() {
 		return pho;
 	}
 
-	public void setPho(String pho) {
+	public void setPho(byte [] pho) {
 		this.pho = pho;
 	}
 
@@ -126,6 +128,14 @@ public class DataHead implements Serializable{
 
 	public void setDataLength(int dataLength) {
 		this.dataLength = dataLength;
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
 }
