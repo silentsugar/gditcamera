@@ -1,5 +1,9 @@
 package com.camera.util;
 
+import java.io.UnsupportedEncodingException;
+
+import android.util.Log;
+
 /**
  * 字符串工具类
  * @author 郑澍璋
@@ -92,5 +96,37 @@ public class StringUtil {
 		}else{
 			return false;
 		}
+	}
+	
+	/**
+	 * 把字符串按照特定的编码转换成特定长度的字节数组，字符串的字节数组超出指定的长度时返回null,少于指定长度补0
+	 * @param str 要转换的字符串
+	 * @param encoding 转换编码
+	 * @param len 所要转成的byte数组的长度
+	 * @return byte []
+	 */
+	public static final byte [] getByteArrayByLength(String str,String encoding,int len){
+		byte [] b = new byte[len];
+		byte [] tmp;
+		int tmpLen = 0;
+		try {
+			tmp = str.getBytes(encoding);
+			tmpLen = tmp.length;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if(tmpLen>len){
+			Log.e("String", "the String:("+str+") bytes array length("+tmpLen+") is Longer then "+len);
+			return null;
+		}
+		for(int i=0;i<len;i++){
+			if(i>=tmpLen)
+				b[i] = 0;
+			else
+				b[i] = tmp[i];
+		}
+		return b;
+		
 	}
 }
