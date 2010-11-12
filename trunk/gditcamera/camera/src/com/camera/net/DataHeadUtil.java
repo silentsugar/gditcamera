@@ -161,10 +161,10 @@ public class DataHeadUtil {
 		tem = int2bytes(dataHead.getDataLength());
 		result[offset1++] = tem[0];
 		result[offset1++] = tem[1];
-
-		for(int i=0;i<result.length;i++){
-			Log.e("result["+i+"]=",result[i]+"");
-		}
+//
+//		for(int i=0;i<result.length;i++){
+//			Log.e("result["+i+"]=",result[i]+"");
+//		}
 		
 		return result;
 	}
