@@ -108,6 +108,7 @@ public class Main extends TabActivity implements OnClickListener {
 			Intent intent = new Intent();
 			intent.setClass(this, UploadFileActivity.class);
 			this.startActivity(intent);
+			this.finish();
 			break;
 		case R.id.btnExit:
 			this.finish();
