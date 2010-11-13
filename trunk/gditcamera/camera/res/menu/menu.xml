@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+   <item android:id="@+id/refresh"
+          android:title="刷新"
+          android:icon="@drawable/icon" />
+   <item android:id="@+id/refresh"
+          android:title="配置"
+          android:icon="@drawable/icon" />
+   <item android:id="@+id/refresh"
+          android:title="退出"
+          android:icon="@drawable/icon" />
+</menu>
