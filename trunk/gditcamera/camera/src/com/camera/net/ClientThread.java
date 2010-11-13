@@ -36,7 +36,7 @@ public class ClientThread extends Thread {
 	 * @param dataHead 每个数据包的包头
 	 * @param dataIn 所上传的文件的数据流
 	 */
-	public ClientThread(Socket socket,Handler handler,DataHead dataHead,DataInputStream dataIn){
+	public ClientThread(Socket socket, Handler handler,DataHead dataHead, DataInputStream dataIn){
 		this.clientSocket = socket;
 		this.handler = handler;
 		this.dataHead = dataHead;
@@ -133,7 +133,6 @@ public class ClientThread extends Thread {
 						e.printStackTrace();
 					}
 				}
-				
 			}.start();
 		} catch (Exception e) {
 			e.printStackTrace();
