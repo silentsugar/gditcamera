@@ -1,4 +1,4 @@
-package com.camera.util;
+package com.camera.picture;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.camera.util.Constant;
 
 import android.content.Context;
 
@@ -40,8 +42,7 @@ public class CutFileUtil {
 	/** Context∂‘œÛ*/
 	private Context context;
 	
-	public CutFileUtil(Context context, String filePath) throws Exception {
-		this.context = context;
+	public CutFileUtil(String filePath) throws Exception {
 		this.filePath = filePath;
 		file = new File(filePath);
 		if(!file.exists()) {
@@ -81,7 +82,7 @@ public class CutFileUtil {
 	 * @throws IOException 
 	 */
 	private void packagePiece(byte[] buf) throws IOException {
-		String pieceName = filePath + pieceNum + ".txt";
+		String pieceName = Constant.PIECE_FOLDER + pieceNum;
 		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
 		//out.write(packageHead);

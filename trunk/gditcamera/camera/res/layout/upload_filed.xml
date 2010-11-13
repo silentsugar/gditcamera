@@ -73,18 +73,18 @@
 	    android:layout_alignParentBottom="true"
 	    android:layout_height="40dip"
 	    android:background="@drawable/blue_toolbar_bg"    
-	    gdit:left_view="@+id/btnUpdate"
-	    gdit:right_view="@+id/btnUpdateAll" >
+	    gdit:left_view="@+id/btnUpload"
+	    gdit:right_view="@+id/btnUploadAll" >
 	    
 	    <Button
-	    	android:id="@+id/btnUpdate"
+	    	android:id="@+id/btnUpload"
 	    	android:text="上传"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
 	    	
 	    <Button
-	    	android:id="@+id/btnUpdateAll"
+	    	android:id="@+id/btnUploadAll"
 	    	android:text="上传所有"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"

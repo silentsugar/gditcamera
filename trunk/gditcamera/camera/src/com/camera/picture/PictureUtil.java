@@ -107,12 +107,8 @@ public class PictureUtil {
 	 */
 	public List<String> getThumbnailPathsByFolder(String folderPath) throws Exception {
 		List<String> filePaths = null;
-		File folder = new File(Constant.THUMBNAIL_FOLDER);
-		if(!folder.exists() || !folder.isDirectory()) {
-			throw new Exception("Cant not find the folder");
-		}
+		File[] files = getThumbnailFile();
 		filePaths = new ArrayList<String>();
-		File[] files = folder.listFiles();
 		String thumbnailFolderPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(folderPath);
 		for(File file : files) {
 			String path = file.getAbsolutePath();
@@ -122,6 +118,14 @@ public class PictureUtil {
 			}
 		}
 		return filePaths;
+	}
+	
+	public File[] getThumbnailFile() throws Exception {
+		File folder = new File(Constant.THUMBNAIL_FOLDER);
+		if(!folder.exists() || !folder.isDirectory()) {
+			throw new Exception("Cant not find the folder");
+		}
+		return folder.listFiles();
 	}
 	
 	/**
@@ -181,6 +185,22 @@ public class PictureUtil {
 		bitmapWtriter.close();
 		return thumbnailPath;
 			
+	}
+	
+	/**
+	 * 清除指定目录的缩略图
+	 * @param folderPath
+	 * @throws Exception 
+	 */
+	public void clearThumbnail(String folderPath) throws Exception {
+		String thumbnailFolderPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(folderPath);
+		File[] files = getThumbnailFile();
+		for(File file : files) {
+			String path = file.getAbsolutePath();
+			if(path.contains(thumbnailFolderPath)) {
+				file.delete();
+			}
+		}
 	}
 
 	public int getThumbnailWidth() {

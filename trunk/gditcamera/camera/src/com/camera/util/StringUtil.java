@@ -22,6 +22,17 @@ public class StringUtil {
 	}
 	
 	/**
+	 * 把缩略图片路径转换成原图片路径
+	 * @param filePath 缩略图路径
+	 * @return
+	 */
+	public static String convertBackFolderPath(String filePath) {
+		int position = filePath.lastIndexOf("/");
+		String strTmp = filePath.substring(position);
+		return strTmp.replace("_", "/");
+	}
+	
+	/**
 	 * 检查分局名称是否合法
 	 * @param subStation
 	 * @return 错误信息
@@ -116,7 +127,7 @@ public class StringUtil {
 			e.printStackTrace();
 			return null;
 		}
-		if(tmpLen>len){
+		if(tmpLen>len){ 
 			Log.e("String", "the String:("+str+") bytes array length("+tmpLen+") is Longer then "+len);
 			return null;
 		}

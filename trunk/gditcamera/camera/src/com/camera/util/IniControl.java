@@ -3,6 +3,8 @@ package com.camera.util;
 import java.io.File;
 import java.io.IOException;
 
+import com.camera.picture.CutFileUtil;
+
 import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
@@ -44,7 +46,7 @@ public class IniControl {
 		String filePath = Constant.SDCARD_PATH + "/camera/wUpload/a.txt";
 
 		try {
-			CutFileUtil cutFileUtil = new CutFileUtil(context, filePath);
+			CutFileUtil cutFileUtil = new CutFileUtil(filePath);
 			byte[] buf = new byte[CutFileUtil.pieceSize];
 			//System.out.println("--------------------开始获取切片--------------------------");
 			while(cutFileUtil.getNextPiece(buf) != -1) {
