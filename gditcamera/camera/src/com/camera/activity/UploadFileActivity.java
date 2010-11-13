@@ -3,6 +3,8 @@ package com.camera.activity;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.picture.PictureUtil;
+import com.camera.util.Constant;
 
 /**
  * 图片上传管理模块
@@ -23,7 +26,7 @@ import com.camera.picture.PictureUtil;
 public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
-	private static final String PICTURE_FOLDER = "/mnt/sdcard/camera/";
+	private static final String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
 	
 	private Button mBtnUpdate;
 	private Button mBtnUpdateAll;
@@ -63,7 +66,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 //		try {
 //			pictureUtil.createThumbnails(PICTURE_FOLDER);
 //		} catch (Exception e) {
-//			Toast.makeText(this, "生成缩略图出错！！", Toast.LENGTH_SHORT);
+//			Toast.makeText(this, "生成缩略图出错！！", Toast.LENGTH_SHORT).show();
 //			e.printStackTrace();
 //		}
 		adapter = new ImageAdapter(this, PICTURE_FOLDER);
@@ -81,5 +84,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View arg0) {
 		
+	}
+	
+	/**
+	 * 创建菜单
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		  MenuInflater inflater = getMenuInflater();
+		  inflater.inflate(R.menu.menu, menu);
+		  return true;
 	}
 }
