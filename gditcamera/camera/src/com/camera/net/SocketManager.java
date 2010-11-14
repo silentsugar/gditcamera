@@ -56,10 +56,13 @@ public class SocketManager {
 		@Override
 		public void run(){
 			try {
-				//客户端发送数据
-				out.write(dataBuf, 0, bufLength);
-				handler.removeCallbacks(this);
-				Log.e(TAG, "hased send the paskage!");
+				synchronized (this) {
+					//客户端发送数据
+					out.write(dataBuf, 0, bufLength);
+					handler.removeCallbacks(this);
+					Log.e(TAG, "hased send the paskage!");
+					this.stop();
+				}
 			} catch (Exception e) {
 				Log.e(TAG, "failse to send the data to the server!");
 //				Toast.makeText(context, "发送数据失败！", Toast.LENGTH_SHORT);
@@ -102,7 +105,7 @@ public class SocketManager {
 							handler.sendMessage(msg);
 						}
 						//打印返回的数据
-						for(int i = 0; i < length; i++){
+						for(int i = 1; i < 3; i++){
 							Log.e("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
 						}
 					}
