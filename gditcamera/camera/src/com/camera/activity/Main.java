@@ -1,6 +1,8 @@
 package com.camera.activity;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.app.TabActivity;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -17,7 +20,9 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.camera.util.IniControl;
+import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
+import com.camera.vo.Preferences;
 import com.camera.widget.CEditTextButton;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
@@ -46,6 +51,9 @@ public class Main extends TabActivity implements OnClickListener {
 	private String stationCode;
 	private String path;
 	
+	/**±£¥Ê≈‰÷√≤Œ ˝*/
+	private PreferencesDAO dao;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,17 +74,7 @@ public class Main extends TabActivity implements OnClickListener {
 		createTab();
 		setListener();
 		
-//		PreferencesDAO dao = new PreferencesDAO(this);
-//		Preferences p = new Preferences();
-//		Map<Integer,String> hosts = new HashMap<Integer,String>();
-//		hosts.put(1, "http://192.168.1.1:8080");
-//		hosts.put(2, "http://192.168.2.1:65534");
-//		p.setDefaultImgDir(Environment.getDownloadCacheDirectory().getAbsolutePath());
-//		p.setStationCode("12334");
-//		p.setSubStation("sub213");
-//		p.setSurveyStation("survy233");
-//		p.setHostList(hosts);
-//		dao.save(p);
+		dao = new PreferencesDAO(this);
 	}
 	
 	public void setListener() {
@@ -119,7 +117,18 @@ public class Main extends TabActivity implements OnClickListener {
 //			this.startActivity(intent2);
 //			break;
 		case R.id.btnSave:
-			checkInput();
+			if(checkInput()){
+				Preferences p = new Preferences();
+//				Map<String,Integer> hosts = new HashMap<String,Integer>();
+//				hosts.put("http://192.168.1.1:8080",8080);
+//				hosts.put("http://192.168.1.2:8080",8080);
+//				hosts.put("http://192.168.1.3:8080",8080);
+				p.setDefaultImgDir(defaultImgDir);
+				p.setSubStation(subStation);
+				p.setStationCode(surveyStation);
+				p.setSurveyStation(stationCode);
+				dao.save(p);
+			}
 			break;
 		}
 	}
@@ -153,7 +162,6 @@ public class Main extends TabActivity implements OnClickListener {
 			mLayoutStationCode.removeView(etStationCode);
 			mLayoutStationCode.addView(etStationCode);
 		}
-		
 		return isVaild;
 	}
 
