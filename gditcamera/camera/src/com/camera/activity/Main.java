@@ -34,13 +34,16 @@ public class Main extends TabActivity implements OnClickListener {
 	
 	private Button mBtnExit;
 	private Button mBtnUpdateManager;
-//	private Button mBtnTestService;
-	private Button mBtnSave;
-	private Button mBtnTest1;
-	private Button mBtnTest2;
 	private CEditTextButton btnBrowse;
-	private EditText etSubStation,etSurveyStation,etStationCode,etHost1Ip,etHost2Ip,etHost1Port,etHost2Port;
-	private RelativeLayout mLayoutSubStation,mLayoutSurveyStation,mLayoutStationCode;
+	private Button mBtnSave;
+	/**服务器配置所用到的按钮*/
+	private Button mBtnTest1,mBtnTest2,mBtnSave1,mBtnSave2;
+	/**所有配置所用到的编辑框*/
+	private EditText etSubStation,etSurveyStation,
+			etStationCode,etHost1Ip,etHost2Ip,etHost1Port,etHost2Port;
+	/**所有编辑框，按钮的父容器布局*/
+	private RelativeLayout mLayoutSubStation,mLayoutSurveyStation,
+			mLayoutStationCode,mLayoutBtnSave,layoutBtnSaveTest1,layoutBtnSaveTest2;
 
 	/**默认到图片目录*/
 	private String defaultImgDir;
@@ -54,6 +57,8 @@ public class Main extends TabActivity implements OnClickListener {
 	
 	/**保存配置参数*/
 	private PreferencesDAO dao;
+	/**标识编辑框当前是否为可修改状态*/
+	private boolean mIsodifyAble = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +76,7 @@ public class Main extends TabActivity implements OnClickListener {
 		mLayoutSubStation = (RelativeLayout) findViewById(R.id.layoutSubStation);
 		mLayoutSurveyStation = (RelativeLayout) findViewById(R.id.layoutSurveyStation);
 		mLayoutStationCode = (RelativeLayout) findViewById(R.id.layoutStationCode);
+		mLayoutBtnSave = (RelativeLayout) findViewById(R.id.layoutBtnSave);
 		
 		createTab();
 		setListener();
@@ -118,17 +124,25 @@ public class Main extends TabActivity implements OnClickListener {
 //			this.startActivity(intent2);
 //			break;
 		case R.id.btnSave:
-			if(checkInput()){
-				Preferences p = new Preferences();
-//				Map<String,Integer> hosts = new HashMap<String,Integer>();
-//				hosts.put("http://192.168.1.1:8080",8080);
-//				hosts.put("http://192.168.1.2:8080",8080);
-//				hosts.put("http://192.168.1.3:8080",8080);
-				p.setDefaultImgDir(defaultImgDir);
-				p.setSubStation(subStation);
-				p.setStationCode(stationCode);
-				p.setSurveyStation(surveyStation);
-				Log.d("save:", (dao.save(p)?"success":"failed"));
+			if(mIsodifyAble){
+				if(checkInput()){
+					Preferences p = new Preferences();
+//					Map<String,Integer> hosts = new HashMap<String,Integer>();
+//					hosts.put("http://192.168.1.1:8080",8080);
+//					hosts.put("http://192.168.1.2:8080",8080);
+//					hosts.put("http://192.168.1.3:8080",8080);
+					p.setDefaultImgDir(defaultImgDir);
+					p.setSubStation(subStation);
+					p.setStationCode(stationCode);
+					p.setSurveyStation(surveyStation);
+					if(dao.save(p)){
+						Log.d("save:","success");
+						setModifyEnable(false);
+						Toast.makeText(this, "保存成功", 300).show();
+					}
+				}
+			}else{
+				setModifyEnable(true);
 			}
 			break;
 		}
@@ -173,6 +187,23 @@ public class Main extends TabActivity implements OnClickListener {
 		return isVaild;
 	}
 
+	private void setModifyEnable(boolean enabled){
+		mIsodifyAble = enabled;
+		if(enabled){
+			mLayoutBtnSave.removeView(mBtnSave);
+			mBtnSave.setText("保存");
+			mLayoutBtnSave.addView(mBtnSave);
+		}else{
+			mLayoutBtnSave.removeView(mBtnSave);
+			mBtnSave.setText("修改");
+			mLayoutBtnSave.addView(mBtnSave);
+		}
+		
+		btnBrowse.getEditText().setEnabled(enabled);
+		etSubStation.setEnabled(enabled);
+		etSurveyStation.setEnabled(enabled);
+		etStationCode.setEnabled(enabled);
+	}
 	/**
 	 * 创建tab选项卡
 	 */
