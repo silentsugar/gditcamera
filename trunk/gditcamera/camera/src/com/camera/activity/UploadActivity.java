@@ -21,7 +21,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.camera.net.ClientThread;
-import com.camera.net.ServerThread;
+//import com.camera.net.ServerThread;
 import com.camera.util.Constant;
 import com.camera.vo.DataHead;
 
@@ -93,7 +93,7 @@ public class UploadActivity extends Activity implements OnClickListener {
 	}
 
 	private void startServerSocket() {
-		new ServerThread(handler).start();
+//		new ServerThread(handler).start();
 	}
 
 	/**
