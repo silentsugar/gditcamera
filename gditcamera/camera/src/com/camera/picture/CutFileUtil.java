@@ -77,13 +77,13 @@ public class CutFileUtil {
 			int pieceNum = 1;
 			int dataSize = 0;
 			while(true) {
-				if((dataSize = in.read(buf, 0, pieceSize)) > 0) {
+				if((dataSize = in.read(buf, 0, pieceSize - 90)) > 0) {
+					Log.d(TAG, "dataSize " + dataSize);
 					packagePiece(buf, pieceNum, dataSize);
 					pieceNum ++ ;
-				} else {
-					packagePiece(buf, pieceNum, dataSize);
-					break;
-				}
+					continue;
+				} 
+				break;
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
@@ -115,7 +115,7 @@ public class CutFileUtil {
 			e.printStackTrace();
 		}
 		out.write(packageHead);
-		out.write(buf);
+		out.write(buf, 0, dataSize);
 		out.close();
 	}
 	
