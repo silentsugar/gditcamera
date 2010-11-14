@@ -30,8 +30,9 @@ public class Constant {
 	
 	/**配置文件里面的属性名：图片目录*/
 	public static final String IMAGE_DIR = "ImgDir";
-	/**配置文件里面的属性名：服务器主机地址列表(如：主机1，配置文件里的属性名为host_1)*/
-	public static final String HOST_LIST = "host_";
+	/**配置文件里面的属性名：服务器主机地址(如：主机1，配置文件里的属性名为host_1)*/
+	public static final String HOST_1 = "host_1";
+	public static final String HOST_2 = "host_2";
 	/**配置文件里面的属性名：站码*/
 	public static final String STATION_CODE = "stationCode";
 	/**配置文件里面的属性名：分站*/

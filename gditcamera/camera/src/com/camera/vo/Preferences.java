@@ -19,9 +19,9 @@ public class Preferences {
 	private String stationCode;
 	/**
 	 * 服务器地址列表，
-	 * 格式:http://192.168.1.1:8080 或 http://www.baidu.com:8080,默认使用80端口
+	 * 格式:Map<"192.168.1.1",8080> 或 Map<"www.baidu.com",8080>
 	 */
-	private Map<Integer,String> hostList;
+	private Map<String,Integer> hostList;
 	
 	public String getDefaultImgDir() {
 		return defaultImgDir;
@@ -47,10 +47,10 @@ public class Preferences {
 	public void setStationCode(String stationCode) {
 		this.stationCode = stationCode;
 	}
-	public Map<Integer, String> getHostList() {
+	public Map<String,Integer> getHostList() {
 		return hostList;
 	}
-	public void setHostList(Map<Integer, String> hostList) {
+	public void setHostList(Map<String,Integer> hostList) {
 		this.hostList = hostList;
 	}
 	
