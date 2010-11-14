@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
+import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
 import com.camera.util.Constant;
@@ -37,6 +38,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
 	private static final String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
+	
+	private static final int IS_REFRESH_FOLDER = 10;
 	
 	private Button mBtnUpload;
 	private Button mBtnUploadAll;
@@ -58,11 +61,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		public void handleMessage(Message msg) {
 			//图片目录刷新完
 			super.handleMessage(msg);
-			if(msg.what == 1) {
+			switch(msg.what) {
+			
+			//正在刷新目录
+			case IS_REFRESH_FOLDER:
 				adapter = new ImageAdapter(UploadFileActivity.this, PICTURE_FOLDER);
 				mGallery.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 				dialog.dismiss();
+				break;
 			}
 		}
 	};
@@ -120,7 +127,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			String imagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 			System.out.println(imagePath);
 			try {
-				CutFileUtil cutFileUtil = new CutFileUtil(imagePath);
+				CutFileUtil cutFileUtil = new CutFileUtil(this, imagePath);
+				UploadFile uploadFile = new UploadFile(this, mHandler);
+				uploadFile.upload(cutFileUtil);
 			} catch (Exception e) {
 				Toast.makeText(this, "文件上传过程出现错误，错误原因：文件不存在或切片过程出现错误！", Toast.LENGTH_SHORT).show();
 				e.printStackTrace();
@@ -152,7 +161,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				@Override
 				public void run() {
 					refreshFolder();
-					mHandler.sendEmptyMessage(1);
+					mHandler.sendEmptyMessage(IS_REFRESH_FOLDER);
 				}	
 			};
 			mHandler.post(thread);

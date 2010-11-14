@@ -46,7 +46,7 @@ public class IniControl {
 		String filePath = Constant.SDCARD_PATH + "/camera/wUpload/a.txt";
 
 		try {
-			CutFileUtil cutFileUtil = new CutFileUtil(filePath);
+			CutFileUtil cutFileUtil = new CutFileUtil(context, filePath);
 			byte[] buf = new byte[CutFileUtil.pieceSize];
 			//System.out.println("--------------------开始获取切片--------------------------");
 			while(cutFileUtil.getNextPiece(buf) != -1) {

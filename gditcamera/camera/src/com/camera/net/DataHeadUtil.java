@@ -8,7 +8,6 @@ import java.util.Date;
 import android.util.Log;
 
 import com.camera.util.StringUtil;
-import com.camera.vo.Data;
 import com.camera.vo.DataHead;
 
 /**
@@ -260,25 +259,18 @@ public class DataHeadUtil {
 	 * @param args
 	 * @throws Exception
 	 */
-//	public static void main(String args[])throws Exception{
-//		DataHead data = new DataHead();
-//		data.setPho("apho");
-//		data.setSubStation("1234567890123456");
-//		data.setSurveyStation("6543210987654321");
-//		data.setPhoDesc("三十二个字符，六十四字节。三十二个字符，六十四字节，一二三四五六");
-//		data.setStationCode("12345678");
-//		data.setDataTime(new Date());
-//		data.setCameraId((byte)1);
-//		data.setCurrentPackage(22);
-//		data.setTotalPackage(2049);
-//		data.setDataLength(10000);
-//		
-//		print(DataHeadUtil.dataHead2Byte(data));
-//	}
+	public static DataHead getHeadData() {
+		DataHead dataHead = new DataHead();
+		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
+		dataHead.setPho(bPho);
+		dataHead.setSubStation("changzhou");
+		dataHead.setSurveyStation("xiaohezhan");
+		dataHead.setPhoDesc("一号河流");
+		dataHead.setStationCode("12345678");
+		dataHead.setCommand("1234567812345678");
+		dataHead.setDataTime(new Date());
+		dataHead.setCameraId((byte)1);
+		return dataHead;
+	}
 	
-//	static void print(byte [] b){
-//		for(int i=0;i<b.length;i++){
-//			System.out.println("b["+i+"]="+b[i]+" ");
-//		}
-//	}
 }

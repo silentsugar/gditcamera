@@ -5,19 +5,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.camera.util.Constant;
-
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.camera.net.DataHeadUtil;
+import com.camera.util.Constant;
+import com.camera.vo.DataHead;
 
 
 public class CutFileUtil {
 	
+	public static final String TAG = "CutFileUtil";
+	
 	/** 切片的大小*/
-	public static final int pieceSize = 2000;
+	public static final int pieceSize = 60000;
 	/** 包头信息*/
 	private static byte[] packageHead;
 	
@@ -29,6 +34,9 @@ public class CutFileUtil {
 	
 	/** 当前切片数量*/
 	private int pieceNum = 1;
+	
+	/** 切片总数*/
+	private int totalPieceNum = 0;
 	
 	/** 文件大小,单位为byte*/
 	private int fileSize;
@@ -42,7 +50,8 @@ public class CutFileUtil {
 	/** Context对象*/
 	private Context context;
 	
-	public CutFileUtil(String filePath) throws Exception {
+	public CutFileUtil(Context context, String filePath) throws Exception {
+		this.context = context;
 		this.filePath = filePath;
 		file = new File(filePath);
 		if(!file.exists()) {
@@ -59,13 +68,20 @@ public class CutFileUtil {
 		try {
 			FileInputStream in = new FileInputStream(filePath);
 			fileSize = in.available();
+			//计算切片总数
+			int count = fileSize / pieceSize;
+			totalPieceNum = (fileSize % pieceSize == 0) ? count : count + 1;
+			Log.d(TAG, "total piece count : " + totalPieceNum + "; fileSize = " + fileSize);
+			
 			byte[] buf = new byte[pieceSize];
+			int pieceNum = 1;
+			int dataSize = 0;
 			while(true) {
-				if(in.read(buf, 0, pieceSize) > 0) {
-					packagePiece(buf);
+				if((dataSize = in.read(buf, 0, pieceSize)) > 0) {
+					packagePiece(buf, pieceNum, dataSize);
 					pieceNum ++ ;
 				} else {
-					packagePiece(buf);
+					packagePiece(buf, pieceNum, dataSize);
 					break;
 				}
 			}
@@ -79,13 +95,26 @@ public class CutFileUtil {
 	
 	/**
 	 * 组装切片流
-	 * @throws IOException 
+	 * @param buf 文件切片流
+	 * @param pieceNum 当前包数
+	 * @param dataSize 数据长度
+	 * @throws IOException
 	 */
-	private void packagePiece(byte[] buf) throws IOException {
+	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
 		String pieceName = Constant.PIECE_FOLDER + pieceNum;
 		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
-		//out.write(packageHead);
+		DataHead dataHead = DataHeadUtil.getHeadData();
+		dataHead.setCurrentPackage(pieceNum);
+		dataHead.setTotalPackage(totalPieceNum);
+		dataHead.setDataLength(dataSize);
+		try {
+			packageHead = DataHeadUtil.dataHead2Byte(dataHead);
+		} catch (Exception e) {
+			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
+			e.printStackTrace();
+		}
+		out.write(packageHead);
 		out.write(buf);
 		out.close();
 	}
@@ -96,15 +125,22 @@ public class CutFileUtil {
 	 * @return -1表示文件已经读取完,否则返回读取buf的大小
 	 * @throws IOException 
 	 */
-	public int getNextPiece(byte[] buf) throws IOException {
+	public int getNextPiece(byte[] buf) {
 		//如果文件名不存在，说明已经读完，则返回-1
 		if(nCurrentPiece >= pieceFiles.size())
 			return -1;
 		String fileName = pieceFiles.get(nCurrentPiece);
 		
-		FileInputStream in = new FileInputStream(fileName);
-		int pieceSize = in.available();
-		in.read(buf);
+		FileInputStream in;
+		try {
+			in = new FileInputStream(fileName);
+			int pieceSize = in.available();
+			in.read(buf);
+		} catch (Exception e) {
+			Toast.makeText(context, "获取切片失败！", Toast.LENGTH_SHORT);
+			e.printStackTrace();
+		}
+		
 		nCurrentPiece ++;
 		return pieceSize;
 	}
