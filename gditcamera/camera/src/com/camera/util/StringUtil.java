@@ -1,5 +1,6 @@
 package com.camera.util;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 
 import android.util.Log;
@@ -32,6 +33,24 @@ public class StringUtil {
 		return strTmp.replace("_", "/");
 	}
 	
+	/**
+	 * 检查图片路径是否合法
+	 * @param imgDir
+	 * @return
+	 */
+	public static final String isCorrectImgDir(String imgDir){
+		if(imgDir.indexOf("/")!=0){
+			return "路径要以\"/\"开头";
+		}
+		File f = new File(imgDir);
+		if((!f.exists())){
+			return "该文件夹不存在";
+		}
+		if(!f.isDirectory()){
+			return "不是目录";
+		}
+		return null;
+	}
 	/**
 	 * 检查分局名称是否合法
 	 * @param subStation
