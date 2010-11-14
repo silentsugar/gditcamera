@@ -22,16 +22,16 @@ public class PreferencesDAO {
     /**
      * 默认的配置参数实体
      */
-    static final Preferences p;
+    static final Preferences defaultPref;
     static{
-		p = new Preferences();
+		defaultPref = new Preferences();
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
 		hosts.put("http://112.125.33.161",10808);
 		hosts.put("http://192.168.1.2:8080",8080);
-		p.setDefaultImgDir("/mnt/sdcard");
-		p.setSubStation("changzhou");
-		p.setSurveyStation("xiaohezhan");
-		p.setStationCode("00033001");
+		defaultPref.setDefaultImgDir("/mnt/sdcard");
+		defaultPref.setSubStation("changzhou");
+		defaultPref.setSurveyStation("xiaohezhan");
+		defaultPref.setStationCode("00033001");
     }
 
 	public PreferencesDAO(Context c){
@@ -63,7 +63,7 @@ public class PreferencesDAO {
 	 * @return
 	 */
 	public static final Preferences getDefaultPreferences(){
-		return p;
+		return defaultPref;
 	}
 	
 	/**
@@ -73,21 +73,21 @@ public class PreferencesDAO {
 	 */
 	public static final String getDefaultPreferencesByKey(String key){
 		if(key.equals(Constant.IMAGE_DIR)){
-			return p.getDefaultImgDir();
+			return defaultPref.getDefaultImgDir();
 		}else if(key.equals(Constant.STATION_CODE)){
-			return p.getStationCode();
+			return defaultPref.getStationCode();
 		}else if(key.equals(Constant.STATION_SUB)){
-			return p.getSubStation();
+			return defaultPref.getSubStation();
 		}else if(key.equals(Constant.STATION_SURVEY)){
-			return p.getSurveyStation();
+			return defaultPref.getSurveyStation();
 		}else if(key.equals("host_1")){
-			Map<String,Integer> m = p.getHostList();
+			Map<String,Integer> m = defaultPref.getHostList();
 			final Set<String> keySet = m.keySet();
 			for(final String hostAdd : keySet){
 				return hostAdd+m.get(hostAdd);
 			}
 		}else if(key.equals("host_2")){
-			Map<String,Integer> m = p.getHostList();
+			Map<String,Integer> m = defaultPref.getHostList();
 			final Set<String> keySet = m.keySet();
 			int i=0;
 			for(final String hostAdd : keySet){
