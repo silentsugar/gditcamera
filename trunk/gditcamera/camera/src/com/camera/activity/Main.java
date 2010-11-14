@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -125,9 +126,9 @@ public class Main extends TabActivity implements OnClickListener {
 //				hosts.put("http://192.168.1.3:8080",8080);
 				p.setDefaultImgDir(defaultImgDir);
 				p.setSubStation(subStation);
-				p.setStationCode(surveyStation);
-				p.setSurveyStation(stationCode);
-				dao.save(p);
+				p.setStationCode(stationCode);
+				p.setSurveyStation(surveyStation);
+				Log.d("save:", (dao.save(p)?"success":"failed"));
 			}
 			break;
 		}
@@ -137,13 +138,20 @@ public class Main extends TabActivity implements OnClickListener {
 	 * 检查输入参数是否有效
 	 */
 	private boolean checkInput() {
-		this.defaultImgDir = btnBrowse.getEditText().toString();
+		this.defaultImgDir = btnBrowse.getEditText().getText().toString();
 		this.subStation = etSubStation.getText().toString();
 		this.surveyStation = etSurveyStation.getText().toString();
 		this.stationCode = etStationCode.getText().toString();
 		
 		boolean isVaild = true;
 		String errMsg = null;
+		if((errMsg=StringUtil.isCorrectImgDir(defaultImgDir))!=null){
+			isVaild = false;
+			EditText et = this.btnBrowse.getEditText();
+			et.setError(errMsg);
+			this.btnBrowse.removeView(et);
+			this.btnBrowse.addView(et);
+		}
 		if((errMsg=StringUtil.isCorrectSubStation(subStation))!=null){
 			isVaild = false;
 			this.etSubStation.setError(errMsg);
@@ -192,7 +200,7 @@ public class Main extends TabActivity implements OnClickListener {
 		case REQUESTCODE_FOLDER:
 			if(resultCode==Activity.RESULT_OK){
 				path=data.getStringExtra("path");
-				Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+				btnBrowse.getEditText().setText(path);
 			}
 			break;
 		}
