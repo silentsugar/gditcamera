@@ -161,13 +161,13 @@ public class DataHeadUtil {
 		result[offset1++] = tem[0];
 		result[offset1++] = tem[1];
 		Log.e("10 : ", "10");
-		for(int i=0;i<result.length;i++){
-			Log.e("result["+i+"]=", result[i] + "");
-		}
-		Log.e("16 : ", "16");
-		for(int i=0;i<result.length;i++){
-			Log.e("result["+i+"]=", Integer.toHexString(result[i]));
-		}
+//		for(int i=0;i<result.length;i++){
+//			Log.e("result["+i+"]=", result[i] + "");
+//		}
+//		Log.e("16 : ", "16");
+//		for(int i=0;i<result.length;i++){
+//			Log.e("result["+i+"]=", Integer.toHexString(result[i]));
+//		}
 		
 		return result;
 	}

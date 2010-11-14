@@ -22,7 +22,7 @@ public class CutFileUtil {
 	public static final String TAG = "CutFileUtil";
 	
 	/** 切片的大小*/
-	public static final int pieceSize = 60000;
+	public static final int pieceSize = 5000;
 	/** 包头信息*/
 	private static byte[] packageHead;
 	
