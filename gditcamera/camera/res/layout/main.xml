@@ -141,8 +141,7 @@
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
 						android:stretchColumns="2">
-						
-						
+
 						    <TableRow>
 						        <TextView
 						            android:layout_column="0"
@@ -157,8 +156,9 @@
 						    </TableRow>
 						
 						    <TableRow
-						    		>
+						    	android:id="@+id/trHost1">
 						        <EditText
+						    		android:id="@+id/etHost1Ip"
 						            android:layout_column="0"
 						        	android:gravity="left"
 						        	android:layout_width="190dip"
@@ -166,6 +166,7 @@
 						        	android:singleLine="true"
 						        	android:hint="eg:192.168.1.1"/>
 						        <EditText
+						    		android:id="@+id/etHost1Port"
 						        	android:layout_marginTop="3dip"
 						            android:layout_column="1"
 						        	android:layout_width="90dip"
@@ -183,10 +184,10 @@
 						    		android:gravity="right">
 							    <Button
 						            android:layout_column="1"
-							    	android:id="@+id/btnTest2"
+							    	android:id="@+id/btnTest1"
 							    	android:text="测试"
 							    	android:textColor="@color/white"
-							    	android:layout_width="50dip"
+							    	android:layout_width="wrap_content"
 							    	android:layout_height="wrap_content"
 							    	android:background="@drawable/button_bg"
 							    	android:textSize="17sp"/>
@@ -207,8 +208,9 @@
 						    </TableRow>
 						
 						    <TableRow
-						    		>
+						    	android:id="@+id/trHost2">
 						        <EditText
+						        	android:id="@+id/etHost2Ip"
 						            android:layout_column="0"
 						        	android:gravity="left"
 						        	android:layout_width="190dip"
@@ -216,6 +218,7 @@
 						        	android:singleLine="true"
 						        	android:hint="eg:192.168.1.1"/>
 						        <EditText
+						    		android:id="@+id/etHost2Port"
 						        	android:layout_marginTop="3dip"
 						            android:layout_column="1"
 						        	android:layout_width="90dip"
@@ -236,7 +239,7 @@
 							    	android:id="@+id/btnTest2"
 							    	android:text="测试"
 							    	android:textColor="@color/white"
-							    	android:layout_width="50dip"
+							    	android:layout_width="wrap_content"
 							    	android:layout_height="wrap_content"
 							    	android:background="@drawable/button_bg"
 							    	android:textSize="17sp"/>
@@ -273,14 +276,13 @@
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-	    	<!-- 
+
 	    <Button
 	    	android:id="@+id/btnTestService"
 	    	android:text="测试服务器"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
- -->
 			
 	</com.camera.widget.CTitleBar>
 </RelativeLayout>
