@@ -50,6 +50,7 @@ public class UploadFile extends Thread {
 	
 	@Override
 	public void run() {
+		Log.i(TAG, "run....");
 		byte[] dataBuf = new byte[CutFileUtil.pieceSize];
 		int length = 0;
 		//从切片对象中一片片获取文件流，上传到服务器

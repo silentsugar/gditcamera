@@ -57,9 +57,7 @@ public class SocketManager {
 		public void run(){
 			try {
 				//客户端发送数据
-				out = socket.getOutputStream();
 				out.write(dataBuf, 0, bufLength);
-				out.close();
 				handler.removeCallbacks(this);
 				Log.e(TAG, "hased send the paskage!");
 			} catch (Exception e) {
@@ -80,28 +78,34 @@ public class SocketManager {
 				//服务端数据
 				byte[] recDataBuf = new byte[14];
 				int length = 0;
-				while(true) {
-					in = socket.getInputStream();
-					if((length = in.read(recDataBuf)) == -1) {
-						continue;
+				synchronized (this) {
+					while(true) {
+						if(socket.isClosed()) {
+							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
+							continue;
+						}
+						if((length = in.read(recDataBuf)) == -1) {
+							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
+							Log.v(TAG, "length : " + length);
+							continue;
+						}
+						Log.e(TAG, "length : " + length);
+						Message msg = new Message();
+						//服务器确定包发送成功
+						if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
+							msg.what = PACKAGE_SEND_SUCCESS;
+							handler.sendMessage(msg);
+							
+						//服务器确定包发送失败
+						} else if(recDataBuf[1] == 0X45 && recDataBuf[2] == 0X52) {
+							msg.what = PACKAGE_SEND_FAIL;
+							handler.sendMessage(msg);
+						}
+						//打印返回的数据
+						for(int i = 0; i < length; i++){
+							Log.e("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
+						}
 					}
-					Message msg = new Message();
-					//服务器确定包发送成功
-					if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
-						msg.what = PACKAGE_SEND_SUCCESS;
-						handler.sendMessage(msg);
-						
-					//服务器确定包发送失败
-					} else if(recDataBuf[1] == 0X45 && recDataBuf[2] == 0X52) {
-						msg.what = PACKAGE_SEND_FAIL;
-						handler.sendMessage(msg);
-					}
-					//打印返回的数据
-					for(int i = 0; i < length; i++){
-						Log.e("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
-					}
-					in.close();
-					this.sleep(RECEIVE_THREAD_SLEEP_TIME);
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "throw exception while receive data from server");
@@ -117,6 +121,8 @@ public class SocketManager {
 	public void openSocketThread() {
 		try {
 			socket = new Socket(HOST,PORT);
+			in = socket.getInputStream();
+			out = socket.getOutputStream();
 		} catch(Exception e) {
 			e.printStackTrace();
 			Log.e(TAG, "file to connect the server");
