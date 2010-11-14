@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -62,7 +63,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			//图片目录刷新完
 			super.handleMessage(msg);
 			switch(msg.what) {
-			
+			case UploadFile.FINISH_UPLOAD_FILE:
+				Log.i(TAG, "file send is finish");
+				break;
 			//正在刷新目录
 			case IS_REFRESH_FOLDER:
 				adapter = new ImageAdapter(UploadFileActivity.this, PICTURE_FOLDER);

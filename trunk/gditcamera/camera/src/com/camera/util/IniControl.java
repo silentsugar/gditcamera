@@ -37,7 +37,7 @@ public class IniControl {
 		if(!file.exists()) {
 			file.mkdir();
 		}
-		cutFile(context);
+//		cutFile(context);
 		return true;
 	}
 	

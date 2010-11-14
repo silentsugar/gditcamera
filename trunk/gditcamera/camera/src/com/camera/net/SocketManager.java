@@ -12,9 +12,14 @@ import android.widget.Toast;
 
 public class SocketManager {
 	
+	public static final String TAG = "SocketManager";
+	
 	public static final int PACKAGE_SEND_FAIL = -1;
 	public static final int PACKAGE_SEND_SUCCESS = 1;
 	public static final int TIME_OUT = 0;
+	
+	/** 服务器接收线程睡眠时间*/
+	private static final int RECEIVE_THREAD_SLEEP_TIME = 500;
 	
 	private static final String tag = "ServerActivity";
 	private static final String HOST = "112.125.33.161";
@@ -32,14 +37,13 @@ public class SocketManager {
 	private byte[] dataBuf;
 	/** 发送数据时要读取的BUF长度*/
 	private int bufLength = 0;
-	/** 返回给Handler的信息*/
-	private Message msg;
 	private Context context;
 	
 
 	public SocketManager(Context context, Handler handler){
 		this.context = context;
 		this.handler = handler;
+		openSocketThread();
 		//打开SOCKET套接字
 		handler.post(receiveThread);
 		receiveThread.start();
@@ -57,8 +61,10 @@ public class SocketManager {
 				out.write(dataBuf, 0, bufLength);
 				out.close();
 				handler.removeCallbacks(this);
+				Log.e(TAG, "hased send the paskage!");
 			} catch (Exception e) {
-				Toast.makeText(context, "发送数据失败！", Toast.LENGTH_SHORT);
+				Log.e(TAG, "failse to send the data to the server!");
+//				Toast.makeText(context, "发送数据失败！", Toast.LENGTH_SHORT);
 				e.printStackTrace();
 			}
 		}
@@ -72,10 +78,14 @@ public class SocketManager {
 		public void run(){
 			try {
 				//服务端数据
-				in = socket.getInputStream();
 				byte[] recDataBuf = new byte[14];
+				int length = 0;
 				while(true) {
-					int length = in.read(recDataBuf);
+					in = socket.getInputStream();
+					if((length = in.read(recDataBuf)) == -1) {
+						continue;
+					}
+					Message msg = new Message();
 					//服务器确定包发送成功
 					if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
 						msg.what = PACKAGE_SEND_SUCCESS;
@@ -90,9 +100,12 @@ public class SocketManager {
 					for(int i = 0; i < length; i++){
 						Log.e("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
 					}
+					in.close();
+					this.sleep(RECEIVE_THREAD_SLEEP_TIME);
 				}
 			} catch (Exception e) {
-				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
+				Log.e(TAG, "throw exception while receive data from server");
+//				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
 				e.printStackTrace();
 			}
 		}
@@ -104,10 +117,10 @@ public class SocketManager {
 	public void openSocketThread() {
 		try {
 			socket = new Socket(HOST,PORT);
-			out = socket.getOutputStream();
 		} catch(Exception e) {
 			e.printStackTrace();
-			Toast.makeText(context, "连接服务器失败！", Toast.LENGTH_SHORT);
+			Log.e(TAG, "file to connect the server");
+//			Toast.makeText(context, "连接服务器失败！", Toast.LENGTH_SHORT);
 		}
 	}
 	
