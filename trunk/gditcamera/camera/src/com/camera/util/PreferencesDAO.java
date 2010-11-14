@@ -26,7 +26,7 @@ public class PreferencesDAO {
     static{
 		p = new Preferences();
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
-		hosts.put("http://192.168.1.1:8080",8080);
+		hosts.put("http://112.125.33.161",10808);
 		hosts.put("http://192.168.1.2:8080",8080);
 		p.setDefaultImgDir("/mnt/sdcard");
 		p.setSubStation("changzhou");
@@ -55,7 +55,7 @@ public class PreferencesDAO {
 	 * @return
 	 */
 	public String getPreferencesByKey(String key){
-		return sp.getString(key, null);
+		return sp.getString(key, getDefaultPreferencesByKey(key));
 	}
 	
 	/**
