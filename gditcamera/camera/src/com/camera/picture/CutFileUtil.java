@@ -108,6 +108,7 @@ public class CutFileUtil {
 		dataHead.setCurrentPackage(pieceNum);
 		dataHead.setTotalPackage(totalPieceNum);
 		dataHead.setDataLength(dataSize);
+		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
 		try {
 			packageHead = DataHeadUtil.dataHead2Byte(dataHead);
 		} catch (Exception e) {
