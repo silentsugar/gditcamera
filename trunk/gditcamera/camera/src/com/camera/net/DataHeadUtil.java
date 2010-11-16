@@ -288,8 +288,7 @@ public class DataHeadUtil {
 //		dataHead.setCommand("1234567812345678");
 //		dataHead.setDataTime(date);
 //		dataHead.setCameraId((byte)1);
-		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
-		dataHead.setPho(bPho);
+		dataHead.setPho(dao.getPreferences().getPho());
 		dataHead.setSubStation(dao.getPreferencesByKey(Constant.STATION_SUB));
 		dataHead.setSurveyStation(dao.getPreferencesByKey(Constant.STATION_SURVEY));
 		dataHead.setPhoDesc(desc);
