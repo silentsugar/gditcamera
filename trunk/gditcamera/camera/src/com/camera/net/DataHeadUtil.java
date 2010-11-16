@@ -17,6 +17,7 @@ import com.camera.vo.DataHead;
  */
 public class DataHeadUtil { 
 	
+	private static Date date = new Date();
 	/**
 	 * 打印数组，测试用
 	 * @param b
@@ -263,12 +264,12 @@ public class DataHeadUtil {
 		DataHead dataHead = new DataHead();
 		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
 		dataHead.setPho(bPho);
-		dataHead.setSubStation("changzhou");
-		dataHead.setSurveyStation("xiaohezhan");
+		dataHead.setSubStation("beijingshuiwen");
+		dataHead.setSurveyStation("ceshizhan");
 		dataHead.setPhoDesc("一号河流");
 		dataHead.setStationCode("12345678");
 		dataHead.setCommand("1234567812345678");
-		dataHead.setDataTime(new Date());
+		dataHead.setDataTime(date);
 		dataHead.setCameraId((byte)1);
 		return dataHead;
 	}

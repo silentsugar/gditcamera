@@ -38,6 +38,7 @@ import com.camera.util.StringUtil;
 public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
+	
 	private static final String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
 	
 	private static final int IS_REFRESH_FOLDER = 10;

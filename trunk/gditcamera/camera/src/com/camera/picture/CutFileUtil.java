@@ -108,6 +108,7 @@ public class CutFileUtil {
 		dataHead.setCurrentPackage(pieceNum);
 		dataHead.setTotalPackage(totalPieceNum);
 		dataHead.setDataLength(dataSize);
+		System.out.println("dataSize:" + dataSize);
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
 		try {
 			packageHead = DataHeadUtil.dataHead2Byte(dataHead);
@@ -133,9 +134,10 @@ public class CutFileUtil {
 		String fileName = pieceFiles.get(nCurrentPiece);
 		
 		FileInputStream in;
+		int pieceSizeTmp = 0;
 		try {
 			in = new FileInputStream(fileName);
-			int pieceSize = in.available();
+			pieceSizeTmp = in.available();
 			in.read(buf);
 		} catch (Exception e) {
 			Toast.makeText(context, "ªÒ»°«–∆¨ ß∞‹£°", Toast.LENGTH_SHORT);
@@ -143,7 +145,7 @@ public class CutFileUtil {
 		}
 		
 		nCurrentPiece ++;
-		return pieceSize;
+		return pieceSizeTmp;
 	}
 	
 	/**
