@@ -37,6 +37,8 @@ public class Constant {
 	public static final String STATION_CODE = "stationCode";
 	/**配置文件里面的属性名：分站*/
 	public static final String STATION_SUB = "subStation";
+	/**配置文件里面的属性名：口令*/
+	public static final String COMMAND = "command";
 	/**配置文件里面的属性名：测站*/
 	public static final String STATION_SURVEY = "surveyStation";
 	
