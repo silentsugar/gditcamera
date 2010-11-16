@@ -5,8 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.camera.util.Constant;
+import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.DataHead;
 
@@ -17,7 +20,14 @@ import com.camera.vo.DataHead;
  */
 public class DataHeadUtil { 
 	
-	private static Date date = new Date();
+	private PreferencesDAO dao;
+	private Context mContext;
+	private Date lastTime;
+	
+	public DataHeadUtil(Context context){
+		mContext = context;
+	}
+	
 	/**
 	 * 打印数组，测试用
 	 * @param b
@@ -255,23 +265,54 @@ public class DataHeadUtil {
 			return null;
 		}
 	}
+	
 	/**
-	 * 测试用
-	 * @param args
-	 * @throws Exception
+	 * 根据传入的参数获取数据头对象
+	 * @param desc 照片描述
+	 * @param curr 当前包
+	 * @param total 总包数
+	 * @param len 数据长度
+	 * @param useLastTime 是否使用上次获取数据包的时间
+	 * @return
 	 */
-	public static DataHead getHeadData() {
+	public DataHead getHeadData(String desc,int curr,int total,int len,boolean useLastTime) {
+		dao = new PreferencesDAO(this.mContext);
 		DataHead dataHead = new DataHead();
+//		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
+//		dataHead.setPho(bPho);
+//		dataHead.setSubStation("beijingshuiwen");
+//		dataHead.setSurveyStation("ceshizhan");
+//		dataHead.setPhoDesc("一号河流");
+//		dataHead.setPhoDesc("desc");
+//		dataHead.setStationCode("12345678");
+//		dataHead.setCommand("1234567812345678");
+//		dataHead.setDataTime(date);
+//		dataHead.setCameraId((byte)1);
 		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
 		dataHead.setPho(bPho);
-		dataHead.setSubStation("beijingshuiwen");
-		dataHead.setSurveyStation("ceshizhan");
-		dataHead.setPhoDesc("一号河流");
-		dataHead.setStationCode("12345678");
-		dataHead.setCommand("1234567812345678");
-		dataHead.setDataTime(date);
+		dataHead.setSubStation(dao.getPreferencesByKey(Constant.STATION_SUB));
+		dataHead.setSurveyStation(dao.getPreferencesByKey(Constant.STATION_SURVEY));
+		dataHead.setPhoDesc(desc);
+		dataHead.setStationCode(dao.getPreferencesByKey(Constant.STATION_CODE));
+		dataHead.setCommand(dao.getPreferencesByKey(Constant.COMMAND));
+		if(useLastTime){
+			dataHead.setDataTime((lastTime==null?(lastTime=new Date()):lastTime));
+		}else{
+			dataHead.setDataTime(new Date());
+		}
 		dataHead.setCameraId((byte)1);
+		dataHead.setCurrentPackage(curr);
+		dataHead.setTotalPackage(total);
+		dataHead.setDataLength(len);
 		return dataHead;
 	}
 	
+	public byte [] getBytesHeadData(String desc,int curr,int total,int len,boolean useLastTime){
+		try {
+			return dataHead2Byte(this.getHeadData(desc, curr, total, len, useLastTime));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
