@@ -94,7 +94,7 @@ public class StringUtil {
 	}
 	
 	/**
-	 * 检查分站名称是否合法
+	 * 检查测站名称是否合法
 	 * @param surveyStation
 	 * @return
 	 */
@@ -114,6 +114,97 @@ public class StringUtil {
 		return null;
 	}
 	
+	/**
+	 * 检查测站口令是否合法
+	 * @param command
+	 * @return
+	 */
+	public static final String isCorrectCommand(String command){
+		if(command == null || command.length()<=0){
+			return "不允许为空";
+		}
+		if(command.length()>16){
+			return "不能超过16个字符";
+		}
+		char [] cArray = command.toCharArray();
+		for(char c : cArray){
+			if(!isValidateChar(c)){
+				return "请输入数字或英文字母";
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 检查主机名是否合法
+	 * @param hostAdd
+	 * @return
+	 */
+	public static final String isCorrectHostAdd(String ip){
+		if(ip==null)return "不能为空";
+		if(ip.lastIndexOf(".")==ip.length()-1 || ip.indexOf(".")==0){
+			return "ip地址格式错误";
+		}
+		String [] strIp = ip.split("\\.");
+		if(strIp.length!=4){
+			return "ip地址格式错误";
+		}
+		for(int i=0;i<strIp.length;i++){
+			System.out.println(strIp[i]);
+			int value = 0;
+			try{
+				value = Integer.parseInt(strIp[i]);
+			}catch(NumberFormatException e){
+				return "不是数字";
+			}
+			if(value<=0 || value>=255){
+				return "ip数字范围(0~255)";
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 根据正确的主机地址获取ip
+	 * @param hostAdd
+	 * @return
+	 */
+	public static final String getIpByHostAdd(String hostAdd){
+		int indexProtocol = hostAdd.indexOf("//");
+		int indexPort = hostAdd.lastIndexOf(":");
+		Log.d("indexProtocol", indexProtocol+"");
+		Log.e("ip=",hostAdd.substring(indexProtocol, indexPort));
+		return hostAdd.substring(indexProtocol+2, indexPort);
+	}
+	
+	/**
+	 * 根据正确的主机地址获取端口
+	 * @param hostAdd
+	 * @return
+	 */
+	public static final int getPortByHostAdd(String hostAdd){
+		int indexPort = hostAdd.lastIndexOf(":");
+		String portStr = hostAdd.substring(indexPort+1);
+		return Integer.parseInt(portStr);
+	}
+	
+	/**
+	 * 检查端口号是否合法
+	 * @param hostAdd
+	 * @return
+	 */
+	public static final String isCorrectPort(String port){
+		int p = 0;
+		try{
+			p = Integer.parseInt(port);
+		}catch(NumberFormatException e){
+			return "请输入正确的数字";
+		}
+		if(p<=0||p>65535){
+			return "范围(0~65535)";
+		}
+		return null;
+	}
 	/**
 	 * 通过ASCII码判断 char 是否是大小写字母、或者数字中的某一个
 	 * @param char c

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.camera.vo.Preferences;
 
@@ -27,7 +28,7 @@ public class PreferencesDAO {
 		defaultPref = new Preferences();
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
 		hosts.put("http://112.125.33.161",10808);
-		hosts.put("http://192.168.1.2:8080",8080);
+		hosts.put("http://192.168.1.2",8080);
 		defaultPref.setDefaultImgDir("/mnt/sdcard");
 		defaultPref.setSubStation("changzhou");
 		defaultPref.setSurveyStation("xiaohezhan");
@@ -45,8 +46,31 @@ public class PreferencesDAO {
 	 * @return
 	 */
 	public Preferences getPreferences(){
-		Preferences p = new Preferences();
-		return p;
+		if(sp.getAll().size()<=0){
+			return null;
+		}else{
+			Preferences p = new Preferences();
+			p.setDefaultImgDir(sp.getString(Constant.IMAGE_DIR, ""));
+			p.setSubStation(sp.getString(Constant.STATION_SUB, ""));
+			p.setSurveyStation(sp.getString(Constant.STATION_SURVEY, ""));
+			p.setStationCode(sp.getString(Constant.STATION_CODE, ""));
+			//主机列表
+			Map<String,Integer> m = new HashMap<String, Integer>();
+			String host1Add = sp.getString("host_1",null);
+			String host2Add = sp.getString("host_2",null);
+
+			if(host1Add!=null){
+				m.put(StringUtil.getIpByHostAdd(host1Add),StringUtil.getPortByHostAdd(host1Add));
+			}else{
+				return p;
+			}
+			
+			if(host2Add!=null){
+				m.put(StringUtil.getIpByHostAdd(host2Add),StringUtil.getPortByHostAdd(host2Add));
+			}
+			p.setHostList(m);
+			return p;
+		}
 	}
 	
 	/**
@@ -108,6 +132,7 @@ public class PreferencesDAO {
 		spEdit.putString(Constant.IMAGE_DIR, p.getDefaultImgDir());
 		spEdit.putString(Constant.STATION_CODE,p.getStationCode());
 		spEdit.putString(Constant.STATION_SUB, p.getSubStation());
+		spEdit.putString(Constant.COMMAND, p.getCommand());
 		spEdit.putString(Constant.STATION_SURVEY, p.getSurveyStation());
 		Map<String,Integer> hostList = p.getHostList();
 		if(null!=hostList){
