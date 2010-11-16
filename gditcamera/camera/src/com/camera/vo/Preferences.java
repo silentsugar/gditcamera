@@ -104,11 +104,12 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return null;
 		}
-		
+		Log.e("Host List Size", this.hostList.keySet().size()+"");
 		int i = 1;
 		for(String ip : this.hostList.keySet()){
-			if(i==2)
+			if(i==2){
 				return ip;
+			}
 			i++;
 		}
 		return null;

@@ -173,7 +173,6 @@ public class StringUtil {
 		int indexProtocol = hostAdd.indexOf("//");
 		int indexPort = hostAdd.lastIndexOf(":");
 		Log.d("indexProtocol", indexProtocol+"");
-		Log.e("ip=",hostAdd.substring(indexProtocol, indexPort));
 		return hostAdd.substring(indexProtocol+2, indexPort);
 	}
 	
