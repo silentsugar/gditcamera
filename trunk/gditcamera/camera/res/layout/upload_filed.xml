@@ -90,7 +90,7 @@
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
 	    	
-	   <!-- <EditText
+	    <EditText
 	    	android:id="@+id/txtMessage"
 	    	android:layout_marginLeft="60dip"
 	    	android:layout_marginRight="90dip"
@@ -98,7 +98,7 @@
         	android:paddingLeft="10dip"
         	android:paddingRight="10dip"
         	android:singleLine="true"
-        	android:layout_width="fill_parent"/> --> 
+        	android:layout_width="fill_parent"/> 
 
 			
 	</com.camera.widget.CTitleBar>
