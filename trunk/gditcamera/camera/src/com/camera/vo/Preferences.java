@@ -11,6 +11,8 @@ import android.util.Log;
  */
 public class Preferences {
 
+	/**协议号(fixed)*/
+	private static final byte [] pho = new byte[]{0x24,0x50,0x48,0x4F};
 	/**默认到图片目录*/
 	private String defaultImgDir;
 	/**分站名称(16byte)*/
@@ -63,6 +65,13 @@ public class Preferences {
 	}
 	public void setCommand(String command) {
 		this.command = command;
+	}
+	/**
+	 * 获取协议号
+	 * @return
+	 */
+	public byte [] getPho(){
+		return pho;
 	}
 	/**
 	 * **********************************
