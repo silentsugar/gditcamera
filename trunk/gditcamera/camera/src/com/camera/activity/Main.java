@@ -170,6 +170,14 @@ public class Main extends TabActivity implements OnClickListener {
 		mBtnSave1 = (Button)this.findViewById(R.id.btnSave1);
 		mBtnSave2 = (Button)this.findViewById(R.id.btnSave2);
 		mBtnTest1 = (Button)this.findViewById(R.id.btnTest1);
+		
+		/**
+		 * 测试功能先不搞...
+		 */
+		mBtnTest1.setEnabled(false);
+		mBtnTest2.setEnabled(false);
+		
+		
 		mBtnTest2 = (Button)this.findViewById(R.id.btnTest2);
 		etSubStation = (EditText) this.findViewById(R.id.etSubStation);
 		etCommand = (EditText) this.findViewById(R.id.etCommand);
