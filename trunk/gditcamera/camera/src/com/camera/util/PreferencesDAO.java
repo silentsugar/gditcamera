@@ -6,7 +6,6 @@ import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.camera.vo.Preferences;
 
@@ -52,6 +51,7 @@ public class PreferencesDAO {
 			Preferences p = new Preferences();
 			p.setDefaultImgDir(sp.getString(Constant.IMAGE_DIR, ""));
 			p.setSubStation(sp.getString(Constant.STATION_SUB, ""));
+			p.setCommand(sp.getString(Constant.COMMAND, ""));
 			p.setSurveyStation(sp.getString(Constant.STATION_SURVEY, ""));
 			p.setStationCode(sp.getString(Constant.STATION_CODE, ""));
 			//主机列表
