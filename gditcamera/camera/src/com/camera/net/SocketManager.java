@@ -73,7 +73,6 @@ public class SocketManager {
 					//从切片对象中一片片获取文件流，上传到服务器
 					int i = 0;
 					while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
-						System.out.println(++i);
 						//如果服务器尚未确认包发送成功，则处于等待状态
 						while(isFinish == 0) {
 							this.sleep(5);
@@ -84,16 +83,11 @@ public class SocketManager {
 						//标识未接收到
 						isFinish = 0;
 						out.write(dataBuf, 0, length);
-						handler.removeCallbacks(this);
 						Log.e(TAG, "hased send the paskage!");
 					}
 					//文件上传完,通知界面已经上传好了一个文件
-					Message msg = new Message();
-					msg.what = FINISH_UPLOAD_FILE;
-					handler.sendMessage(msg);
-					
+					handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
 					//客户端发送数据
-//					this.stop();
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "failse to send the data to the server!");
