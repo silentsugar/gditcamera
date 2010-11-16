@@ -1,17 +1,23 @@
 package com.camera.activity;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -69,7 +75,27 @@ public class Main extends TabActivity implements OnClickListener {
 	/**标识服务器配置编辑框当前是否为可修改状态*/
 	private boolean mCanChangeServ1 = true;
 	private boolean mCanChangeServ2 = true;
+
+	/**
+	 * 检测服务器的属性
+	 */
+	private boolean testSuccess = false;
+	private ProgressDialog dialog;
+	private boolean running = true;
 	
+	private Handler hander = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(msg.getData().getBoolean("success")){
+				Toast.makeText(Main.this, "该服务器能正常连接", 300).show();
+			}else{
+				Toast.makeText(Main.this, "连接失败", 300).show();
+			}
+		}
+		
+	};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -120,11 +146,15 @@ public class Main extends TabActivity implements OnClickListener {
 				etHost1Ip.setText(ip1);
 				etHost1Port.setText(port1+"");
 				setModifyEnable(false, 1);
+			}else{
+				mBtnTest1.setEnabled(false);
 			}
 			if(ip2!=null){
 				etHost2Ip.setText(ip2);
 				etHost2Port.setText(port2+"");
 				setModifyEnable(false, 2);
+			}else{
+				mBtnTest2.setEnabled(false);
 			}
 		}else{
 			setModifyEnable(true);
@@ -178,11 +208,6 @@ public class Main extends TabActivity implements OnClickListener {
 		case R.id.btnExit:
 			this.finish();
 			break;
-//		case R.id.btnTestService:
-//			Intent intent2 = new Intent();
-//			intent2.setClass(this, SelectFolderActivity.class);
-//			this.startActivity(intent2);
-//			break;
 		case R.id.btnSave:
 			if(mCanChange1){
 				if(checkUploadConfig()){
@@ -224,12 +249,87 @@ public class Main extends TabActivity implements OnClickListener {
 			}
 			break;
 		case R.id.btnTest1:
+//			if(checkServerConfig(1)){
+//				testServer(host1Ip, Integer.parseInt(port1));
+//			}
 			break;
 		case R.id.btnTest2:
+//			if(checkServerConfig(2)){
+//				testServer(host2Ip, Integer.parseInt(port2));
+//			}
 			break;
 		}
 	}
 	
+	/**
+	 * 测试服务器能否连通
+	 * @param ip
+	 * @param port
+	 * @return
+	 */
+	public void testServer(final String ip, final int port){
+		dialog = ProgressDialog.show(this, "","正在连接..", true);
+		final Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int count = 0;
+				while(running){
+					Log.d("while loop", count+"");
+					if(count++>5){
+						dialog.dismiss();
+						testSuccess = false;
+						running = false;
+						count = 0;
+					}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						dialog.dismiss();
+						testSuccess = false;
+						running = false;
+						count = 0;
+						e.printStackTrace();
+					} catch (Exception e){
+						dialog.dismiss();
+						testSuccess = false;
+						running = false;
+						count = 0;
+						e.printStackTrace();
+					}
+				}
+			
+			}
+		});
+		t1.start();
+		
+		Thread t2 = new Thread(){
+
+			@Override
+			public void run() {
+				try {
+					Log.d("connecting to ", "ip="+ip+"port="+port);
+					Socket s = new Socket(ip,port);
+					if(s!=null){
+						Main.this.running = false;
+						dialog.dismiss();
+						testSuccess = true;
+					}
+				} catch (Exception e){
+//					e.printStackTrace();
+					dialog.dismiss();
+					testSuccess = false;
+				}
+
+				Message msg = Main.this.hander.obtainMessage();
+				Bundle data = new Bundle();
+				data.putBoolean("success", testSuccess);
+				msg.setData(data);
+				Main.this.hander.sendMessage(msg);
+			}
+			
+		};
+		t2.start();
+	}
 	/**
 	 * 检查输入参数是否有效
 	 */
@@ -354,6 +454,7 @@ public class Main extends TabActivity implements OnClickListener {
 			mCanChangeServ1 = enabled;
 			if(enabled){
 				mBtnSave1.setText("保存");
+				mBtnTest1.setEnabled(true);
 			}else{
 				mBtnSave1.setText("修改");
 			}
@@ -364,6 +465,7 @@ public class Main extends TabActivity implements OnClickListener {
 			mCanChangeServ2 = enabled;
 			if(enabled){
 				mBtnSave2.setText("保存");
+				mBtnTest2.setEnabled(true);
 			}else{
 				mBtnSave2.setText("修改");
 			}
@@ -404,7 +506,5 @@ public class Main extends TabActivity implements OnClickListener {
 			break;
 		}
 	}
-	
-	
 
 }

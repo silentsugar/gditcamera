@@ -149,7 +149,7 @@ public class StringUtil {
 		if(strIp.length!=4){
 			return "ip地址格式错误";
 		}
-		for(int i=0;i<strIp.length;i++){
+		for(int i=0;i<4;i++){
 			System.out.println(strIp[i]);
 			int value = 0;
 			try{
@@ -157,8 +157,14 @@ public class StringUtil {
 			}catch(NumberFormatException e){
 				return "不是数字";
 			}
-			if(value<=0 || value>=255){
-				return "ip数字范围(0~255)";
+			if(i==0 || i==3){
+				if(value<=0 || value>=255){
+					return "ip数字范围(0~255)";
+				}
+			}else{
+				if(value<0 || value>=255){
+					return "ip数字范围(0~255)";
+				}
 			}
 		}
 		return null;
