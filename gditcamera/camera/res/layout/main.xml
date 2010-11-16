@@ -318,13 +318,13 @@
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-
+<!-- 
 	    <Button
 	    	android:id="@+id/btnTestService"
 	    	android:text="测试服务器"
 	    	android:background="@drawable/controlbar_button_bg"
 	    	android:textSize="17sp"
 	    	android:textColor="@color/toolbar_btn_color"/>
-			
+ -->		
 	</com.camera.widget.CTitleBar>
 </RelativeLayout>
