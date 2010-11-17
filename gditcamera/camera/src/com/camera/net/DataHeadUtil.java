@@ -24,8 +24,8 @@ public class DataHeadUtil {
 	private Context mContext;
 	private Date lastTime;
 	
-	public DataHeadUtil(){
-//		mContext = context;
+	public DataHeadUtil(Context context){
+		mContext = context;
 	}
 	
 	/**
@@ -306,9 +306,9 @@ public class DataHeadUtil {
 		return dataHead;
 	}
 	
-	public static byte [] getBytesHeadData(String desc,int curr,int total,int len,boolean useLastTime){
+	public static byte [] getBytesHeadData(Context context, String desc,int curr,int total,int len,boolean useLastTime){
 		try {
-			DataHeadUtil dataHeadUtil = new DataHeadUtil();
+			DataHeadUtil dataHeadUtil = new DataHeadUtil(context);
 			return dataHead2Byte(dataHeadUtil.getHeadData(desc, curr, total, len, useLastTime));
 		} catch (Exception e) {
 			e.printStackTrace();
