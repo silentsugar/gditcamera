@@ -97,18 +97,23 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	 */
 	private void initProperties() {
 		
-		this.setFocusable(false);
+		this.setFocusable(true);
+		this.setFocusableInTouchMode(true);
+		this.setClickable(true);
 		this.setBackgroundResource(BACKGROUND_RESOURCE);
 		
 		mEditText.setSingleLine();
 		int i[] = EDITTEXT_PADDING;
 		mEditText.setPadding(i[0], i[1], i[2], i[3]);
+		mEditText.setClickable(false);
+		mEditText.setFocusable(false);
+		mEditText.setFocusableInTouchMode(false);
 		
 		i = BUTTON_PADDING;
 		mBtn.setPadding(i[0], i[1], i[2], i[3]);
-		mBtn.setOnClickListener(this);
-		mBtn.setFocusable(true);
-		mBtn.setFocusableInTouchMode(true);
+		mBtn.setClickable(false);
+		mBtn.setFocusable(false);
+		mBtn.setFocusableInTouchMode(false);
 		mBtn.setText("‰Ø¿¿");
 		
 	}
@@ -140,10 +145,6 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 		return mOnClickListener;
 	}
 
-	@Override
-	public void setOnClickListener(OnClickListener l) {
-		this.mOnClickListener = l;
-	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
