@@ -144,5 +144,12 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	public void setOnClickListener(OnClickListener l) {
 		this.mOnClickListener = l;
 	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		mBtn.setEnabled(enabled);
+		mEditText.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
 	
 }
