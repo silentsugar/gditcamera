@@ -152,14 +152,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 						CutFileUtil cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath);
 						UploadFile uploadFile = new UploadFile(UploadFileActivity.this, mHandler, cutFileUtil);
 //						uploadFile.upload(cutFileUtil, mHandler);
-//						mHandler.sendEmptyMessage(UploadFile.FINISH_UPLOAD_FILE);
 					} catch (Exception e) {
 						Log.e(TAG, "throw a exception while upload a file!!");
 						e.printStackTrace();
 					}
 				}	
 			};
-			mHandler.post(uploadOnePicThread);
+			uploadOnePicThread.start();
 			break;
 		case R.id.btnUploadAll:
 			break;

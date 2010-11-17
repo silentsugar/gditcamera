@@ -60,13 +60,15 @@ public class UploadFile {
 		
 		openSocketThread();
 		
+		//打开SOCKET套接字
+//		handler.post(receiveThread);
+		receiveThread.start();
+//		handler.removeCallbacks(receiveThread);
+		System.out.println("post receiveThread:thread start");
+		
 		System.out.println("post sendThread:thread start");
 		this.mCutFileUtil = cutFileUtil;
 		handler.post(sendThread);
-		
-		//打开SOCKET套接字
-		handler.post(receiveThread);
-		System.out.println("post receiveThread:thread start");
 		
 	}
 	
