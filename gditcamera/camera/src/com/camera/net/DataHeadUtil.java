@@ -1,5 +1,6 @@
 package com.camera.net;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -314,5 +315,60 @@ public class DataHeadUtil {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	/**
+	 * BCD码转换成ASCII码
+	 * @param bcd
+	 * @return
+	 */
+	public static final byte BCD2Ascii(byte bcd){
+		return 0;
+	}
+	
+	/**
+	 * ASCII码转换成BCD码
+	 * 什么是BCD码
+　　bcd码也叫8421码就是将十进制的数以8421的形式展开成二进制，大家知道十进制是0～9十个数组成，这十个数每个数都有自己的8421码：
+　　0＝0000
+　　1＝0001
+　　2＝0010
+　　3＝0011
+　　4＝0100
+　　5＝0101
+　　6＝0110
+　　7＝0111
+　　8＝1000
+　　9＝1001
+　　举个例子：
+　　321的8421码就是
+　　3 2 1
+　　0011 0010 0001
+　　原因:0011=8x0+4x0+1x2+1x1=3 0010=8x0+4x0+2x1+1x0=2. 0001=8x0+4x0+2x0+1x1=1
+
+	 * @param bcd BCD码
+	 * @return
+	 */
+	public static final byte[] stationCode2BCDbytes(String stationCodes){
+		//压缩
+//		if (stationCodes.length() % 2 != 0) {
+//			stationCodes = "0" + stationCodes;
+//		}
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		char[] cs = stationCodes.toCharArray();
+//		for (int i = 0; i < cs.length; i += 2) {
+//			int high = cs[i] - 48;
+//			int low = cs[i + 1] - 48;
+//			baos.write(high << 4 | low);
+//		}
+//		return baos.toByteArray();
+		//不压缩
+		
+		byte [] b = new byte[stationCodes.length()];
+		int len = b.length;
+		for(int i=0;i<len;i++){
+			b[i] = (byte)Byte.parseByte(stationCodes.charAt(i)+"");
+		}
+		return b;
 	}
 }
