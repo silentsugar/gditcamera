@@ -98,8 +98,11 @@
         	android:paddingLeft="10dip"
         	android:paddingRight="10dip"
         	android:singleLine="true"
+        	android:hint="添加照片描述"
         	android:layout_width="fill_parent"/> 
 
 			
 	</com.camera.widget.CTitleBar>
+	
+	
 </RelativeLayout>

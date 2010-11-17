@@ -449,6 +449,10 @@ public class Main extends TabActivity implements OnClickListener {
 		etCommand.setEnabled(enabled);
 		etSurveyStation.setEnabled(enabled);
 		etStationCode.setEnabled(enabled);
+		etSubStation.setFocusable(enabled);
+		etCommand.setFocusable(enabled);
+		etSurveyStation.setFocusable(enabled);
+		etStationCode.setFocusable(enabled);
 	}
 	
 	/**
