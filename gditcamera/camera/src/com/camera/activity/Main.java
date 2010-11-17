@@ -444,7 +444,7 @@ public class Main extends TabActivity implements OnClickListener {
 			mLayoutBtnSave.addView(mBtnSave);
 		}
 		
-		btnBrowse.getEditText().setEnabled(enabled);
+		btnBrowse.setEnabled(enabled);
 		etSubStation.setEnabled(enabled);
 		etCommand.setEnabled(enabled);
 		etSurveyStation.setEnabled(enabled);
