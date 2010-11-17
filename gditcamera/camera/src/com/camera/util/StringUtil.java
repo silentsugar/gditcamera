@@ -82,12 +82,12 @@ public class StringUtil {
 			return "不允许为空";
 		}
 		if(stationCode.length()>8){
-			return "不能超过8个字符";
+			return "不能超过8个数字";
 		}
 		char [] cArray = stationCode.toCharArray();
 		for(char c : cArray){
-			if(!isValidateChar(c)){
-				return "请输入数字或英文字母";
+			if(!Character.isDigit(c)){
+				return "只能是数字";
 			}
 		}
 		return null;
