@@ -150,8 +150,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 						String imagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 						System.out.println(imagePath);
 						CutFileUtil cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath);
-						UploadFile uploadFile = new UploadFile(UploadFileActivity.this, mHandler);
-						uploadFile.upload(cutFileUtil);
+						UploadFile uploadFile = new UploadFile(UploadFileActivity.this, mHandler, cutFileUtil);
+//						uploadFile.upload(cutFileUtil, mHandler);
+//						mHandler.sendEmptyMessage(UploadFile.FINISH_UPLOAD_FILE);
 					} catch (Exception e) {
 						Log.e(TAG, "throw a exception while upload a file!!");
 						e.printStackTrace();
@@ -159,7 +160,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				}	
 			};
 			mHandler.post(uploadOnePicThread);
-//			uploadOnePicThread.start();
 			break;
 		case R.id.btnUploadAll:
 			break;
