@@ -36,7 +36,7 @@ public class PreferencesDAO {
 
 	public PreferencesDAO(Context c){
 		context = c;
-		sp = context.getSharedPreferences("preferences",context.MODE_PRIVATE);
+		sp = context.getSharedPreferences("preferences",Context.MODE_PRIVATE);
     	spEdit = sp.edit();
 	}
 

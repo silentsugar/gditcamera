@@ -10,8 +10,8 @@ import android.os.Message;
 import android.util.Log;
 
 import com.camera.picture.CutFileUtil;
-import com.camera.util.Constant;
 import com.camera.util.PreferencesDAO;
+import com.camera.vo.Preferences;
 
 public class UploadFile {
 	
@@ -43,6 +43,8 @@ public class UploadFile {
 	private int bufLength = 0;
 	/** 判断包是否已经发送，如果确认已经发送，再发送下一个包*/
 	private int isFinish = 1;
+	/** 标识要发送的类型，0为测试服务器，1为发送文件，2为发送多文件*/
+	private int sendType = -1;
 	
 	/** 文件切片工具*/
 	private CutFileUtil mCutFileUtil;
@@ -55,20 +57,10 @@ public class UploadFile {
 		this.handler = handler;
 		
 		//获取服务器地址跟端口
-//		PreferencesDAO preferencesDao = new PreferencesDAO(context);
-//		preferencesDao.getPreferencesByKey(Constant.HOST_1);
-		
-		openSocketThread();
-		
-		//打开SOCKET套接字
-//		handler.post(receiveThread);
-		receiveThread.start();
-//		handler.removeCallbacks(receiveThread);
-		System.out.println("post receiveThread:thread start");
-		
-		System.out.println("post sendThread:thread start");
-		this.mCutFileUtil = cutFileUtil;
-		handler.post(sendThread);
+		PreferencesDAO preferencesDao = new PreferencesDAO(context);
+		Preferences p = preferencesDao.getPreferences();
+		HOST = p.getHost1IP();
+		PORT = p.getHost1Port();
 		
 	}
 	
@@ -79,34 +71,54 @@ public class UploadFile {
 		@Override
 		public void run(){
 			try {
-				synchronized (this) {
-					System.out.println("sendThread:thread start");
-					Log.i(TAG, "run....");
-					byte[] dataBuf = new byte[CutFileUtil.pieceSize];
-					int length = 0;
-					//从切片对象中一片片获取文件流，上传到服务器
-					int i = 0;
-					while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
-						//如果服务器尚未确认包发送成功，则处于等待状态
-						while(isFinish == 0) {
-							this.sleep(5);
-							continue;
-						//服务器确认发送错误
-						}
-						Log.i(TAG, "send " + i + "piece");
-						//标识未接收到
-						isFinish = 0;
-						out.write(dataBuf, 0, length);
-						Log.e(TAG, "hased send the paskage!");
-					}
-					//文件上传完,通知界面已经上传好了一个文件
-					handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
-					//客户端发送数据
+				//发送数据给服务器
+				switch(sendType) {
+				//测试服务器是否连接得通
+				case 0:
+					break;
+				//发送单文件给服务器
+				case 1:
+					break;
+				//发送多文件给服务器
+				case 2:
+					break;
+				default
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "failse to send the data to the server!");
 //				Toast.makeText(context, "发送数据失败！", Toast.LENGTH_SHORT);
 				e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * 发送单文件
+		 * @throws Exception
+		 */
+		private void sendFile() throws Exception {
+			synchronized (this) {
+				System.out.println("sendThread:thread start");
+				Log.i(TAG, "run....");
+				byte[] dataBuf = new byte[CutFileUtil.pieceSize];
+				int length = 0;
+				//从切片对象中一片片获取文件流，上传到服务器
+				int i = 0;
+				while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
+					//如果服务器尚未确认包发送成功，则处于等待状态
+					while(isFinish == 0) {
+						this.sleep(5);
+						continue;
+					//服务器确认发送错误
+					}
+					Log.i(TAG, "send " + i + "piece");
+					//标识未接收到
+					isFinish = 0;
+					out.write(dataBuf, 0, length);
+					Log.e(TAG, "hased send the paskage!");
+				}
+				//文件上传完,通知界面已经上传好了一个文件
+				handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
+				//客户端发送数据
 			}
 		}
 	};
@@ -118,12 +130,11 @@ public class UploadFile {
 		@Override
 		public void run(){
 			try {
-				System.out.println("receiveThread:thread start");
-				//服务端数据
-				byte[] recDataBuf = new byte[14];
-				int length = 0;
 				synchronized (this) {
 					while(true) {
+						//服务端数据
+						byte[] recDataBuf = new byte[14];
+						int length = 0;
 						if(socket.isClosed()) {
 							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
 							continue;
@@ -161,12 +172,13 @@ public class UploadFile {
 				e.printStackTrace();
 			}
 		}
+		
 	};
 	
 	/**
 	 * 打开SOCKET套接字
 	 */
-	private void openSocketThread() {
+	private void openSocketThread(String host, int port) {
 		try {
 			socket = new Socket(HOST,PORT);
 			in = socket.getInputStream();
@@ -182,11 +194,22 @@ public class UploadFile {
 	 * 上传文件
 	 * @param cutFileUtil 文件切片对象
 	 */
-	public void upload(CutFileUtil cutFileUtil, Handler handler) {
+	public void upload(CutFileUtil cutFileUtil) {
+		//打开套接字
+		openSocketThread(HOST, PORT);
 		//向服务端传输数据
-		System.out.println("post sendThread:thread start");
+		receiveThread.start();
 		this.mCutFileUtil = cutFileUtil;
 		handler.post(sendThread);
+	}
+	
+	/**
+	 * 测试服务器是否连接成功
+	 * @param packageHead 包字节流
+	 * @param handler
+	 */
+	public void testServer(String ip, int port, Handler handler) {
+		openSocketThread(ip, port);
 	}
 
 }

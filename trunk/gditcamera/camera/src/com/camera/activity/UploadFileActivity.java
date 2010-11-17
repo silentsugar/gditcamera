@@ -1,9 +1,9 @@
 package com.camera.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,15 +17,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
-import com.camera.net.UploadFile;
 import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
