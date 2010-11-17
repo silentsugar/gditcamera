@@ -1,9 +1,9 @@
 package com.camera.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,12 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.SocketManager;
@@ -30,6 +30,7 @@ import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
 import com.camera.util.Constant;
+import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 
 /**
@@ -40,9 +41,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
 	
-	private static final String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
-	
-	private static final int IS_REFRESH_FOLDER = 10;
+	private static String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
+	/** 刷新目录成功*/
+	private static final int REFRESH_FOLDER_SUCCESS = 10;
+	/** 刷新目录失败*/
+	private static final int REFRESH_FOLDER_ERR = 11;
 	
 	private Button mBtnUpload;
 	private Button mBtnUploadAll;
@@ -70,10 +73,14 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				Toast.makeText(UploadFileActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
 				break;
 			//正在刷新目录
-			case IS_REFRESH_FOLDER:
+			case REFRESH_FOLDER_SUCCESS:
 				adapter = new ImageAdapter(UploadFileActivity.this, PICTURE_FOLDER);
 				mGallery.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
+				dialog.dismiss();
+				break;
+			case REFRESH_FOLDER_ERR:
+				Toast.makeText(UploadFileActivity.this, "刷新目录失败！", Toast.LENGTH_SHORT).show();
 				dialog.dismiss();
 				break;
 			}
@@ -87,6 +94,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.upload_filed);
+		//获取图片路径
+		PreferencesDAO preferencesDao = new PreferencesDAO(this);
+		PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
+		
 		getComponents();
 		loadPicture();
 		
@@ -175,8 +186,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			Thread thread = new Thread() {
 				@Override
 				public void run() {
-					refreshFolder();
-					mHandler.sendEmptyMessage(IS_REFRESH_FOLDER);
+					try {
+						refreshFolder();
+						mHandler.sendEmptyMessage(REFRESH_FOLDER_SUCCESS);
+					} catch(Exception e ){
+						mHandler.sendEmptyMessage(REFRESH_FOLDER_ERR);
+					}
+					
 				}	
 			};
 			mHandler.post(thread);
@@ -210,14 +226,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	/**
 	 * 刷新目录图片，重新生成缩略图
 	 */
-	public void refreshFolder() {
+	public void refreshFolder() throws Exception {
 		try {
 			PictureUtil pictureUtil = new PictureUtil();
 			pictureUtil.clearThumbnail(PICTURE_FOLDER);
 			pictureUtil.createThumbnails(PICTURE_FOLDER);
 		} catch (Exception e) {
-			Toast.makeText(this, "刷新目录出错了！", Toast.LENGTH_SHORT).show();
+			Log.e(TAG, "throw a exception while refresh the picture folder!");
 			e.printStackTrace();
+			throw new Exception("throw a exception while refresh the picture folder!");
 		}
 	}
 }

@@ -137,6 +137,9 @@ public class PictureUtil {
 	public List<String> createThumbnails(String folderPath) throws Exception {
 		List<String> thumbnailPaths = null;
 		List<String> paths = getFilePathsFromFolder(folderPath);
+		if(paths == null) {
+			return thumbnailPaths;
+		}
 		if(paths.size() > 0)
 			thumbnailPaths = new ArrayList<String>();
 		for(String filePath : paths) {
