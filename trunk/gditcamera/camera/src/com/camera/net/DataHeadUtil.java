@@ -390,6 +390,7 @@ public class DataHeadUtil {
 		for(int i=0;i<len;i++){
 			tmp[i] = (byte)Integer.parseInt(stationCodes.charAt(i)+"");
 		}
+		print(tmp);
 		if(len==8){
 			return tmp;
 		}else{
@@ -401,6 +402,7 @@ public class DataHeadUtil {
 					b[i] = tmp[i-zeroIndex];
 				}
 			}
+			print(b);
 			return b;
 		}
 	}
