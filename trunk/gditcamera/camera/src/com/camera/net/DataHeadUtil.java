@@ -130,6 +130,7 @@ public class DataHeadUtil {
 		byte [] stationCodeByte =stationCode2BCDbytes(stationCode);
 		for(int i=0;i<8;i++){
 			result[offset1++] = stationCodeByte[i];
+			System.out.println("0x" + Integer.toHexString(stationCodeByte[i]));
 		}
 		/**¿ÚÁî(16byte)*/
 //		String command = dataHead.getCommand();
