@@ -47,6 +47,9 @@ public class CutFileUtil {
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
 	
+	/** 标识是否第一次组装包*/
+	private boolean isFirst = true;
+	
 	/** Context对象*/
 	private Context context;
 	
@@ -104,14 +107,15 @@ public class CutFileUtil {
 		String pieceName = Constant.PIECE_FOLDER + pieceNum;
 		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
-		DataHead dataHead = DataHeadUtil.getHeadData();
-		dataHead.setCurrentPackage(pieceNum);
-		dataHead.setTotalPackage(totalPieceNum);
-		dataHead.setDataLength(dataSize);
 		System.out.println("dataSize:" + dataSize);
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
 		try {
-			packageHead = DataHeadUtil.dataHead2Byte(dataHead);
+			if(isFirst) {
+				packageHead = DataHeadUtil.getBytesHeadData("照片描述", pieceNum, totalPieceNum, dataSize, true);
+				isFirst = false;
+			}
+			else
+				packageHead = DataHeadUtil.getBytesHeadData("", pieceNum, totalPieceNum, dataSize, false);
 		} catch (Exception e) {
 			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
 			e.printStackTrace();
