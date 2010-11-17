@@ -57,7 +57,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private ProgressDialog dialog;
 	/** 当前选中图片的文件名*/
 	private String mCurrentImg;
-	
+	private UploadFile uploadFile;
+	private CutFileUtil cutFileUtil;
 	/**
 	 * 处理异步线程信息
 	 */
@@ -67,9 +68,23 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			//图片目录刷新完
 			super.handleMessage(msg);
 			switch(msg.what) {
+			
+			case UploadFile.CONNECTION_SUCCESS:
+				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
+				break;
+			case UploadFile.CONNECTION_FAILSE:
+				dialog.dismiss();
+				Toast.makeText(UploadFileActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				break;
+			
+			
 			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
+				break;
+			case UploadFile.THROW_EXCEPTION:
+				dialog.dismiss();
+				Toast.makeText(UploadFileActivity.this, "上传时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -148,9 +163,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					try {
 						String imagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 						System.out.println(imagePath);
-						CutFileUtil cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath);
-						UploadFile uploadFile = new UploadFile(UploadFileActivity.this, mHandler, cutFileUtil);
-//						uploadFile.upload(cutFileUtil, mHandler);
+						cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath);
+						uploadFile = new UploadFile(UploadFileActivity.this, mHandler);
+						uploadFile.upload(cutFileUtil);
 					} catch (Exception e) {
 						Log.e(TAG, "throw a exception while upload a file!!");
 						e.printStackTrace();
