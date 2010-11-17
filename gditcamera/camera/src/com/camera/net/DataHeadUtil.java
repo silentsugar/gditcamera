@@ -351,47 +351,47 @@ public class DataHeadUtil {
 	 */
 	public static final byte[] stationCode2BCDbytes(String stationCodes){
 		//Ñ¹Ëõ
-		int dataLen = 8;
-		byte [] b = new byte[dataLen];
-		byte [] tmp = null;
-		if (stationCodes.length() % 2 != 0) {
-			stationCodes = "0" + stationCodes;
-		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		char[] cs = stationCodes.toCharArray();
-		for (int i = 0; i < cs.length; i += 2) {
-			int high = cs[i] - 48;
-			int low = cs[i + 1] - 48;
-			baos.write(high << 4 | low);
-		}
-		tmp = baos.toByteArray();
-		for(int i=0;i<dataLen;i++){
-			if(i<tmp.length){
-				b[i] = tmp[i];
-			}else{
-				b[i] = 0;
-			}
-		}
-		return b;
-		//²»Ñ¹Ëõ
 //		int dataLen = 8;
 //		byte [] b = new byte[dataLen];
-//		byte [] tmp = new byte[stationCodes.length()];
-//		int len = tmp.length;
-//		for(int i=0;i<len;i++){
-//			tmp[i] = (byte)Byte.parseByte(stationCodes.charAt(i)+"");
+//		byte [] tmp = null;
+//		if (stationCodes.length() % 2 != 0) {
+//			stationCodes = "0" + stationCodes;
 //		}
-//		if(len==8){
-//			return tmp;
-//		}else{
-//			for(int i=0;i<dataLen;i++){
-//				if(i<len){
-//					b[i] = tmp[i];
-//				}else{
-//					b[i] = 0;
-//				}
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		char[] cs = stationCodes.toCharArray();
+//		for (int i = 0; i < cs.length; i += 2) {
+//			int high = cs[i] - 48;
+//			int low = cs[i + 1] - 48;
+//			baos.write(high << 4 | low);
+//		}
+//		tmp = baos.toByteArray();
+//		for(int i=0;i<dataLen;i++){
+//			if(i<tmp.length){
+//				b[i] = tmp[i];
+//			}else{
+//				b[i] = 0;
 //			}
-//			return b;
 //		}
+//		return b;
+		//²»Ñ¹Ëõ
+		int dataLen = 8;
+		byte [] b = new byte[dataLen];
+		byte [] tmp = new byte[stationCodes.length()];
+		int len = tmp.length;
+		for(int i=0;i<len;i++){
+			tmp[i] = (byte)Integer.parseInt(stationCodes.charAt(i)+"");
+		}
+		if(len==8){
+			return tmp;
+		}else{
+			for(int i=0;i<dataLen;i++){
+				if(i<len){
+					b[i] = tmp[i];
+				}else{
+					b[i] = 0;
+				}
+			}
+			return b;
+		}
 	}
 }
