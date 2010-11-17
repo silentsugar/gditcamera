@@ -50,19 +50,24 @@ public class UploadFile {
 	private Context context;
 	
 
-	public UploadFile(Context context, Handler handler){
+	public UploadFile(Context context, Handler handler, CutFileUtil cutFileUtil){
 		this.context = context;
 		this.handler = handler;
 		
 		//获取服务器地址跟端口
-		PreferencesDAO preferencesDao = new PreferencesDAO(context);
-		preferencesDao.getPreferencesByKey(Constant.HOST_1);
+//		PreferencesDAO preferencesDao = new PreferencesDAO(context);
+//		preferencesDao.getPreferencesByKey(Constant.HOST_1);
 		
 		openSocketThread();
 		
+		System.out.println("post sendThread:thread start");
+		this.mCutFileUtil = cutFileUtil;
+		handler.post(sendThread);
+		
 		//打开SOCKET套接字
 		handler.post(receiveThread);
-		receiveThread.start();
+		System.out.println("post receiveThread:thread start");
+		
 	}
 	
 	/**
@@ -73,7 +78,7 @@ public class UploadFile {
 		public void run(){
 			try {
 				synchronized (this) {
-					
+					System.out.println("sendThread:thread start");
 					Log.i(TAG, "run....");
 					byte[] dataBuf = new byte[CutFileUtil.pieceSize];
 					int length = 0;
@@ -111,6 +116,7 @@ public class UploadFile {
 		@Override
 		public void run(){
 			try {
+				System.out.println("receiveThread:thread start");
 				//服务端数据
 				byte[] recDataBuf = new byte[14];
 				int length = 0;
@@ -174,11 +180,11 @@ public class UploadFile {
 	 * 上传文件
 	 * @param cutFileUtil 文件切片对象
 	 */
-	public void upload(CutFileUtil cutFileUtil) {
+	public void upload(CutFileUtil cutFileUtil, Handler handler) {
 		//向服务端传输数据
-		handler.post(sendThread);
+		System.out.println("post sendThread:thread start");
 		this.mCutFileUtil = cutFileUtil;
-		sendThread.start();
+		handler.post(sendThread);
 	}
 
 }

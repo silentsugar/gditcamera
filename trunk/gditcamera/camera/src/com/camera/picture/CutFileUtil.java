@@ -109,18 +109,18 @@ public class CutFileUtil {
 		pieceFiles.add(pieceName);
 		System.out.println("dataSize:" + dataSize);
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
-		try {
-			if(isFirst) {
-				packageHead = DataHeadUtil.getBytesHeadData("照片描述", pieceNum, totalPieceNum, dataSize, true);
-				isFirst = false;
-			}
-			else
-				packageHead = DataHeadUtil.getBytesHeadData("", pieceNum, totalPieceNum, dataSize, false);
-		} catch (Exception e) {
-			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
-			e.printStackTrace();
-		}
-		out.write(packageHead);
+//		try {
+//			if(isFirst) {
+//				packageHead = DataHeadUtil.getBytesHeadData("照片描述", pieceNum, totalPieceNum, dataSize, true);
+//				isFirst = false;
+//			}
+//			else
+//				packageHead = DataHeadUtil.getBytesHeadData("", pieceNum, totalPieceNum, dataSize, false);
+//		} catch (Exception e) {
+//			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
+//			e.printStackTrace();
+//		}
+//		out.write(packageHead);
 		out.write(buf, 0, dataSize);
 		out.close();
 	}
