@@ -384,11 +384,12 @@ public class DataHeadUtil {
 		if(len==8){
 			return tmp;
 		}else{
+			int zeroIndex = dataLen-len;
 			for(int i=0;i<dataLen;i++){
-				if(i<len){
-					b[i] = tmp[i];
-				}else{
+				if(i<zeroIndex){
 					b[i] = 0;
+				}else{
+					b[i] = tmp[i-zeroIndex];
 				}
 			}
 			return b;
