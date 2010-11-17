@@ -127,7 +127,7 @@ public class DataHeadUtil {
 		}
 		/**Õ¾Âë(8byte)*/
 		String stationCode = dataHead.getStationCode();
-		byte [] stationCodeByte =StringUtil.getByteArrayByLength(stationCode, "GB2312", 8);
+		byte [] stationCodeByte =stationCode2BCDbytes(stationCode);
 		for(int i=0;i<8;i++){
 			result[offset1++] = stationCodeByte[i];
 		}
@@ -363,12 +363,24 @@ public class DataHeadUtil {
 //		}
 //		return baos.toByteArray();
 		//²»Ñ¹Ëõ
-		
-		byte [] b = new byte[stationCodes.length()];
-		int len = b.length;
+		int dataLen = 8;
+		byte [] b = new byte[dataLen];
+		byte [] tmp = new byte[stationCodes.length()];
+		int len = tmp.length;
 		for(int i=0;i<len;i++){
-			b[i] = (byte)Byte.parseByte(stationCodes.charAt(i)+"");
+			tmp[i] = (byte)Byte.parseByte(stationCodes.charAt(i)+"");
 		}
-		return b;
+		if(len==8){
+			return tmp;
+		}else{
+			for(int i=0;i<dataLen;i++){
+				if(i<len){
+					b[i] = tmp[i];
+				}else{
+					b[i] = 0;
+				}
+			}
+			return b;
+		}
 	}
 }
