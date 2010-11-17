@@ -57,22 +57,6 @@ public class UploadFile {
 	
 	private Context context;
 	
-//	public Handler innerHandler = new Handler() {
-//		@Override
-//		public void handleMessage(Message msg) {
-//			switch(msg.what) {
-//			case UploadFile.CONNECTION_SUCCESS:
-//				System.out.println("host : " + HOST + "; post : " + PORT);
-//				handler.post(sendThread);
-//				break;
-//			case UploadFile.CONNECTION_FAILSE:
-//				handler.sendEmptyMessage(CONNECTION_FAILSE);
-//				break;
-//			}
-//			
-//		}
-//	};
-	
 
 	public UploadFile(Context context, Handler handler){
 		this.context = context;
