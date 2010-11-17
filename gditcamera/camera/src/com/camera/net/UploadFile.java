@@ -8,7 +8,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.camera.activity.UploadFileActivity;
 import com.camera.picture.CutFileUtil;
 import com.camera.util.PreferencesDAO;
 import com.camera.vo.Preferences;
@@ -17,10 +19,14 @@ public class UploadFile {
 	
 	public static final String TAG = "SocketManager";
 	
+	//服务器信息
 	public static final int PACKAGE_SEND_FAIL = -1;
 	public static final int PACKAGE_SEND_SUCCESS = 1;
 	public static final int TIME_OUT = 0;
 	public static final int FINISH_UPLOAD_FILE = 2;
+	public static final int THROW_EXCEPTION = 3;
+	public static final int CONNECTION_FAILSE = 4;
+	public static final int CONNECTION_SUCCESS = 5;
 	
 	/** 服务器接收线程睡眠时间*/
 	private static final int RECEIVE_THREAD_SLEEP_TIME = 500;
@@ -51,44 +57,98 @@ public class UploadFile {
 	
 	private Context context;
 	
+//	public Handler innerHandler = new Handler() {
+//		@Override
+//		public void handleMessage(Message msg) {
+//			switch(msg.what) {
+//			case UploadFile.CONNECTION_SUCCESS:
+//				System.out.println("host : " + HOST + "; post : " + PORT);
+//				handler.post(sendThread);
+//				break;
+//			case UploadFile.CONNECTION_FAILSE:
+//				handler.sendEmptyMessage(CONNECTION_FAILSE);
+//				break;
+//			}
+//			
+//		}
+//	};
+	
 
-	public UploadFile(Context context, Handler handler, CutFileUtil cutFileUtil){
+	public UploadFile(Context context, Handler handler){
 		this.context = context;
 		this.handler = handler;
-		
-		//获取服务器地址跟端口
-		PreferencesDAO preferencesDao = new PreferencesDAO(context);
-		Preferences p = preferencesDao.getPreferences();
-		HOST = p.getHost1IP();
-		PORT = p.getHost1Port();
-		
 	}
 	
 	/**
 	 * 套接字发送线程
 	 */
 	private Thread sendThread = new Thread() {
+		
+		/**
+		 * 打开SOCKET套接字
+		 */
+		private void openSocketThread() {
+			//获取服务器地址跟端口
+			PreferencesDAO preferencesDao = new PreferencesDAO(context);
+			Preferences p = preferencesDao.getPreferences();
+			HOST = p.getHost1IP();
+			PORT = p.getHost1Port();
+			
+
+			try {
+				System.out.println("start to connect the server!!");
+				socket = new Socket(HOST,PORT);
+				in = socket.getInputStream();
+				out = socket.getOutputStream();
+				handler.sendEmptyMessage(CONNECTION_SUCCESS);
+			} catch(Exception e) {
+				e.printStackTrace();
+				Log.e(TAG, "file to connect the server");
+				handler.sendEmptyMessage(CONNECTION_FAILSE);
+			}
+		}
+		
 		@Override
 		public void run(){
 			try {
+				openSocketThread();
+				receiveThread.start();
 				//发送数据给服务器
 				switch(sendType) {
 				//测试服务器是否连接得通
 				case 0:
+					System.out.println("test server thread run.....");
 					break;
 				//发送单文件给服务器
 				case 1:
+					System.out.println("send file thread run.....");
+					sendFile();
 					break;
 				//发送多文件给服务器
 				case 2:
+					System.out.println("send some file thread run.....");
 					break;
-				default
+				default:
+					break;
 				}
 			} catch (Exception e) {
 				Log.e(TAG, "failse to send the data to the server!");
-//				Toast.makeText(context, "发送数据失败！", Toast.LENGTH_SHORT);
 				e.printStackTrace();
+				handler.sendEmptyMessage(THROW_EXCEPTION);
+			} finally {
+				//关闭线程
+				System.out.println("stop thread.....");
+				this.stop();
+				receiveThread.stop();
+				sendType = -1;
 			}
+		}
+		
+		/**
+		 * 测试服务器
+		 */
+		public void testServer() throws Exception {
+			handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
 		}
 		
 		/**
@@ -97,8 +157,6 @@ public class UploadFile {
 		 */
 		private void sendFile() throws Exception {
 			synchronized (this) {
-				System.out.println("sendThread:thread start");
-				Log.i(TAG, "run....");
 				byte[] dataBuf = new byte[CutFileUtil.pieceSize];
 				int length = 0;
 				//从切片对象中一片片获取文件流，上传到服务器
@@ -110,15 +168,16 @@ public class UploadFile {
 						continue;
 					//服务器确认发送错误
 					}
-					Log.i(TAG, "send " + i + "piece");
+					Log.i(TAG, "send " + ++i + " piece");
 					//标识未接收到
 					isFinish = 0;
 					out.write(dataBuf, 0, length);
 					Log.e(TAG, "hased send the paskage!");
 				}
+
 				//文件上传完,通知界面已经上传好了一个文件
 				handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
-				//客户端发送数据
+				System.out.println("finish send a file to the server!");
 			}
 		}
 	};
@@ -170,46 +229,36 @@ public class UploadFile {
 				Log.e(TAG, "throw exception while receive data from server");
 //				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
 				e.printStackTrace();
-			}
+			} 
 		}
 		
 	};
-	
-	/**
-	 * 打开SOCKET套接字
-	 */
-	private void openSocketThread(String host, int port) {
-		try {
-			socket = new Socket(HOST,PORT);
-			in = socket.getInputStream();
-			out = socket.getOutputStream();
-		} catch(Exception e) {
-			e.printStackTrace();
-			Log.e(TAG, "file to connect the server");
-//			Toast.makeText(context, "连接服务器失败！", Toast.LENGTH_SHORT);
-		}
-	}
 	
 	/**
 	 * 上传文件
 	 * @param cutFileUtil 文件切片对象
 	 */
 	public void upload(CutFileUtil cutFileUtil) {
-		//打开套接字
-		openSocketThread(HOST, PORT);
-		//向服务端传输数据
-		receiveThread.start();
 		this.mCutFileUtil = cutFileUtil;
+		sendType = 1;
 		handler.post(sendThread);
 	}
+	
 	
 	/**
 	 * 测试服务器是否连接成功
 	 * @param packageHead 包字节流
 	 * @param handler
 	 */
-	public void testServer(String ip, int port, Handler handler) {
-		openSocketThread(ip, port);
+	public static boolean testServer(String ip, int port) {
+		try {
+			Socket socket = new Socket(ip, port);
+		} catch(Exception e) {
+			e.printStackTrace();
+			Log.e(TAG, "file to connect the server");
+			return false;
+		}
+		return true;
 	}
 
 }
