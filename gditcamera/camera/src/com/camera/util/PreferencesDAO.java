@@ -28,7 +28,7 @@ public class PreferencesDAO {
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
 		hosts.put("http://112.125.33.161",10808);
 		hosts.put("http://192.168.1.2",8080);
-		defaultPref.setDefaultImgDir("/mnt/sdcard");
+		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA/");
 		defaultPref.setSubStation("changzhou");
 		defaultPref.setSurveyStation("xiaohezhan");
 		defaultPref.setStationCode("00033001");

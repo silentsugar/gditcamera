@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.camera.adapter.ImageAdapter;
-import com.camera.net.SocketManager;
+import com.camera.net.UploadFile;
 import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
@@ -68,7 +68,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			//图片目录刷新完
 			super.handleMessage(msg);
 			switch(msg.what) {
-			case SocketManager.FINISH_UPLOAD_FILE:
+			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
 				break;
