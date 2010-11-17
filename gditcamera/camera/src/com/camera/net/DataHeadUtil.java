@@ -351,6 +351,9 @@ public class DataHeadUtil {
 	 */
 	public static final byte[] stationCode2BCDbytes(String stationCodes){
 		//Ñ¹Ëõ
+		int dataLen = 8;
+		byte [] b = new byte[dataLen];
+		byte [] tmp = null;
 		if (stationCodes.length() % 2 != 0) {
 			stationCodes = "0" + stationCodes;
 		}
@@ -361,7 +364,15 @@ public class DataHeadUtil {
 			int low = cs[i + 1] - 48;
 			baos.write(high << 4 | low);
 		}
-		return baos.toByteArray();
+		tmp = baos.toByteArray();
+		for(int i=0;i<dataLen;i++){
+			if(i<tmp.length){
+				b[i] = tmp[i];
+			}else{
+				b[i] = 0;
+			}
+		}
+		return b;
 		//²»Ñ¹Ëõ
 //		int dataLen = 8;
 //		byte [] b = new byte[dataLen];
