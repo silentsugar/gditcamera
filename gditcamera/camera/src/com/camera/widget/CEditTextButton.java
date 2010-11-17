@@ -25,7 +25,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 	private static final int BUTTON_BACKGROUND_RESOURCE = 0;
 	
 	/** EditText控件的padding大小*/
-	private static final int[] EDITTEXT_PADDING = {10, 2, 2, 2};
+	private static final int[] EDITTEXT_PADDING = {10, 4, 4, 4};
 	/** 默认EditText背景样式*/
 	private static final int EDITTEXT_BACKGROUND_RESOURCE = 0;
 	/** 默认EditText的margin大小*/
@@ -148,6 +148,7 @@ public class CEditTextButton extends RelativeLayout implements OnClickListener {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		this.setFocusable(enabled);
 		mBtn.setEnabled(enabled);
 		mEditText.setEnabled(enabled);
 		super.setEnabled(enabled);
