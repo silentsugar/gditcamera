@@ -306,7 +306,16 @@ public class DataHeadUtil {
 		dataHead.setDataLength(len);
 		return dataHead;
 	}
-	
+
+	/**
+	 * 根据传入的参数获取数据头对象
+	 * @param desc 照片描述
+	 * @param curr 当前包
+	 * @param total 总包数
+	 * @param len 数据长度
+	 * @param useLastTime 是否使用上次获取数据包的时间
+	 * @return
+	 */
 	public static byte [] getBytesHeadData(Context context, String desc,int curr,int total,int len,boolean useLastTime){
 		try {
 			DataHeadUtil dataHeadUtil = new DataHeadUtil(context);
