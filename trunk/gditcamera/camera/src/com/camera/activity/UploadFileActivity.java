@@ -189,6 +189,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * »ñÈ¡¿Ø¼þ
 	 */
 	public void getComponents() {
+		mTxtMessage = (EditText)this.findViewById(R.id.txtMessage);
 		mBtnUpload = (Button)this.findViewById(R.id.btnUpload);
 		mBtnUploadAll = (Button)this.findViewById(R.id.btnUploadAll);
 		mBtnUpload.setOnClickListener(this);
