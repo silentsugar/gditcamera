@@ -9,9 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.camera.activity.UploadFileActivity;
 import com.camera.net.DataHeadUtil;
 import com.camera.util.Constant;
 
@@ -49,10 +52,15 @@ public class CutFileUtil {
 	/** 标识是否第一次组装包*/
 	private boolean isFirst = false;
 	
+	private Handler handler;
+	
+	private int progress = 0;
+	
 	/** Context对象*/
 	private Context context;
 	
-	public CutFileUtil(Context context, String filePath) throws Exception {
+	public CutFileUtil(Context context, String filePath, Handler handler) throws Exception {
+		this.handler = handler;
 		this.context = context;
 		this.filePath = filePath;
 		file = new File(filePath);
@@ -122,6 +130,10 @@ public class CutFileUtil {
 		out.write(packageHead);
 		out.write(buf, 0, dataSize);
 		out.close();
+		Message msg = new Message();
+		msg.obj = (Integer)(pieceNum  * 100 / totalPieceNum);
+		msg.what = UploadFileActivity.PROGRESS_DIALOG;
+		handler.sendMessage(msg);
 	}
 	
 	/**

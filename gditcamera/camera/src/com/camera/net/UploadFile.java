@@ -1,5 +1,6 @@
 package com.camera.net;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -28,8 +29,11 @@ public class UploadFile {
 	/** 连接服务器超时*/
 	public static final int TIME_OUT = 6;
 	
+	
 	/** 服务器连接超时时间*/
 	public static final int CONNECT_TIME_OUT = 5000;
+	/** 连接文件超时*/
+	public static final int SEND_TIME_OUT = 6000;
 	
 	/** 服务器接收线程睡眠时间*/
 	private static final int RECEIVE_THREAD_SLEEP_TIME = 500;
@@ -62,6 +66,9 @@ public class UploadFile {
 	/** 标识服务器是否连接成功*/
 	private boolean isConnect = false;
 	
+	/** 上传错误代码*/
+	private int errorCode;
+	
 	private Context context;
 	
 
@@ -89,17 +96,33 @@ public class UploadFile {
 			//从切片对象中一片片获取文件流，上传到服务器
 			int i = 0;
 			while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
-				//如果服务器尚未确认包发送成功，则处于等待状态
-				while(isFinish == 0) {
-					Thread.sleep(5);
-					continue;
-				//服务器确认发送错误
-				}
 				Log.i(TAG, "send " + ++i + " piece");
 				//标识未接收到
-				isFinish = 0;
 				out.write(dataBuf, 0, length);
-				Log.e(TAG, "hased send the paskage!");
+				//如果服务器尚未确认包发送成功，则处于等待状态
+				//服务器确认发送成功
+				int time = 0;
+				while(isFinish == 0) {
+					Thread.sleep(5);
+					time += 5;
+					//判断是否超时
+					if(time >= SEND_TIME_OUT) {
+						//结束当前进程
+						errorCode = TIME_OUT;
+						currentThread.interrupt();
+					}
+					continue;
+				}
+				//服务器确认发送错误
+				if(isFinish == 2) {
+					errorCode = THROW_EXCEPTION;
+					currentThread.interrupt();
+				} else if(isFinish == 1) {
+					//删除当前切片
+					isFinish = 0;
+					mCutFileUtil.removeCurrentFile();
+					Log.e(TAG, "hased send the paskage!");
+				}
 			}
 
 			//文件上传完,通知界面已经上传好了一个文件
@@ -151,6 +174,9 @@ public class UploadFile {
 			default:
 				break;
 			}
+		} catch(InterruptedException e) {
+			e.printStackTrace();
+			handler.sendEmptyMessage(errorCode);
 		} catch (Exception e) {
 			Log.e(TAG, "failse to send the data to the server!");
 			e.printStackTrace();
@@ -158,8 +184,17 @@ public class UploadFile {
 		} finally {
 			//关闭线程
 			System.out.println("stop thread.....");
-			receiveThread.stop();
+			try {
+				receiveThread.interrupt();
+				in = null;
+				out = null;
+				socket.close();
+			} catch (IOException e) {
+				handler.sendEmptyMessage(THROW_EXCEPTION);
+				e.printStackTrace();
+			}
 			sendType = -1;
+			isConnect = false;
 		}
 	}
 	
@@ -175,13 +210,10 @@ public class UploadFile {
 						//服务端数据
 						byte[] recDataBuf = new byte[14];
 						int length = 0;
-						if(socket.isClosed()) {
-							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
-							continue;
-						}
+						if(in == null)
+							break;
 						if((length = in.read(recDataBuf)) == -1) {
 							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
-							Log.v(TAG, "length : " + length);
 							continue;
 						}
 						Log.e(TAG, "length : " + length);
@@ -209,6 +241,7 @@ public class UploadFile {
 			} catch (Exception e) {
 				Log.e(TAG, "throw exception while receive data from server");
 //				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
+				handler.sendEmptyMessage(THROW_EXCEPTION);
 				e.printStackTrace();
 			} 
 		}
