@@ -31,6 +31,7 @@ import com.camera.picture.PictureUtil;
 import com.camera.util.Constant;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
+import com.camera.vo.UploadFileList;
 
 /**
  * 图片上传管理模块
@@ -67,7 +68,29 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private UploadFile uploadFile;
 	private CutFileUtil cutFileUtil;
 	
+	/** 上传文件列表*/
+	private UploadFileList mUploadFileList = new UploadFileList();
+	
 	private String mImagePath;
+	
+	
+	Thread mUploadOnePicThread = new Thread() {
+		@Override
+		public void run() {
+			try {
+				String description = mTxtMessage.getText().toString();
+				cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
+				mHandler.sendEmptyMessage(FINISH_CUT_FILE);
+				uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
+				uploadFile.upload(cutFileUtil);
+			} catch (Exception e) {
+				Log.e(TAG, "throw a exception while upload a file!!");
+				e.printStackTrace();
+				mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
+			}
+		}	
+	};
+	
 	/**
 	 * 处理异步线程信息
 	 */
@@ -90,6 +113,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				uploadNextFile(false);
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
@@ -99,16 +123,19 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				uploadNextFile(false);
 				break;
 			
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
+				uploadNextFile(true);
 				break;
 			case UploadFile.THROW_EXCEPTION:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
+				uploadNextFile(false);
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -124,6 +151,23 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
+	
+	/**
+	 * 上传下一个文件
+	 */
+	public void uploadNextFile(boolean isLastSuccess) {
+		Object item = mUploadFileList.get(0);
+		if(isLastSuccess) {
+			mUploadFileList.addSuccess(item);
+		} else {
+			mUploadFileList.addFailse(item);
+		}
+		mUploadFileList.remove(item);
+		if(mUploadFileList.size() < 1)
+			return;
+		mImagePath = StringUtil.convertBackFolderPath((String)mUploadFileList.get(0));
+		mUploadOnePicThread.start();
+	}
 	
 	/** 图片预览控件*/
 	private ImageView mImageView;
@@ -188,27 +232,19 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//上传一张图片
 		case R.id.btnUpload:
 			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
-			System.out.println(mImagePath);
+			mUploadFileList.add(mImagePath);
 			showDialog();
-			Thread uploadOnePicThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						String description = mTxtMessage.getText().toString();
-						cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
-						mHandler.sendEmptyMessage(FINISH_CUT_FILE);
-						uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
-						uploadFile.upload(cutFileUtil);
-					} catch (Exception e) {
-						Log.e(TAG, "throw a exception while upload a file!!");
-						e.printStackTrace();
-						mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
-					}
-				}	
-			};
-			uploadOnePicThread.start();
+			mUploadOnePicThread.start();
 			break;
 		case R.id.btnUploadAll:
+			int size = adapter.getCount();
+			if(size > 0) {
+				mCurrentImg = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
+			}
+			for(int i = 0; i < size; i ++) {
+				mUploadFileList.add(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
+			}
+			mUploadOnePicThread.start();
 			break;
 		}
 	}
