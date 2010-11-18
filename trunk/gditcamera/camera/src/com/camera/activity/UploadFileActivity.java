@@ -1,9 +1,11 @@
 package com.camera.activity;
 
+import java.io.File;
+
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,12 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
@@ -202,6 +204,16 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		//检验配置文件是否存在，如果存在，则跳到配置界面
+//		File file = new File(Constant.PERFERENCES_FILE_PATH);
+//		if(!file.exists()) {
+//			Intent intent = new Intent();
+//			intent.setClass(this, ConfigurationActivity.class);
+//			this.startActivity(intent);
+//			return;
+//		}
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.upload_filed);
 		//获取图片路径
@@ -341,7 +353,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//跳到配置界面
 		case R.id.menuConfig:
 			Intent intent = new Intent();
-			intent.setClass(this, Main.class);
+			intent.setClass(this, ConfigurationActivity.class);
 			this.startActivity(intent);
 			break;
 		//退出系统

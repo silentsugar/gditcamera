@@ -16,6 +16,8 @@ public class Constant {
 	public static final int DATA_HEAD_SIZE = 138;
 	/**每个数据包大小*/
 	public static final int PACKAGE_SIZE = 1024;
+	/** 配置文件路径 */
+	public static final String  PERFERENCES_FILE_PATH = "/shared_prefs/perferences.xml";
 	
 	/** 应用程序目录*/
 	public static final String APP_FOLDER = SDCARD_PATH + "/camera/";
