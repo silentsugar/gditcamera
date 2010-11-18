@@ -1,6 +1,5 @@
 package com.camera.net;
 
-import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +23,7 @@ public class DataHeadUtil {
 	private PreferencesDAO dao;
 	private Context mContext;
 	private Date lastTime;
+	private static DataHead mDataHead;
 	
 	public DataHeadUtil(Context context){
 		mContext = context;
@@ -127,19 +127,28 @@ public class DataHeadUtil {
 		}
 		/**Õ¾Âë(8byte)*/
 		String stationCode = dataHead.getStationCode();
-		byte [] stationCodeByte =stationCode2BCDbytes(stationCode);
-//		for(int i=0;i<8;i++){
-//			result[offset1++] = stationCodeByte[i];
-////			System.out.println("0x" + Integer.toHexString(stationCodeByte[i]));
-//		}
-		result[offset1++] = 49;
-		result[offset1++] = 50;
-		result[offset1++] = 51;
-		result[offset1++] = 52;
-		result[offset1++] = 53;
-		result[offset1++] = 54;
-		result[offset1++] = 55;
-		result[offset1++] = 56;
+		byte [] stationCodeByte = StringUtil.getByteArrayByLength(stationCode, "GB2312", 8);
+		for(int i=0;i<8;i++){
+			result[offset1++] = stationCodeByte[i];
+//			System.out.println("0x" + Integer.toHexString(stationCodeByte[i]));
+		}
+//		result[offset1++] = 49;
+//		result[offset1++] = 50;
+//		result[offset1++] = 51;
+//		result[offset1++] = 52;
+//		result[offset1++] = 53;
+//		result[offset1++] = 54;
+//		result[offset1++] = 55;
+//		result[offset1++] = 56;
+		
+//		result[offset1++] = '1';
+//		result[offset1++] = '0';
+//		result[offset1++] = '9';
+//		result[offset1++] = '0';
+//		result[offset1++] = '0';
+//		result[offset1++] = '0';
+//		result[offset1++] = '3';
+//		result[offset1++] = 0x00;
 		
 		/**¿ÚÁî(16byte)*/
 //		String command = dataHead.getCommand();
@@ -287,8 +296,6 @@ public class DataHeadUtil {
 	 * @return
 	 */
 	public DataHead getHeadData(String desc,int curr,int total,int len,boolean useLastTime) {
-		dao = new PreferencesDAO(this.mContext);
-		DataHead dataHead = new DataHead();
 //		byte [] bPho = new byte[]{0x24,0x50,0x48,0x4F};
 //		dataHead.setPho(bPho);
 //		dataHead.setSubStation("beijingshuiwen");
@@ -299,21 +306,29 @@ public class DataHeadUtil {
 //		dataHead.setCommand("1234567812345678");
 //		dataHead.setDataTime(date);
 //		dataHead.setCameraId((byte)1);
+		System.out.println("useLastTime" + useLastTime);
+		if(useLastTime) {
+			mDataHead.setTotalPackage(total);
+			mDataHead.setDataLength(len);
+			mDataHead.setCurrentPackage(curr);
+			mDataHead.setPhoDesc(desc);
+			System.out.println("abc");
+			return mDataHead;
+		}
+		dao = new PreferencesDAO(this.mContext);
+		DataHead dataHead = new DataHead();
 		dataHead.setPho(dao.getPreferences().getPho());
 		dataHead.setSubStation(dao.getPreferencesByKey(Constant.STATION_SUB));
 		dataHead.setSurveyStation(dao.getPreferencesByKey(Constant.STATION_SURVEY));
 		dataHead.setPhoDesc(desc);
 		dataHead.setStationCode(dao.getPreferencesByKey(Constant.STATION_CODE));
 		dataHead.setCommand(dao.getPreferencesByKey(Constant.COMMAND));
-		if(useLastTime){
-			dataHead.setDataTime((lastTime==null?(lastTime=new Date()):lastTime));
-		}else{
-			dataHead.setDataTime(new Date());
-		}
+		dataHead.setDataTime(new Date());
 		dataHead.setCameraId((byte)1);
 		dataHead.setCurrentPackage(curr);
 		dataHead.setTotalPackage(total);
 		dataHead.setDataLength(len);
+		mDataHead = dataHead;
 		return dataHead;
 	}
 
