@@ -50,8 +50,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	/** 切换进度对话框进度*/
 	public static final int PROGRESS_DIALOG = 13;
 	
+	/** 上传*/
 	private Button mBtnUpload;
+	/** 上传所有*/
 	private Button mBtnUploadAll;
+	/** 照片描述*/
 	private EditText mTxtMessage;
 	/** 图片浏览Gallery*/
 	private Gallery mGallery;
@@ -63,6 +66,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private String mCurrentImg;
 	private UploadFile uploadFile;
 	private CutFileUtil cutFileUtil;
+	
+	private String mImagePath;
 	/**
 	 * 处理异步线程信息
 	 */
@@ -84,7 +89,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
@@ -99,11 +104,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "上传图片成功！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(UploadFileActivity.this, "成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
 				break;
 			case UploadFile.THROW_EXCEPTION:
 				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "上传时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -155,6 +160,14 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public void loadPicture() {
 		adapter = new ImageAdapter(this, PICTURE_FOLDER);
 		mGallery.setAdapter(adapter);
+		//默认选中第一项
+		PictureUtil pictureUtil = new PictureUtil();
+		if(adapter.getCount() > 0) {
+			Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(0) + ".big");
+	        mCurrentImg = adapter.getImagePath(0);
+	        mImageView.setImageBitmap(bitmap);
+	        mGallery.setSelection(0);
+		}
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 //	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
@@ -174,17 +187,18 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		switch(view.getId()) {
 		//上传一张图片
 		case R.id.btnUpload:
+			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
+			System.out.println(mImagePath);
 			showDialog();
 			Thread uploadOnePicThread = new Thread() {
 				@Override
 				public void run() {
 					try {
-						String imagePath = StringUtil.convertBackFolderPath(mCurrentImg);
-						System.out.println(imagePath);
-						cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath, mHandler);
+						String description = mTxtMessage.getText().toString();
+						cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
 						mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 						uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
-//						uploadFile.upload(cutFileUtil);
+						uploadFile.upload(cutFileUtil);
 					} catch (Exception e) {
 						Log.e(TAG, "throw a exception while upload a file!!");
 						e.printStackTrace();
@@ -201,12 +215,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public void showDialog() {
 		ProgressDialog progressDialog = new ProgressDialog(this);
-		CharSequence title = "ProgressDialog监听线程处理进度";
+		CharSequence title = "正在上传图片 " + mImagePath;
 		// CharSequence message = getString(R.string.xxx);
 		CharSequence message = "当前处理进度";
 		progressDialog = new ProgressDialog(this);
 		progressDialog.setTitle(title);
-		progressDialog.setMessage("正在切片....");
+		progressDialog.setMessage("正在处理图片（切片）....");
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		progressDialog.setButton("后台运行", new Dialog.OnClickListener() {
 			@Override
@@ -260,7 +274,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			Intent intent = new Intent();
 			intent.setClass(this, Main.class);
 			this.startActivity(intent);
-			this.finish();
 			break;
 		//退出系统
 		case R.id.menuExit:

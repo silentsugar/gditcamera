@@ -56,10 +56,14 @@ public class CutFileUtil {
 	
 	private int progress = 0;
 	
+	/** ’’∆¨√Ë ˆ*/
+	private String description;
+	
 	/** Context∂‘œÛ*/
 	private Context context;
 	
-	public CutFileUtil(Context context, String filePath, Handler handler) throws Exception {
+	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws Exception {
+		this.description = description;
 		this.handler = handler;
 		this.context = context;
 		this.filePath = filePath;
@@ -118,7 +122,7 @@ public class CutFileUtil {
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
 		try {
 			if(isFirst) {
-				packageHead = DataHeadUtil.getBytesHeadData(context, "’’∆¨√Ë ˆ", pieceNum, totalPieceNum, dataSize, false);
+				packageHead = DataHeadUtil.getBytesHeadData(context, description, pieceNum, totalPieceNum, dataSize, false);
 				isFirst = false;
 			}
 			else
@@ -192,5 +196,15 @@ public class CutFileUtil {
 		File file = new File(fileName);
 		return file.delete();
 	}
+
+	public int getTotalPieceNum() {
+		return totalPieceNum;
+	}
+
+	public void setTotalPieceNum(int totalPieceNum) {
+		this.totalPieceNum = totalPieceNum;
+	}
+	
+	
 	
 }

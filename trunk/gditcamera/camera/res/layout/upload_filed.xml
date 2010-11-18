@@ -49,7 +49,6 @@
 				android:id="@+id/img"
 				android:layout_width="250dip"
 				android:layout_height="250dip"
-				android:background="@drawable/a"
 				android:layout_gravity="center_horizontal"
 				android:layout_marginTop="10dip"
 			    android:layout_marginBottom="10dip"
