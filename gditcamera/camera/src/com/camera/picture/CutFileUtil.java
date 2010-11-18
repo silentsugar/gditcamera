@@ -50,7 +50,7 @@ public class CutFileUtil {
 	private List<String> pieceFiles;
 	
 	/** 标识是否第一次组装包*/
-	private boolean isFirst = false;
+	private boolean isFirst = true;
 	
 	private Handler handler;
 	
@@ -122,11 +122,13 @@ public class CutFileUtil {
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
 		try {
 			if(isFirst) {
+				System.out.println("isFirst : aaaaaaaaaaa " + isFirst);
 				packageHead = DataHeadUtil.getBytesHeadData(context, description, pieceNum, totalPieceNum, dataSize, false);
 				isFirst = false;
-			}
-			else
+			} else {
 				packageHead = DataHeadUtil.getBytesHeadData(context, "", pieceNum, totalPieceNum, dataSize, true);
+				System.out.println("isFirst : " + isFirst);
+			}
 		} catch (Exception e) {
 			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
 			e.printStackTrace();

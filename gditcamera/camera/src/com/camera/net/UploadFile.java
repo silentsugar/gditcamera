@@ -187,6 +187,7 @@ public class UploadFile {
 			Log.e(TAG, "failse to send the data to the server!");
 			e.printStackTrace();
 			handler.sendEmptyMessage(THROW_EXCEPTION);
+			currentThread.interrupt();
 		} finally {
 			//关闭线程
 			System.out.println("stop thread.....");
@@ -200,7 +201,6 @@ public class UploadFile {
 				e.printStackTrace();
 			}
 			sendType = -1;
-			isConnect = false;
 		}
 	}
 	
@@ -247,7 +247,7 @@ public class UploadFile {
 			} catch (Exception e) {
 				Log.e(TAG, "throw exception while receive data from server");
 //				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
-				handler.sendEmptyMessage(THROW_EXCEPTION);
+//				handler.sendEmptyMessage(THROW_EXCEPTION);
 				e.printStackTrace();
 			} 
 		}

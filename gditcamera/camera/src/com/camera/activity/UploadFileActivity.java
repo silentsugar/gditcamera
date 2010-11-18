@@ -50,6 +50,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private static final int FINISH_CUT_FILE = 12;
 	/** 切换进度对话框进度*/
 	public static final int PROGRESS_DIALOG = 13;
+	/** 上传多张图片的间隔时间*/
+	public static final int UPLOAD_INTERVAL = 2000;
 	
 	/** 上传*/
 	private Button mBtnUpload;
@@ -74,19 +76,39 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private String mImagePath;
 	
 	
-	Thread mUploadOnePicThread = new Thread() {
+	Thread mUploadOnePicThread = new UploadThread();
+	
+	public class UploadThread extends Thread {
+		
+		private int mInterval = 0;
+		
+		public UploadThread() {
+			super();
+		}
+		
+		public UploadThread(int interval) {
+			super();
+			this.mInterval = interval;
+		}
+		
+		
 		@Override
 		public void run() {
-			try {
-				String description = mTxtMessage.getText().toString();
-				cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
-				mHandler.sendEmptyMessage(FINISH_CUT_FILE);
-				uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
-				uploadFile.upload(cutFileUtil);
-			} catch (Exception e) {
-				Log.e(TAG, "throw a exception while upload a file!!");
-				e.printStackTrace();
-				mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
+			synchronized (this) {
+				try {
+					this.sleep(mInterval);
+					String description = mTxtMessage.getText().toString();
+					cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
+					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
+					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
+					uploadFile.upload(cutFileUtil);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					Log.e(TAG, "throw a exception while upload a file!!");
+					e.printStackTrace();
+					mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
+				}
 			}
 		}	
 	};
@@ -95,6 +117,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 处理异步线程信息
 	 */
 	Handler mHandler = new Handler() {
+		
 		@Override
 		public void handleMessage(Message msg) {
 			//图片目录刷新完
@@ -117,7 +140,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
-				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
 				dialog.setMessage("正在上传图片....");
 				break;
 			case UploadFile.CONNECTION_FAILSE:
@@ -156,6 +179,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 上传下一个文件
 	 */
 	public void uploadNextFile(boolean isLastSuccess) {
+		if(mUploadFileList.size() < 1)
+			return;
 		Object item = mUploadFileList.get(0);
 		if(isLastSuccess) {
 			mUploadFileList.addSuccess(item);
@@ -165,7 +190,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		mUploadFileList.remove(item);
 		if(mUploadFileList.size() < 1)
 			return;
-		mImagePath = StringUtil.convertBackFolderPath((String)mUploadFileList.get(0));
+		mImagePath = (String)mUploadFileList.get(0);
+		System.out.println("---------------------" + mImagePath + "----------------------------");
+		showDialog();
+		mUploadOnePicThread = new UploadThread(UPLOAD_INTERVAL);
 		mUploadOnePicThread.start();
 	}
 	
@@ -235,16 +263,20 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 			mUploadFileList.add(mImagePath);
 			showDialog();
+			mUploadOnePicThread = new UploadThread();
 			mUploadOnePicThread.start();
 			break;
 		case R.id.btnUploadAll:
 			int size = adapter.getCount();
 			if(size > 0) {
-				mCurrentImg = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
+				mImagePath = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
 			}
 			for(int i = 0; i < size; i ++) {
+				System.out.println(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
 				mUploadFileList.add(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
 			}
+			showDialog();
+			mUploadOnePicThread = new UploadThread();
 			mUploadOnePicThread.start();
 			break;
 		}
