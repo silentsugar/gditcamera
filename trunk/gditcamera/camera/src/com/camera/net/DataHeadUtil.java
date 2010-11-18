@@ -35,12 +35,12 @@ public class DataHeadUtil {
 	 */
 	public static void print(byte[] b) {
 		for (int i = 0; i < b.length; i++) {
-			System.out.print(b[i]);
-			if (i < b.length - 1)
-				System.out.print(",");
-			else {
-				System.out.println(" => " + bytes2int(b));
-			}
+//			System.out.print(b[i]);
+//			if (i < b.length - 1)
+//				System.out.print(",");
+//			else {
+//				System.out.println(" => " + bytes2int(b));
+//			}
 		}
 	}
 
@@ -128,10 +128,19 @@ public class DataHeadUtil {
 		/**Õ¾Âë(8byte)*/
 		String stationCode = dataHead.getStationCode();
 		byte [] stationCodeByte =stationCode2BCDbytes(stationCode);
-		for(int i=0;i<8;i++){
-			result[offset1++] = stationCodeByte[i];
-			System.out.println("0x" + Integer.toHexString(stationCodeByte[i]));
-		}
+//		for(int i=0;i<8;i++){
+//			result[offset1++] = stationCodeByte[i];
+////			System.out.println("0x" + Integer.toHexString(stationCodeByte[i]));
+//		}
+		result[offset1++] = 49;
+		result[offset1++] = 50;
+		result[offset1++] = 51;
+		result[offset1++] = 52;
+		result[offset1++] = 53;
+		result[offset1++] = 54;
+		result[offset1++] = 55;
+		result[offset1++] = 56;
+		
 		/**¿ÚÁî(16byte)*/
 //		String command = dataHead.getCommand();
 //		byte [] commandByte =StringUtil.getByteArrayByLength(command, "GB2312",16);
@@ -389,7 +398,7 @@ public class DataHeadUtil {
 		byte [] tmp = new byte[stationCodes.length()];
 		int len = tmp.length;
 		for(int i=0;i<len;i++){
-			tmp[i] = (byte)Integer.parseInt(stationCodes.charAt(i)+"");
+//			tmp[i] = (byte)Integer.parseInt(stationCodes.charAt(i)+"");
 		}
 		print(tmp);
 		if(len==8){

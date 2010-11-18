@@ -1,11 +1,6 @@
 package com.camera.activity;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -17,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -26,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.camera.net.UploadFile;
 import com.camera.util.Constant;
 import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
@@ -64,9 +59,11 @@ public class Main extends TabActivity implements OnClickListener {
 	private String stationCode;
 	private String path;
 	/**主机1、2 IP*/
-	private String host1Ip,host2Ip;
+	private String host1Ip,host2Ip, testIp;
 	/**主机1、2 Port*/
 	private String port1,port2;
+	private int testPort;
+	
 	
 	/**保存配置参数*/
 	private PreferencesDAO dao;
@@ -87,11 +84,20 @@ public class Main extends TabActivity implements OnClickListener {
 
 		@Override
 		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			if(msg.getData().getBoolean("success")){
-				Toast.makeText(Main.this, "该服务器能正常连接", 300).show();
-			}else{
-				Toast.makeText(Main.this, "连接失败", 300).show();
+			switch(msg.what) {
+			case UploadFile.TIME_OUT:
+				dialog.dismiss();
+				Toast.makeText(Main.this, "连接服务器超时,连接失败！", Toast.LENGTH_SHORT).show();
+				break;
+			
+			case UploadFile.CONNECTION_SUCCESS:
+				dialog.dismiss();
+				Toast.makeText(Main.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
+				break;
+			case UploadFile.CONNECTION_FAILSE:
+				dialog.dismiss();
+				Toast.makeText(Main.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				break;
 			}
 		}
 		
@@ -257,14 +263,14 @@ public class Main extends TabActivity implements OnClickListener {
 			}
 			break;
 		case R.id.btnTest1:
-//			if(checkServerConfig(1)){
-//				testServer(host1Ip, Integer.parseInt(port1));
-//			}
+			if(checkServerConfig(1)){
+				testServer(host1Ip, Integer.parseInt(port1));
+			}
 			break;
 		case R.id.btnTest2:
-//			if(checkServerConfig(2)){
-//				testServer(host2Ip, Integer.parseInt(port2));
-//			}
+			if(checkServerConfig(2)){
+				testServer(host2Ip, Integer.parseInt(port2));
+			}
 			break;
 		}
 	}
@@ -276,67 +282,17 @@ public class Main extends TabActivity implements OnClickListener {
 	 * @return
 	 */
 	public void testServer(final String ip, final int port){
-		dialog = ProgressDialog.show(this, "","正在连接..", true);
-		final Thread t1 = new Thread(new Runnable() {
+		this.testIp = ip;
+		this.testPort = port;
+		dialog = ProgressDialog.show(this, "","正在测试服务器连接...", true);
+		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				int count = 0;
-				while(running){
-					Log.d("while loop", count+"");
-					if(count++>5){
-						dialog.dismiss();
-						testSuccess = false;
-						running = false;
-						count = 0;
-					}
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						dialog.dismiss();
-						testSuccess = false;
-						running = false;
-						count = 0;
-						e.printStackTrace();
-					} catch (Exception e){
-						dialog.dismiss();
-						testSuccess = false;
-						running = false;
-						count = 0;
-						e.printStackTrace();
-					}
-				}
-			
+				UploadFile uploadFile = new UploadFile(Main.this, hander, this);
+				uploadFile.testServer(testIp, testPort);
 			}
-		});
-		t1.start();
-		
-		Thread t2 = new Thread(){
-
-			@Override
-			public void run() {
-				try {
-					Log.d("connecting to ", "ip="+ip+"port="+port);
-					Socket s = new Socket(ip,port);
-					if(s!=null){
-						Main.this.running = false;
-						dialog.dismiss();
-						testSuccess = true;
-					}
-				} catch (Exception e){
-//					e.printStackTrace();
-					dialog.dismiss();
-					testSuccess = false;
-				}
-
-				Message msg = Main.this.hander.obtainMessage();
-				Bundle data = new Bundle();
-				data.putBoolean("success", testSuccess);
-				msg.setData(data);
-				Main.this.hander.sendMessage(msg);
-			}
-			
 		};
-		t2.start();
+		t1.start();
 	}
 	/**
 	 * 检查输入参数是否有效
