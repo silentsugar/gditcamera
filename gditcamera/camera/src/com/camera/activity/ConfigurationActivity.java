@@ -30,7 +30,7 @@ import com.camera.widget.CEditTextButton;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
 
-public class Main extends TabActivity implements OnClickListener {
+public class ConfigurationActivity extends TabActivity implements OnClickListener {
 	
 	private final static int REQUESTCODE_FOLDER = 1;//定义转动选择文件的请求代号
 	
@@ -87,16 +87,16 @@ public class Main extends TabActivity implements OnClickListener {
 			switch(msg.what) {
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
-				Toast.makeText(Main.this, "连接服务器超时,连接失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity.this, "连接服务器超时,连接失败！", Toast.LENGTH_SHORT).show();
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
 				dialog.dismiss();
-				Toast.makeText(Main.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
 				break;
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
-				Toast.makeText(Main.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
 				break;
 			}
 		}
@@ -214,9 +214,6 @@ public class Main extends TabActivity implements OnClickListener {
 			this.startActivityForResult(intent3, REQUESTCODE_FOLDER);
 			break;
 		case R.id.btnUpdateManager:
-			Intent intent = new Intent();
-			intent.setClass(this, UploadFileActivity.class);
-			this.startActivity(intent);
 			this.finish();
 			break;
 		case R.id.btnExit:
@@ -288,7 +285,7 @@ public class Main extends TabActivity implements OnClickListener {
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				UploadFile uploadFile = new UploadFile(Main.this, hander, this);
+				UploadFile uploadFile = new UploadFile(ConfigurationActivity.this, hander, this);
 				uploadFile.testServer(testIp, testPort);
 			}
 		};
