@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.camera.activity.UploadFileActivity;
 import com.camera.picture.CutFileUtil;
 import com.camera.util.PreferencesDAO;
 import com.camera.vo.Preferences;
@@ -95,6 +96,7 @@ public class UploadFile {
 			int length = 0;
 			//从切片对象中一片片获取文件流，上传到服务器
 			int i = 0;
+			int total = mCutFileUtil.getTotalPieceNum();
 			while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
 				Log.i(TAG, "send " + ++i + " piece");
 				//标识未接收到
@@ -122,6 +124,10 @@ public class UploadFile {
 					isFinish = 0;
 					mCutFileUtil.removeCurrentFile();
 					Log.e(TAG, "hased send the paskage!");
+					Message msg = new Message();
+					msg.obj = (Integer)(i  * 100 / total);
+					msg.what = UploadFileActivity.PROGRESS_DIALOG;
+					handler.sendMessage(msg);
 				}
 			}
 
