@@ -45,6 +45,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private static final int REFRESH_FOLDER_SUCCESS = 10;
 	/** 刷新目录失败*/
 	private static final int REFRESH_FOLDER_ERR = 11;
+	/** 切片成功*/
+	private static final int FINISH_CUT_FILE = 12;
 	
 	private Button mBtnUpload;
 	private Button mBtnUploadAll;
@@ -68,6 +70,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			//图片目录刷新完
 			super.handleMessage(msg);
 			switch(msg.what) {
+			
+			case FINISH_CUT_FILE:
+				dialog.setMessage("正在连接服务器....");
+				break;
+				
+			case UploadFile.TIME_OUT:
+				dialog.dismiss();
+				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传失败！", Toast.LENGTH_SHORT).show();
+				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
 				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
@@ -156,7 +167,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//上传一张图片
 		case R.id.btnUpload:
 			dialog = ProgressDialog.show(this, "请稍候", 
-                    "正在上传图片......", true);
+                    "正在切片......", true);
 			Thread uploadOnePicThread = new Thread() {
 				@Override
 				public void run() {
@@ -164,11 +175,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 						String imagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 						System.out.println(imagePath);
 						cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath);
-						uploadFile = new UploadFile(UploadFileActivity.this, mHandler);
-//						uploadFile.upload(cutFileUtil);
+						mHandler.sendEmptyMessage(FINISH_CUT_FILE);
+						uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
+						uploadFile.upload(cutFileUtil);
 					} catch (Exception e) {
 						Log.e(TAG, "throw a exception while upload a file!!");
 						e.printStackTrace();
+						mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
 					}
 				}	
 			};
