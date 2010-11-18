@@ -37,28 +37,9 @@ public class IniControl {
 		if(!file.exists()) {
 			file.mkdir();
 		}
-//		cutFile(context);
 		return true;
 	}
 	
-	public static void cutFile(Context context) {
 
-		String filePath = Constant.SDCARD_PATH + "/camera/wUpload/a.txt";
-
-		try {
-			CutFileUtil cutFileUtil = new CutFileUtil(context, filePath);
-			byte[] buf = new byte[CutFileUtil.pieceSize];
-			//System.out.println("--------------------开始获取切片--------------------------");
-			while(cutFileUtil.getNextPiece(buf) != -1) {
-//				System.out.println("--------------------获取下一个切片--------------------------");
-//				String str = new String(buf, "GB2312");
-//				System.out.println(str);
-			}
-			//System.out.println("--------------------获取完所有切片--------------------------");
-		} catch (Exception e) {
-			Toast.makeText(context, "文件切错了！！", Toast.LENGTH_SHORT);
-			e.printStackTrace();
-		}
-	}
 	
 }
