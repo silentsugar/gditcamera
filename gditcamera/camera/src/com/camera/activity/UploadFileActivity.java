@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +45,7 @@ import com.camera.vo.UploadFileList;
 public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
+	public static final int ACTIVITY_REQUEST_CODE = 1;
 	
 	private static String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
 	/** 刷新目录成功*/
@@ -58,6 +60,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public static final int UPLOAD_INTERVAL = 2000;
 	/** 上传图片失败的重新上传延迟时间*/
 	public static final int REUPLOAD_INTERVAL = 30000;
+	
 	
 	/** 上传*/
 	private Button mBtnUpload;
@@ -96,7 +99,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			super();
 			this.mInterval = interval;
 		}
-		
 		
 		@Override
 		public void run() {
@@ -248,6 +250,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+	}
+	
 	/**
 	 * 获取控件
 	 */
@@ -357,29 +364,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		switch(item.getItemId()) {
 		//刷新目录图片
 		case R.id.menuRefresh:
-			dialog = ProgressDialog.show(this, "请稍候", 
-                    "正在刷新图片目录......", true);
-			Thread thread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						refreshFolder();
-						mHandler.sendEmptyMessage(REFRESH_FOLDER_SUCCESS);
-					} catch(Exception e ){
-						mHandler.sendEmptyMessage(REFRESH_FOLDER_ERR);
-					}
-					
-				}	
-			};
-			mHandler.post(thread);
-			thread.start();
-			mHandler.removeCallbacks(thread);
+			startRefreshFolder();
 			break;
 		//跳到配置界面
 		case R.id.menuConfig:
 			Intent intent = new Intent();
 			intent.setClass(this, ConfigurationActivity.class);
-			this.startActivity(intent);
+			this.startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
 			break;
 		//退出系统
 		case R.id.menuExit:
@@ -399,10 +390,34 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	}
 	
 	/**
+	 * 开启异步刷新目录
+	 */
+	public void startRefreshFolder() {
+		dialog = ProgressDialog.show(this, "请稍候", 
+                "正在刷新图片目录......", true);
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					refreshFolder();
+					mHandler.sendEmptyMessage(REFRESH_FOLDER_SUCCESS);
+				} catch(Exception e ){
+					mHandler.sendEmptyMessage(REFRESH_FOLDER_ERR);
+				}
+				
+			}	
+		};
+		thread.start();
+	}
+	
+	/**
 	 * 刷新目录图片，重新生成缩略图
 	 */
 	public void refreshFolder() throws Exception {
 		try {
+			//获取图片路径
+			PreferencesDAO preferencesDao = new PreferencesDAO(this);
+			PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
 			PictureUtil pictureUtil = new PictureUtil();
 			pictureUtil.clearThumbnail(PICTURE_FOLDER);
 			pictureUtil.createThumbnails(PICTURE_FOLDER);
@@ -410,6 +425,25 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			Log.e(TAG, "throw a exception while refresh the picture folder!");
 			e.printStackTrace();
 			throw new Exception("throw a exception while refresh the picture folder!");
+		}
+	}
+	
+	/**
+	 * 获取配置界面传回的参数
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch(requestCode){
+		case ACTIVITY_REQUEST_CODE:
+			if(resultCode == Activity.RESULT_OK){
+				PreferencesDAO preferencesDao = new PreferencesDAO(this);
+				String folderPath = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
+				if(!PICTURE_FOLDER.equals(folderPath)) {
+					startRefreshFolder();
+				}
+			}
+			break;
 		}
 	}
 }

@@ -1,11 +1,10 @@
 package com.camera.activity;
 
-import java.io.IOException;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,10 +18,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.Toast;
-
 import com.camera.net.UploadFile;
 import com.camera.util.Constant;
-import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.Preferences;
@@ -122,6 +119,12 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 		initInput();
 	}
 	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		//如果练习已经开始，不能切屏
+        super.onConfigurationChanged(newConfig);
+	}
+	
 	/**
 	 * 把已保存的配置参数填入输入框
 	 */
@@ -206,6 +209,8 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 			this.startActivityForResult(intent3, REQUESTCODE_FOLDER);
 			break;
 		case R.id.btnUpdateManager:
+			Intent intent = new Intent();
+			setResult(Activity.RESULT_OK, intent);//给父Activity放回值
 			this.finish();
 			break;
 		case R.id.btnExit:
