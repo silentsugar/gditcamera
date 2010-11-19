@@ -45,6 +45,8 @@ public class ImageAdapter extends BaseAdapter {
         pictureUtil = new PictureUtil();
         try {
         	mPaths = pictureUtil.getThumbnailPathsByFolder(folderPath);
+        	if(mPaths == null) 
+        		mPaths = new ArrayList<String>();
 		} catch (Exception e) {
 			Toast.makeText(mContext, "查找缩略图文件时出错！", Toast.LENGTH_SHORT);
 			e.printStackTrace();

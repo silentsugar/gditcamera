@@ -1,6 +1,7 @@
 package com.camera.activity;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -31,6 +32,7 @@ import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
 import com.camera.util.Constant;
+import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.UploadFileList;
@@ -204,6 +206,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		//初始化应用程序
+		try {
+			IniControl.initConfiguration(this);
+			Toast.makeText(this, "初始化出现成功！", Toast.LENGTH_SHORT);
+		} catch (IOException e) {
+			Toast.makeText(this, "初始化出现异常！", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 		
 		//检验配置文件是否存在，如果存在，则跳到配置界面
 //		File file = new File(Constant.PERFERENCES_FILE_PATH);

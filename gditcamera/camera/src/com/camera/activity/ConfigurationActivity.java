@@ -106,14 +106,6 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		//初始化应用程序
-		try {
-			IniControl.initConfiguration(this);
-			Toast.makeText(this, "初始化出现成功！", Toast.LENGTH_SHORT);
-		} catch (IOException e) {
-			Toast.makeText(this, "初始化出现异常！", Toast.LENGTH_SHORT);
-			e.printStackTrace();
-		}
 
 		mLayoutSubStation = (RelativeLayout) findViewById(R.id.layoutSubStation);
 		mLayoutCommand = (RelativeLayout) findViewById(R.id.layoutCommand);
