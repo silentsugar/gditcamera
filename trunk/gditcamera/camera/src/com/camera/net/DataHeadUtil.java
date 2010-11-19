@@ -8,9 +8,9 @@ import java.util.Date;
 import android.content.Context;
 import android.util.Log;
 
-import com.camera.util.Constant;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
+import com.camera.vo.Constant;
 import com.camera.vo.DataHead;
 
 /**
