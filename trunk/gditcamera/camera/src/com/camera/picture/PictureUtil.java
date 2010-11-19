@@ -122,6 +122,7 @@ public class PictureUtil {
 	
 	public File[] getThumbnailFile() throws Exception {
 		File folder = new File(Constant.THUMBNAIL_FOLDER);
+		System.out.println("" + Constant.THUMBNAIL_FOLDER);
 		if(!folder.exists() || !folder.isDirectory()) {
 			throw new Exception("Cant not find the folder");
 		}
