@@ -119,7 +119,8 @@ public class UploadFile {
 				if(isFinish == 2) {
 					errorCode = THROW_EXCEPTION;
 					currentThread.interrupt();
-				} else if(isFinish == 1) {
+				} 
+				if(isFinish == 1) {
 					//删除当前切片
 					isFinish = 0;
 					mCutFileUtil.removeCurrentFile();
@@ -164,10 +165,7 @@ public class UploadFile {
 			receiveThread.start();
 			//发送数据给服务器
 			switch(sendType) {
-			//测试服务器是否连接得通
-			case 0:
-				System.out.println("test server thread run.....");
-				break;
+
 			//发送单文件给服务器
 			case 1:
 				System.out.println("send file thread run.....");

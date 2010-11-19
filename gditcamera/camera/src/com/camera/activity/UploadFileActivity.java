@@ -56,6 +56,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public static final int PROGRESS_DIALOG = 13;
 	/** 上传多张图片的间隔时间*/
 	public static final int UPLOAD_INTERVAL = 2000;
+	/** 上传图片失败的重新上传延迟时间*/
+	public static final int REUPLOAD_INTERVAL = 30000;
 	
 	/** 上传*/
 	private Button mBtnUpload;
@@ -140,7 +142,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
-				uploadNextFile(false);
+				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
@@ -150,19 +152,24 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
-				uploadNextFile(false);
+				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
-			
+				
+			case UploadFile.CONNECT_TIME_OUT:
+				dialog.dismiss();
+				Toast.makeText(UploadFileActivity.this, "接收服务器数据超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				uploadNextFile(false, true, REUPLOAD_INTERVAL);
+				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
-				uploadNextFile(true);
+				uploadNextFile(true, false, UPLOAD_INTERVAL);
 				break;
 			case UploadFile.THROW_EXCEPTION:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
-				uploadNextFile(false);
+				uploadNextFile(false, true, REUPLOAD_INTERVAL);
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -181,8 +188,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	/**
 	 * 上传下一个文件
+	 * @param isLastSuccess 文件发送是否成功
+	 * @param isReSend 是否重新发送
+	 * @param delay 延迟发送秒数
 	 */
-	public void uploadNextFile(boolean isLastSuccess) {
+	public void uploadNextFile(boolean isLastSuccess, boolean isReSend, int delay) {
 		if(mUploadFileList.size() < 1)
 			return;
 		Object item = mUploadFileList.get(0);
@@ -191,13 +201,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		} else {
 			mUploadFileList.addFailse(item);
 		}
-		mUploadFileList.remove(item);
+		if(!isReSend) {
+			mUploadFileList.remove(item);
+		}
 		if(mUploadFileList.size() < 1)
 			return;
 		mImagePath = (String)mUploadFileList.get(0);
-		System.out.println("---------------------" + mImagePath + "----------------------------");
+//		System.out.println("---------------------" + mImagePath + "----------------------------");
 		showDialog();
-		mUploadOnePicThread = new UploadThread(UPLOAD_INTERVAL);
+		mUploadOnePicThread = new UploadThread(delay);
 		mUploadOnePicThread.start();
 	}
 	
@@ -262,6 +274,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(0) + ".big");
 	        mCurrentImg = adapter.getImagePath(0);
 	        mImageView.setImageBitmap(bitmap);
+	        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 	        mGallery.setSelection(0);
 		}
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
@@ -271,6 +284,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	            Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(position) + ".big");
 	            mCurrentImg = adapter.getImagePath(position);
 	            mImageView.setImageBitmap(bitmap);
+	            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 	        }
 	    });
 	}
