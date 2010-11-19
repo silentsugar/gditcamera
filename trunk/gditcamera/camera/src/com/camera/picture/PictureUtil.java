@@ -32,6 +32,8 @@ public class PictureUtil {
 	private int mTagetHeight;
 	/** 保存要应用上去的缩略图宽度*/
 	private int mTagetWidth;
+	private String[] imageSuffixs;
+	
 	
 	
 	/**
@@ -48,13 +50,40 @@ public class PictureUtil {
 		File[] files = folder.listFiles();
 		if(files.length > 0) 
 			filePaths = new ArrayList<String>();
+		//提取文件格式数组
+		String imageSuffix = Constant.IMAGE_SUFFIX;
+		imageSuffixs = imageSuffix.split(";");
 		for(File file : files) {
 			if(file.isDirectory()) {
 				continue;
 			}
-			filePaths.add(file.getAbsolutePath());
+			//检测文件是否是图片文件
+			if(isImage(file)) {
+				filePaths.add(file.getAbsolutePath());
+			}
 		}
 		return filePaths;
+	}
+	
+	/**
+	 * 检测文件是否是图片资源
+	 * @param file 文件
+	 * @return 是或否
+	 */
+	public boolean isImage(File file) {
+		String fileName = file.getName();
+		int point = fileName.lastIndexOf(".");
+		if(point < 0) {
+			return false;
+		}
+		String suffix = fileName.substring(point + 1);
+		System.out.println("suffix : " + suffix);
+		for(String str : imageSuffixs) {
+			if(suffix.toUpperCase().equals(str)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

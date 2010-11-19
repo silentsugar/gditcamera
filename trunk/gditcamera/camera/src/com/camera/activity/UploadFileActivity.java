@@ -179,6 +179,17 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				mGallery.setAdapter(adapter);
 				adapter.notifyDataSetChanged();
 				dialog.dismiss();
+				//选中第一项
+				PictureUtil pictureUtil = new PictureUtil();
+				if(adapter.getCount() > 0) {
+					Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(0) + ".big");
+			        mCurrentImg = adapter.getImagePath(0);
+			        mImageView.setImageBitmap(bitmap);
+			        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+			        mGallery.setSelection(0);
+				} else {
+					mImageView.setImageResource(0);
+				}
 				break;
 			case REFRESH_FOLDER_ERR:
 				Toast.makeText(UploadFileActivity.this, "刷新目录失败！", Toast.LENGTH_SHORT).show();

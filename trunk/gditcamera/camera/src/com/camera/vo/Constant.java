@@ -24,7 +24,7 @@ public class Constant {
 	/** 应用程序图片切片目录*/
 	public static final String PIECE_FOLDER = SDCARD_PATH + "/camera/wUpload/";
 	/** 图片的格式*/
-	public static final String IMAGE_SUFFIX = "BMP;PCX;TIFF;GIF;JPEG;TGA;EXIF;FPX;SVG;PSD;CDR;PCD;DXF;UFO;EPS;PNG;";
+	public static final String IMAGE_SUFFIX = "BMP;PCX;TIFF;GIF;JPEG;JPG;TGA;EXIF;FPX;SVG;PSD;CDR;PCD;DXF;UFO;EPS;PNG;";
 	
 	
 	/** 缩略图保存目录*/
