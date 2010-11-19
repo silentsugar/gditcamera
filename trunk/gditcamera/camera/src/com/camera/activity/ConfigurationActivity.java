@@ -145,14 +145,14 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				etHost1Port.setText(port1+"");
 				setModifyEnable(false, 1);
 			}else{
-				mBtnTest1.setEnabled(false);
+				mBtnTest1.setEnabled(true);
 			}
 			if(ip2!=null){
 				etHost2Ip.setText(ip2);
 				etHost2Port.setText(port2+"");
 				setModifyEnable(false, 2);
 			}else{
-				mBtnTest2.setEnabled(false);
+				mBtnTest2.setEnabled(true);
 			}
 		}else{
 			setModifyEnable(true);
@@ -173,8 +173,8 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 		/**
 		 * 测试功能先不搞...
 		 */
-		mBtnTest1.setEnabled(false);
-		mBtnTest2.setEnabled(false);
+		mBtnTest1.setEnabled(true);
+		mBtnTest2.setEnabled(true);
 		
 		
 		etSubStation = (EditText) this.findViewById(R.id.etSubStation);

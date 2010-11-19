@@ -149,39 +149,54 @@
 			    <!-- 中间布局 -->
 				<ScrollView
 					android:id="@+id/tab_2" 
-					android:padding="20dip"
 					android:background="@color/gray"
 					android:layout_width="fill_parent"
-					android:layout_height="fill_parent">
+					android:layout_height="fill_parent"
+					android:layout_marginBottom="40dip"
+					>
 					
-					<TableLayout
+					<LinearLayout
 						android:layout_width="fill_parent"
 						android:layout_height="fill_parent"
-						android:stretchColumns="2">
+						android:padding="20dip"
+						android:orientation="vertical">
 
-						    <TableRow>
+						    <RelativeLayout
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content">
+								
 						        <TextView
-						            android:layout_column="0"
 						            android:text="服务器地址1:"
 						            android:textColor="@color/black"
-						            android:padding="3dip" />
+						            android:padding="3dip" 
+						            android:layout_width="fill_parent"
+						            android:layout_alignParentLeft="true"
+						            android:layout_marginRight="110dip"
+						            android:layout_height="wrap_content"/>
 						        <TextView
-						            android:layout_column="1"
 						            android:text="端口:"
+						            android:layout_alignParentRight="true"
 						            android:textColor="@color/black"
-						            android:padding="3dip" />
-						    </TableRow>
+						            android:padding="3dip"  
+						            android:layout_width="90dip"
+						            android:layout_height="wrap_content"/>
+						    </RelativeLayout>
 						
-						    <TableRow
+						    <RelativeLayout
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
 						    	android:id="@+id/trHost1">
+						    	
 						        <EditText
 						    		android:id="@+id/etHost1Ip"
 						            android:layout_column="0"
 						        	android:gravity="left"
-						        	android:layout_width="190dip"
-						        	android:layout_height="wrap_content"
 						        	android:singleLine="true"
-						        	android:hint="eg:192.168.1.1"/>
+						        	android:hint="eg:192.168.1.1"
+						        	android:layout_width="fill_parent"
+						            android:layout_alignParentLeft="true"
+						            android:layout_marginRight="110dip"
+						            android:layout_height="wrap_content"/>
 						        <EditText
 						    		android:id="@+id/etHost1Port"
 						        	android:layout_marginTop="3dip"
@@ -189,9 +204,10 @@
 						        	android:layout_width="90dip"
 						        	android:layout_height="wrap_content"
 						        	android:singleLine="true"
-						        	android:hint="eg:8080"/>
+						        	android:layout_alignParentRight="true"
+						        	android:hint="eg:80"/>
 						        	
-						    </TableRow>
+						    </RelativeLayout>
 							
 							<RelativeLayout
 									android:id="@+id/layoutBtnSaveTest1"
@@ -223,28 +239,42 @@
 						
 						    <View
 						        android:layout_height="2dip"
+						        android:layout_marginTop="5dip"
 						        android:background="#FFFFFFFF" />
-						    <TableRow>
+						    <RelativeLayout
+									android:layout_width="fill_parent"
+									android:layout_height="wrap_content">
 						        <TextView
 						            android:layout_column="0"
 						            android:text="服务器地址2:"
 						            android:textColor="@color/black"
-						            android:padding="3dip" />
+						            android:padding="3dip" 
+						            android:layout_width="fill_parent"
+						            android:layout_alignParentLeft="true"
+						            android:layout_marginRight="110dip"
+						            android:layout_height="wrap_content"/>
 						        <TextView
-						            android:layout_column="1"
 						            android:text="端口:"
+						            android:layout_alignParentRight="true"
 						            android:textColor="@color/black"
-						            android:padding="3dip" />
-						    </TableRow>
+						            android:padding="3dip"  
+						            android:layout_width="90dip"
+						            android:layout_height="wrap_content"/>
+						    </RelativeLayout>
 						
-						    <TableRow
-						    	android:id="@+id/trHost2">
+						   <RelativeLayout
+								android:layout_width="fill_parent"
+								android:layout_height="wrap_content"
+					    		android:id="@+id/trHost2">
+					    		
 						        <EditText
 						        	android:id="@+id/etHost2Ip"
 						            android:layout_column="0"
 						        	android:gravity="left"
-						        	android:layout_width="190dip"
-						        	android:layout_height="wrap_content"
+						        	android:layout_width="fill_parent"
+						            android:layout_alignParentLeft="true"
+						            android:layout_marginRight="110dip"
+						            android:layout_height="wrap_content"
 						        	android:singleLine="true"
 						        	android:hint="eg:192.168.1.1"/>
 						        <EditText
@@ -254,9 +284,10 @@
 						        	android:layout_width="90dip"
 						        	android:layout_height="wrap_content"
 						        	android:singleLine="true"
-						        	android:hint="eg:8080"/>
+						        	android:layout_alignParentRight="true"
+						        	android:hint="eg:80"/>
 						        	
-						    </TableRow>
+						    </RelativeLayout>
 					
 						        
 							<RelativeLayout
@@ -287,7 +318,7 @@
 						        
 							</RelativeLayout>
 						
-					</TableLayout>
+					</LinearLayout>
 						
 				</ScrollView>
 	            

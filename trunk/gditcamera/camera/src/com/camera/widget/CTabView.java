@@ -29,6 +29,7 @@ public class CTabView extends RelativeLayout {
 	private TextView mTextView;
 	/** 在内部增加多一个监听器*/
 	private OnClickListener mInnerOnClickListener = null;
+	private OnFocusChangeListener mOnFocusChangeListener = null;
 	
 	private CTabView(Context context) {
 		super(context);
@@ -36,7 +37,7 @@ public class CTabView extends RelativeLayout {
 		mTextView = new TextView(context);
 	}
 	
-	public static class CTabViewFactory implements OnClickListener {
+	public static class CTabViewFactory implements OnClickListener, OnFocusChangeListener {
 		
 		/** 图像资源ID*/
 		private int mImageResource = android.R.drawable.stat_sys_phone_call;
@@ -90,6 +91,7 @@ public class CTabView extends RelativeLayout {
 			initConext();
 			//增加事件监听，实现选项一被点击，先换样式，再把其他的按钮换成默认样式
 			mTabView.setInnerOnClickListener(this);
+			mTabView.setInnerOnFocusChangeListener(this);
 			return mTabView;
 		}
 		
@@ -301,6 +303,23 @@ public class CTabView extends RelativeLayout {
 			this.mHeight = mHeight;
 		}
 
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			System.out.println("hasFocus" + hasFocus);
+			if(mTabView.mInnerOnClickListener == null)
+				return;
+			if(!mIsShowClickedBackground)
+				return;
+			for(CTabView tv : mTabViewList) {
+				if(!tv.equals(v))
+					tv.setBackgroundResource(CTabViewFactory.this.mBackgroundResource);
+				else {
+					v.setBackgroundResource(CTabViewFactory.this.mClickedBackground);
+					((CTabView)v).mInnerOnClickListener.onClick(v);
+				}
+			}
+		}
+
 	}
 	
 	/**
@@ -313,6 +332,15 @@ public class CTabView extends RelativeLayout {
 	
 	public void setInnerOnClickListener(OnClickListener listener) {
 		super.setOnClickListener(listener);
+	}
+
+	@Override
+	public void setOnFocusChangeListener(OnFocusChangeListener l) {
+		this.mOnFocusChangeListener = l;
+	}
+	
+	public void setInnerOnFocusChangeListener(OnFocusChangeListener listener) {
+		super.setOnFocusChangeListener(listener);
 	}
 	
 }
