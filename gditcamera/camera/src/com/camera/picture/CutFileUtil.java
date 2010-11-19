@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.camera.activity.UploadFileActivity;
 import com.camera.net.DataHeadUtil;
-import com.camera.util.Constant;
+import com.camera.vo.Constant;
 
 
 public class CutFileUtil {

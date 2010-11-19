@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import com.camera.net.ClientThread;
 //import com.camera.net.ServerThread;
-import com.camera.util.Constant;
+import com.camera.vo.Constant;
 import com.camera.vo.DataHead;
 
 /**

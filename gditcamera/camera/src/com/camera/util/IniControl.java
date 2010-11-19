@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.camera.picture.CutFileUtil;
+import com.camera.vo.Constant;
 
 import android.content.Context;
 import android.os.Environment;

@@ -9,8 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import com.camera.util.Constant;
 import com.camera.util.StringUtil;
+import com.camera.vo.Constant;
 
 /**
  * 文件操作类

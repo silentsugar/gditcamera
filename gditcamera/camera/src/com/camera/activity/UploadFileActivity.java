@@ -32,10 +32,10 @@ import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
 import com.camera.picture.PictureUtil;
-import com.camera.util.Constant;
 import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
+import com.camera.vo.Constant;
 import com.camera.vo.UploadFileList;
 
 /**

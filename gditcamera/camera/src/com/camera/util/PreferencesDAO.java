@@ -7,6 +7,7 @@ import java.util.Set;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.camera.vo.Constant;
 import com.camera.vo.Preferences;
 
 /**
