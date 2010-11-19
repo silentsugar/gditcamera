@@ -253,7 +253,7 @@ public class PictureUtil {
 			mTagetWidth = width;
 			mTagetHeight = oriHeight * width / oriWidth;
 		} else {
-			mTagetWidth = width;
+			mTagetHeight = height;
 			mTagetWidth = oriWidth * height / oriHeight;
 		}
 	}
