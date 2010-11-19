@@ -82,7 +82,7 @@ public class ImageAdapter extends BaseAdapter {
     	ImageView imageView = null;
 		imageView = new ImageView(mContext);
         imageView.setLayoutParams(new Gallery.LayoutParams(100, 100));
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imageView.setBackgroundResource(mGalleryItemBackground);
         
         //获取图片资源
@@ -90,7 +90,6 @@ public class ImageAdapter extends BaseAdapter {
         if(bitmap == null)
         	return null;
         imageView.setImageBitmap(bitmap);
-        imageView.setAdjustViewBounds(true);
         return imageView;
     }
 }

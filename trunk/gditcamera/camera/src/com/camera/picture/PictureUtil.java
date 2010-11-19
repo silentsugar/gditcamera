@@ -28,6 +28,11 @@ public class PictureUtil {
 	private int thumbnailWidth2 = 300;
 	/** 图片缩略图的高度*/
 	private int thumbnailHeight2 = 300;
+	/** 保存要应用上去的缩略图高度*/
+	private int mTagetHeight;
+	/** 保存要应用上去的缩略图宽度*/
+	private int mTagetWidth;
+	
 	
 	/**
 	 * 获取目录下面的文件
@@ -163,7 +168,8 @@ public class PictureUtil {
 		if (bitmap == null) 
 			throw new Exception("Can't get the file!");
 		//创建缩略
-		Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth, thumbnailHeight);
+		this.calculateThumbnailSize(bitmap.getWidth(), bitmap.getHeight(), thumbnailWidth, thumbnailHeight);
+		Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(bitmap, mTagetWidth, mTagetHeight);
 		//保存小的缩略图到指定目录
 		thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
 		File bitmapFile = new File(thumbnailPath);
@@ -176,7 +182,8 @@ public class PictureUtil {
 		}
 		bitmapWtriter.close();
 		//保存大的缩略图到指定目录
-		Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap, thumbnailWidth2, thumbnailHeight2);
+		this.calculateThumbnailSize(bitmap.getWidth(), bitmap.getHeight(), thumbnailWidth2, thumbnailHeight2);
+		Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap, mTagetWidth, mTagetHeight);
 		String thumbnailPath2 = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
 		File bitmapFile2 = new File(thumbnailPath2);
 		if (bitmapFile2.exists()) {
@@ -204,6 +211,21 @@ public class PictureUtil {
 			if(path.contains(thumbnailFolderPath)) {
 				file.delete();
 			}
+		}
+	}
+	
+	/**
+	 * 计算缩略图的高度和宽度
+	 * @param oriWidth 真实图片的宽度
+	 * @param oriHeight 真实图片的高度
+	 */
+	public void calculateThumbnailSize(int oriWidth, int oriHeight, int width, int height) {
+		if(oriWidth > oriHeight) {
+			mTagetWidth = width;
+			mTagetHeight = oriHeight * width / oriWidth;
+		} else {
+			mTagetWidth = width;
+			mTagetWidth = oriWidth * height / oriHeight;
 		}
 	}
 
