@@ -19,7 +19,7 @@ public class StringUtil {
 	public static String convertFolderPath(String filePath) {
 		if(filePath.charAt(0) == '/')
 			filePath = filePath.substring(1);
-		return filePath.replace("/", "_");
+		return filePath.replace("/", "ifkfguj");
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class StringUtil {
 	public static String convertBackFolderPath(String filePath) {
 		int position = filePath.lastIndexOf("/");
 		String strTmp = filePath.substring(position);
-		return strTmp.replace("_", "/");
+		return strTmp.replace("ifkfguj", "/");
 	}
 	
 	/**
