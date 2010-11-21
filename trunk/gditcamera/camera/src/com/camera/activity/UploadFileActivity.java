@@ -1,6 +1,7 @@
 package com.camera.activity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.Activity;
@@ -56,6 +57,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private static final int FINISH_CUT_FILE = 12;
 	/** 切换进度对话框进度*/
 	public static final int PROGRESS_DIALOG = 13;
+	/** 切换进度对话框进度*/
+	public static final int FILE_NOT_FIND = 14;
 	/** 上传多张图片的间隔时间*/
 	public static final int UPLOAD_INTERVAL = 2000;
 	/** 上传图片失败的重新上传延迟时间*/
@@ -110,6 +113,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
 					uploadFile.upload(cutFileUtil);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					mHandler.sendEmptyMessage(FILE_NOT_FIND);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (Exception e) {
@@ -135,6 +141,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case PROGRESS_DIALOG:
 				System.out.println((Integer)msg.obj);
 				((ProgressDialog)dialog).setProgress((Integer)msg.obj);
+				break;
+			
+			case FILE_NOT_FIND:
+				dialog.dismiss();
+				Toast.makeText(UploadFileActivity.this, "未找到文件 " + mImagePath + " ，请尝试刷新一下！", Toast.LENGTH_SHORT).show();
 				break;
 				
 			case FINISH_CUT_FILE:

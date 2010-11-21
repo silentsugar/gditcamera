@@ -62,14 +62,14 @@ public class CutFileUtil {
 	/** Context∂‘œÛ*/
 	private Context context;
 	
-	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws Exception {
+	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws FileNotFoundException {
 		this.description = description;
 		this.handler = handler;
 		this.context = context;
 		this.filePath = filePath;
 		file = new File(filePath);
 		if(!file.exists()) {
-			throw new Exception("File not exist!");
+			throw new FileNotFoundException("File not exist!");
 		}
 		pieceFiles = new ArrayList<String>();
 		cutFile();
