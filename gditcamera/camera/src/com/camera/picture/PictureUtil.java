@@ -185,6 +185,7 @@ public class PictureUtil {
 		
 	}
 	
+	
 	/**
 	 * 创建文件缩略图到指定目录
 	 * @param filePath
@@ -240,6 +241,17 @@ public class PictureUtil {
 			if(path.contains(thumbnailFolderPath)) {
 				file.delete();
 			}
+		}
+	}
+	
+	/**
+	 * 清除切片目录
+	 */
+	public void clearImagePieces() {
+		File folder = new File(Constant.PIECE_FOLDER);
+		File[] files = folder.listFiles();
+		for(File file : files) {
+			file.delete();
 		}
 	}
 	

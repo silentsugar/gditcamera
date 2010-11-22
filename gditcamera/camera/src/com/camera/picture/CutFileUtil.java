@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.camera.activity.UploadFileActivity;
 import com.camera.net.DataHeadUtil;
+import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
 
 
@@ -24,7 +25,7 @@ public class CutFileUtil {
 	public static final String TAG = "CutFileUtil";
 	
 	/** 切片的大小*/
-	public static final int pieceSize = 5000;
+	public static final int pieceSize = 10000;
 	/** 包头信息*/
 	private static byte[] packageHead;
 	
@@ -72,7 +73,40 @@ public class CutFileUtil {
 			throw new FileNotFoundException("File not exist!");
 		}
 		pieceFiles = new ArrayList<String>();
+		//检测图片是否已经有切片
+		if(isExistPieces()) {
+			return;
+		}
 		cutFile();
+	}
+	
+	/**
+	 * 查找是否已有切片存在 
+	 * @return
+	 */
+	public boolean isExistPieces() {
+		String pieceName = StringUtil.convertFolderPath(filePath) + "_";
+		int count = 0;
+		Log.i(TAG, "Conver to piece name :" + pieceName);
+		File folder = new File(Constant.PIECE_FOLDER);
+		File[] files = folder.listFiles();
+		String fileName = null;
+		for(File file : files) {
+			fileName = file.getName();
+			if(fileName.contains(pieceName)) {
+				count ++;
+				Log.i(TAG, "Find exist piece file : " + file.getName());
+			}
+		}
+		if(count > 0) {
+			totalPieceNum = count;
+			for(int i = 1; i <= count; i ++) {
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i);
+				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -115,7 +149,8 @@ public class CutFileUtil {
 	 * @throws IOException
 	 */
 	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
-		String pieceName = Constant.PIECE_FOLDER + pieceNum;
+		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  pieceNum;
+		Log.i(TAG, "piece file name : " + pieceName);
 		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
 		System.out.println("dataSize:" + dataSize);
@@ -161,7 +196,7 @@ public class CutFileUtil {
 			pieceSizeTmp = in.available();
 			in.read(buf);
 		} catch (Exception e) {
-			Toast.makeText(context, "获取切片失败！", Toast.LENGTH_SHORT);
+//			Toast.makeText(context, "获取切片失败！", Toast.LENGTH_SHORT);
 			e.printStackTrace();
 		}
 		
@@ -197,6 +232,13 @@ public class CutFileUtil {
 			return false;
 		File file = new File(fileName);
 		return file.delete();
+	}
+	
+	public void removeAllPieceFile() {
+		for(String filePath : pieceFiles) {
+			File file = new File(filePath);
+			file.delete();
+		}
 	}
 
 	public int getTotalPieceNum() {
