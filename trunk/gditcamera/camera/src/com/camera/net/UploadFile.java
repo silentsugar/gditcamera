@@ -34,7 +34,7 @@ public class UploadFile {
 	/** 服务器连接超时时间*/
 	public static final int CONNECT_TIME_OUT = 5000;
 	/** 连接文件超时*/
-	public static final int SEND_TIME_OUT = 6000;
+	public static final int SEND_TIME_OUT = 10000;
 	
 	/** 服务器接收线程睡眠时间*/
 	private static final int RECEIVE_THREAD_SLEEP_TIME = 500;
@@ -100,6 +100,7 @@ public class UploadFile {
 			while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
 				Log.i(TAG, "send " + ++i + " piece");
 				//标识未接收到
+				System.out.println("length : " + length);
 				out.write(dataBuf, 0, length);
 				//如果服务器尚未确认包发送成功，则处于等待状态
 				//服务器确认发送成功
@@ -123,7 +124,7 @@ public class UploadFile {
 				if(isFinish == 1) {
 					//删除当前切片
 					isFinish = 0;
-					mCutFileUtil.removeCurrentFile();
+//					mCutFileUtil.removeCurrentFile();
 					Log.e(TAG, "hased send the paskage!");
 					Message msg = new Message();
 					msg.obj = (Integer)(i  * 100 / total);
@@ -134,6 +135,7 @@ public class UploadFile {
 
 			//文件上传完,通知界面已经上传好了一个文件
 			handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
+			mCutFileUtil.removeAllPieceFile();
 			System.out.println("finish send a file to the server!");
 		}
 	}

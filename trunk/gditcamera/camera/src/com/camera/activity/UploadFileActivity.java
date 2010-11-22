@@ -65,10 +65,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public static final int PROGRESS_DIALOG = 13;
 	/** 切换进度对话框进度*/
 	public static final int FILE_NOT_FIND = 14;
+	/** 开始上传*/
+	public static final int START_UPLOAD = 15;
 	/** 上传多张图片的间隔时间*/
-	public static final int UPLOAD_INTERVAL = 2000;
+	public static final int UPLOAD_INTERVAL = 4000;
 	/** 上传图片失败的重新上传延迟时间*/
-	public static final int REUPLOAD_INTERVAL = 30000;
+	public static final int REUPLOAD_INTERVAL = 4000;
 	
 	
 	/** 上传*/
@@ -116,6 +118,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			synchronized (this) {
 				try {
 					this.sleep(mInterval);
+					mHandler.sendEmptyMessage(START_UPLOAD);
 					String description = mTxtMessage.getText().toString();
 					cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
@@ -158,6 +161,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				
 			case FINISH_CUT_FILE:
 				dialog.setMessage("正在连接服务器....");
+				break;
+				
+			case START_UPLOAD:
+				if(!dialog.isShowing()) {
+					dialog.show();
+				}
 				break;
 				
 			case UploadFile.TIME_OUT:
@@ -267,6 +276,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		mImagePath = (String)mUploadFileList.get(0);
 //		System.out.println("---------------------" + mImagePath + "----------------------------");
 		showDialog();
+		dialog.dismiss();
 		mUploadOnePicThread = new UploadThread(delay);
 		mUploadOnePicThread.start();
 	}
@@ -432,16 +442,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			break;
 		//退出系统
 		case R.id.menuExit:
-			Builder builder = new Builder(this);
-			builder.setTitle("提示").setMessage("您是否要退出系统？");
-			builder.setNeutralButton("确定", new Dialog.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					exit();
-				}
-			});
-			builder.setNegativeButton("取消", null);
-			builder.show();
+			exit();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -451,8 +452,17 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 退出程序
 	 */
 	public void exit() {
-		ActivityManager activityMgr= (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-		activityMgr.restartPackage(getPackageName());
+		Builder builder = new Builder(this);
+		builder.setTitle("提示").setMessage("您是否要退出系统？");
+		builder.setNegativeButton("取消", null);
+		builder.setPositiveButton("确定", new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				ActivityManager activityMgr= (ActivityManager) UploadFileActivity.this.getSystemService(ACTIVITY_SERVICE);
+				activityMgr.restartPackage(getPackageName());
+			}
+		});
+		builder.show();
 	}
 	
 	/**
@@ -487,6 +497,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			PictureUtil pictureUtil = new PictureUtil();
 			pictureUtil.clearThumbnail(PICTURE_FOLDER);
 			pictureUtil.createThumbnails(PICTURE_FOLDER);
+			pictureUtil.clearImagePieces();
 		} catch (Exception e) {
 			Log.e(TAG, "throw a exception while refresh the picture folder!");
 			e.printStackTrace();
@@ -516,22 +527,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(keyCode==KeyEvent.KEYCODE_BACK){
-			Builder builder = new Builder(this);
-			builder.setTitle("提示").setMessage("您是否要退出系统？");
-			builder.setNeutralButton("后台运行", new Dialog.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-//					hi
-				}
-			});
-			builder.setNegativeButton("取消", null);
-			builder.setPositiveButton("确定", new Dialog.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					exit();
-				}
-			});
-			builder.show();
+			exit();
 			return false;
 		}else{
 			return super.onKeyDown(keyCode, event);
