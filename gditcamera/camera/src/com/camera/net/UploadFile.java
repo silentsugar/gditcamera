@@ -101,6 +101,7 @@ public class UploadFile {
 				Log.i(TAG, "send " + ++i + " piece");
 				//标识未接收到
 				System.out.println("length : " + length);
+				System.out.println(dataBuf.length);
 				out.write(dataBuf, 0, length);
 				//如果服务器尚未确认包发送成功，则处于等待状态
 				//服务器确认发送成功
