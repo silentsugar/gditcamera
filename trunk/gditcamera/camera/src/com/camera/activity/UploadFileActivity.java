@@ -1,13 +1,16 @@
 package com.camera.activity;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,18 +19,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
@@ -47,6 +51,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
 	public static final int ACTIVITY_REQUEST_CODE = 1;
+	private static int NOTIFICATION_ID = 1;
 	
 	private static String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
 	/** 刷新目录成功*/
@@ -81,6 +86,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private String mCurrentImg;
 	private UploadFile uploadFile;
 	private CutFileUtil cutFileUtil;
+	
+	private NotificationManager mNotificationManager;
 	
 	/** 上传文件列表*/
 	private UploadFileList mUploadFileList = new UploadFileList();
@@ -155,6 +162,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "连接服务器超时，上传图片 " + mImagePath + " 失败！");
 				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 			
@@ -165,23 +173,27 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "连接服务器失败！");
 				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 				
 			case UploadFile.CONNECT_TIME_OUT:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "接收服务器数据超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "接收服务器数据超时，上传图片 " + mImagePath + " 失败！");
 				uploadNextFile(false, true, REUPLOAD_INTERVAL);
 				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传成功", "成功上传图片  " + mImagePath + " ！");
 				uploadNextFile(true, false, UPLOAD_INTERVAL);
 				break;
 			case UploadFile.THROW_EXCEPTION:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传成功", "上传图片 " + mImagePath + " 时出现异常，上传失败！");
 				uploadNextFile(false, true, REUPLOAD_INTERVAL);
 				break;
 			//正在刷新目录
@@ -209,6 +221,27 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
+	
+	public void sendNotification(String title, String message) {
+		
+		if(mNotificationManager == null) {
+			String ns = Context.NOTIFICATION_SERVICE;
+			mNotificationManager = (NotificationManager) getSystemService(ns);
+		}
+				
+		int icon = R.drawable.icon;        // icon from resources
+		CharSequence tickerText = "camera";              // ticker-text
+		long when = System.currentTimeMillis();         // notification time
+		Context context = getApplicationContext();      // application Context
+
+		Intent notificationIntent = new Intent(this, UploadFileActivity.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+		Notification notification = new Notification(icon, tickerText, when);
+		notification.setLatestEventInfo(context, title, message, contentIntent);
+		
+		mNotificationManager.notify(NOTIFICATION_ID ++, notification);
+	}
 	
 	/**
 	 * 上传下一个文件
@@ -398,13 +431,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		case R.id.menuExit:
 			Builder builder = new Builder(this);
 			builder.setTitle("提示").setMessage("您是否要退出系统？");
-			builder.setNegativeButton("确定", new Dialog.OnClickListener() {
+			builder.setNeutralButton("确定", new Dialog.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					finish();
 				}
 			});
-			builder.setNeutralButton("取消", null);
+			builder.setNegativeButton("取消", null);
 			builder.show();
 			break;
 		}
@@ -466,6 +499,26 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				}
 			}
 			break;
+		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+			Builder builder = new Builder(this);
+			builder.setTitle("提示").setMessage("您是否要退出系统？");
+			builder.setNeutralButton("后台运行", new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			builder.setNegativeButton("取消", null);
+			builder.setPositiveButton("确定", null);
+			builder.show();
+			return false;
+		}else{
+			return super.onKeyDown(keyCode, event);
 		}
 	}
 }
