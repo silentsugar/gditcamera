@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.Notification;
@@ -417,6 +418,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
+		case R.id.menuNotification:
+			
 		//刷新目录图片
 		case R.id.menuRefresh:
 			startRefreshFolder();
@@ -434,7 +437,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			builder.setNeutralButton("确定", new Dialog.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					finish();
+					exit();
 				}
 			});
 			builder.setNegativeButton("取消", null);
@@ -442,6 +445,14 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * 退出程序
+	 */
+	public void exit() {
+		ActivityManager activityMgr= (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+		activityMgr.restartPackage(getPackageName());
 	}
 	
 	/**
@@ -510,11 +521,16 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			builder.setNeutralButton("后台运行", new Dialog.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					finish();
+//					hi
 				}
 			});
 			builder.setNegativeButton("取消", null);
-			builder.setPositiveButton("确定", null);
+			builder.setPositiveButton("确定", new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					exit();
+				}
+			});
 			builder.show();
 			return false;
 		}else{
