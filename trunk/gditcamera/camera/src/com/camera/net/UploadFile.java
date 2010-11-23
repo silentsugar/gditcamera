@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import android.content.Context;
 import android.os.Handler;
@@ -17,7 +18,7 @@ import com.camera.vo.Preferences;
 
 public class UploadFile {
 	
-	public static final String TAG = "SocketManager";
+	public static final String TAG = "UploadFile";
 	
 	//服务器信息
 	public static final int PACKAGE_SEND_FAIL = -1;
@@ -79,13 +80,7 @@ public class UploadFile {
 		this.handler = handler;
 	}
 	
-	/**
-	 * 测试服务器
-	 */
-	public void testServer() throws Exception {
-		handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
-	}
-	
+
 	/**
 	 * 发送单文件
 	 * @throws Exception
@@ -98,10 +93,8 @@ public class UploadFile {
 			int i = 0;
 			int total = mCutFileUtil.getTotalPieceNum();
 			while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
-				Log.i(TAG, "send " + ++i + " piece");
+				Log.d(TAG, "Start send file " + ++i + " piece");
 				//标识未接收到
-				System.out.println("length : " + length);
-				System.out.println(dataBuf.length);
 				out.write(dataBuf, 0, length);
 				//如果服务器尚未确认包发送成功，则处于等待状态
 				//服务器确认发送成功
@@ -126,7 +119,7 @@ public class UploadFile {
 					//删除当前切片
 					isFinish = 0;
 //					mCutFileUtil.removeCurrentFile();
-					Log.e(TAG, "hased send the paskage!");
+//					Log.i(TAG, "hased send the paskage!");
 					Message msg = new Message();
 					msg.obj = (Integer)(i  * 100 / total);
 					msg.what = UploadFileActivity.PROGRESS_DIALOG;
@@ -137,7 +130,7 @@ public class UploadFile {
 			//文件上传完,通知界面已经上传好了一个文件
 			handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
 			mCutFileUtil.removeAllPieceFile();
-			System.out.println("finish send a file to the server!");
+			Log.d("TAG", "finish send a file to the server!");
 		}
 	}
 	
@@ -146,7 +139,7 @@ public class UploadFile {
 		
 		@Override 
 		public void run() {
-			System.out.println("start timeOutThread");
+			Log.i(TAG, "Start timeOutThread");
 			try {
 				this.sleep(CONNECT_TIME_OUT);
 				if(isConnect == false) {
@@ -156,6 +149,7 @@ public class UploadFile {
 				System.out.println("stop timeOutThread");
 				this.interrupt();
 			} catch (InterruptedException e) {
+				Log.w(TAG, "Send CONNECTION_FAILSE to the handler");
 				handler.sendEmptyMessage(CONNECTION_FAILSE);
 				e.printStackTrace();
 			}
@@ -175,12 +169,11 @@ public class UploadFile {
 				sendFile();
 				break;
 			//发送多文件给服务器
-			case 2:
-				System.out.println("send some file thread run.....");
-				break;
 			default:
 				break;
 			}
+		} catch (SocketException e) {
+			e.printStackTrace();
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 			handler.sendEmptyMessage(errorCode);
@@ -223,7 +216,7 @@ public class UploadFile {
 							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
 							continue;
 						}
-						Log.e(TAG, "length : " + length);
+						Log.i(TAG, "length : " + length);
 						Message msg = new Message();
 						//服务器确定包发送成功
 						if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
@@ -241,7 +234,7 @@ public class UploadFile {
 						}
 						//打印返回的数据
 						for(int i = 1; i < 3; i++){
-							Log.e("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
+							Log.i("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
 						}
 					}
 				}
@@ -288,7 +281,7 @@ public class UploadFile {
 	/**
 	 * 打开SOCKET套接字
 	 */
-	private void openSocketThread() {
+	private void openSocketThread() throws  SocketException {
 		//获取服务器地址跟端口
 		PreferencesDAO preferencesDao = new PreferencesDAO(context);
 		Preferences p = preferencesDao.getPreferences();
@@ -304,9 +297,13 @@ public class UploadFile {
 			out = socket.getOutputStream();
 			isConnect = true;
 			handler.sendEmptyMessage(CONNECTION_SUCCESS);
+		} catch (SocketException e) {
+			e.printStackTrace();
+			Log.e(TAG, "socket exception");
+			throw new SocketException("socket timeout exception");
 		} catch(Exception e) {
 			e.printStackTrace();
-			Log.e(TAG, "file to connect the server");
+			Log.e(TAG, "openSocketThread : failse to connect the server");
 			handler.sendEmptyMessage(CONNECTION_FAILSE);
 		}
 	}
