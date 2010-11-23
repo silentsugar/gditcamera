@@ -2,15 +2,16 @@ package com.camera.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.SocketException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,12 +28,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
@@ -124,6 +125,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
 					uploadFile.upload(cutFileUtil);
+				} catch (SocketException e) {
+					e.printStackTrace();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 					mHandler.sendEmptyMessage(FILE_NOT_FIND);
@@ -132,7 +135,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				} catch (Exception e) {
 					Log.e(TAG, "throw a exception while upload a file!!");
 					e.printStackTrace();
-					mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
+//					mHandler.sendEmptyMessage(UploadFile.THROW_EXCEPTION);
 				}
 			}
 		}	
