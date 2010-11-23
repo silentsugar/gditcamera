@@ -156,7 +156,7 @@ public class UploadFile {
 		}
 	};
 
-	public void uploadFile(){
+	public void uploadFile() throws SocketException {
 		try {
 			openSocketThread();
 			receiveThread.start();
@@ -174,6 +174,7 @@ public class UploadFile {
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
+			throw new SocketException();
 		} catch(InterruptedException e) {
 			e.printStackTrace();
 			handler.sendEmptyMessage(errorCode);
@@ -191,7 +192,7 @@ public class UploadFile {
 				out = null;
 				socket.close();
 			} catch (IOException e) {
-				handler.sendEmptyMessage(THROW_EXCEPTION);
+//				handler.sendEmptyMessage(THROW_EXCEPTION);
 				e.printStackTrace();
 			}
 			sendType = -1;
@@ -252,7 +253,7 @@ public class UploadFile {
 	 * 上传文件
 	 * @param cutFileUtil 文件切片对象
 	 */
-	public void upload(CutFileUtil cutFileUtil) {
+	public void upload(CutFileUtil cutFileUtil) throws SocketException {
 		this.mCutFileUtil = cutFileUtil;
 		sendType = 1;
 		this.uploadFile();
