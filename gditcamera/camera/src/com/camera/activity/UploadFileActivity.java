@@ -191,7 +191,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "接收服务器数据超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
 				sendNotification("上传失败", "接收服务器数据超时，上传图片 " + mImagePath + " 失败！");
-				uploadNextFile(false, true, REUPLOAD_INTERVAL);
+				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
@@ -203,8 +203,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.THROW_EXCEPTION:
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传成功", "上传图片 " + mImagePath + " 时出现异常，上传失败！");
-				uploadNextFile(false, true, REUPLOAD_INTERVAL);
+				sendNotification("上传失败", "上传图片 " + mImagePath + " 时出现异常，上传失败！");
+				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -265,11 +265,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		Object item = mUploadFileList.get(0);
 		if(isLastSuccess) {
 			mUploadFileList.addSuccess(item);
+			mUploadFileList.remove(item);
 		} else {
 			mUploadFileList.addFailse(item);
-		}
-		if(!isReSend) {
-			mUploadFileList.remove(item);
+			if(!isReSend) {
+				mUploadFileList.remove(item);
+			}
 		}
 		if(mUploadFileList.size() < 1)
 			return;
@@ -278,6 +279,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		showDialog();
 		dialog.dismiss();
 		mUploadOnePicThread = new UploadThread(delay);
+		Log.e(TAG, "send next picture; mUploadFileList size :" + mUploadFileList.size());
 		mUploadOnePicThread.start();
 	}
 	
@@ -371,6 +373,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//上传一张图片
 		case R.id.btnUpload:
 			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
+			mUploadFileList = new UploadFileList();
 			mUploadFileList.add(mImagePath);
 			showDialog();
 			mUploadOnePicThread = new UploadThread();
@@ -381,6 +384,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			if(size > 0) {
 				mImagePath = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
 			}
+			mUploadFileList = new UploadFileList();
 			for(int i = 0; i < size; i ++) {
 				System.out.println(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
 				mUploadFileList.add(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
