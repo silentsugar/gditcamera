@@ -35,7 +35,7 @@ public class UploadFile {
 	/** 服务器连接超时时间*/
 	public static final int CONNECT_TIME_OUT = 5000;
 	/** 连接文件超时*/
-	public static final int SEND_TIME_OUT = 10000;
+	public static final int SEND_TIME_OUT = 20000;
 	
 	/** 服务器接收线程睡眠时间*/
 	private static final int RECEIVE_THREAD_SLEEP_TIME = 500;
