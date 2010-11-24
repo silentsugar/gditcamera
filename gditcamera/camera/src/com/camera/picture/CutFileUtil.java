@@ -74,9 +74,9 @@ public class CutFileUtil {
 		}
 		pieceFiles = new ArrayList<String>();
 		//ºÏ≤‚Õº∆¨ «∑Ò“—æ≠”–«–∆¨
-		if(isExistPieces()) {
-			return;
-		}
+//		if(isExistPieces()) {
+//			return;
+//		}
 		cutFile();
 	}
 	

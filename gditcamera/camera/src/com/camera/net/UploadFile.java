@@ -117,6 +117,7 @@ public class UploadFile {
 				} 
 				if(isFinish == 1) {
 					//删除当前切片
+					mCutFileUtil.removeCurrentFile();
 					isFinish = 0;
 //					mCutFileUtil.removeCurrentFile();
 //					Log.i(TAG, "hased send the paskage!");
@@ -129,7 +130,7 @@ public class UploadFile {
 
 			//文件上传完,通知界面已经上传好了一个文件
 			handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
-			mCutFileUtil.removeAllPieceFile();
+//			mCutFileUtil.removeAllPieceFile();
 			Log.d("TAG", "finish send a file to the server!");
 		}
 	}
