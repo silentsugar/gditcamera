@@ -280,6 +280,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		mImagePath = (String)mUploadFileList.get(0);
 //		System.out.println("---------------------" + mImagePath + "----------------------------");
 		showDialog();
+		System.out.println("--------------------------send file-----------------------------");
 		dialog.dismiss();
 		mUploadOnePicThread = new UploadThread(delay);
 		Log.e(TAG, "send next picture; mUploadFileList size :" + mUploadFileList.size());
