@@ -82,7 +82,7 @@
 							<TextView
 								style="@style/conf_textview"
 								android:id="@+id/text5"
-								android:text="测试名:"/>
+								android:text="测站名:"/>
 							<EditText
 								android:id="@+id/etSurveyStation"
 								style="@style/conf_edittext"
@@ -99,7 +99,7 @@
 							<TextView
 								style="@style/conf_textview"
 								android:id="@+id/text6"
-								android:text="测试号:"/>
+								android:text="测站号:"/>
 							<EditText
 								android:id="@+id/etStationCode"
 								style="@style/conf_edittext"
@@ -116,7 +116,7 @@
 							<TextView
 								style="@style/conf_textview"
 								android:id="@+id/text4"
-								android:text="测试口令:"/>
+								android:text="测站口令:"/>
 							<EditText
 								android:id="@+id/etCommand"
 								style="@style/conf_edittext"

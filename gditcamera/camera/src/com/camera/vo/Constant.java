@@ -18,17 +18,21 @@ public class Constant {
 	public static final int PACKAGE_SIZE = 1024;
 	/** 配置文件路径 */
 	public static final String  PERFERENCES_FILE_PATH = "/shared_prefs/perferences.xml";
+	/** 文件大小多少时压缩 */
+	public static final int IMAGE_COMPRESS_SIZE = 100000;
 	
 	/** 应用程序目录*/
-	public static final String APP_FOLDER = SDCARD_PATH + "/camera/";
+	public static final String APP_FOLDER = SDCARD_PATH + "/ImageUploader/";
 	/** 应用程序图片切片目录*/
-	public static final String PIECE_FOLDER = SDCARD_PATH + "/camera/wUpload/";
+	public static final String PIECE_FOLDER = SDCARD_PATH + "/ImageUploader/wUpload/";
+	/** 应用程序图片压缩目录*/
+	public static final String PIECE_COMPRESS_FOLDER = SDCARD_PATH + "/ImageUploader/compress/";
 	/** 图片的格式*/
 	public static final String IMAGE_SUFFIX = "BMP;PCX;TIFF;GIF;JPEG;JPG;TGA;EXIF;FPX;SVG;PSD;CDR;PCD;DXF;UFO;EPS;PNG;";
 	
 	
 	/** 缩略图保存目录*/
-	public static final String THUMBNAIL_FOLDER = SDCARD_PATH + "/camera/thumbnail/";
+	public static final String THUMBNAIL_FOLDER = SDCARD_PATH + "/ImageUploader/thumbnail/";
 	/** 目录默认目录*/
 	public static final String DEFAULT_IMAGE_FOLDER = SDCARD_PATH + "/DCIM/100MEDIA/";
 	

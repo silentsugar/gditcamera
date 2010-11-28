@@ -38,6 +38,10 @@ public class IniControl {
 		if(!file.exists()) {
 			file.mkdir();
 		}
+		file = new File(Constant.PIECE_COMPRESS_FOLDER);
+		if(!file.exists()) {
+			file.mkdir();
+		}
 		return true;
 	}
 	

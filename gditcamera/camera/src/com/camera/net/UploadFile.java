@@ -57,7 +57,7 @@ public class UploadFile {
 	/** 发送数据时要读取的BUF长度*/
 	private int bufLength = 0;
 	/** 判断包是否已经发送，如果确认已经发送，再发送下一个包*/
-	private int isFinish = 1;
+	private int isFinish = 0;
 	/** 标识要发送的类型，0为测试服务器，1为发送文件，2为发送多文件*/
 	private int sendType = -1;
 	
@@ -86,53 +86,7 @@ public class UploadFile {
 	 * @throws Exception
 	 */
 	private void sendFile() throws Exception {
-		synchronized (this) {
-			byte[] dataBuf = new byte[CutFileUtil.pieceSize];
-			int length = 0;
-			//从切片对象中一片片获取文件流，上传到服务器
-			int i = 0;
-			int total = mCutFileUtil.getTotalPieceNum();
-			while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
-				Log.d(TAG, "Start send file " + ++i + " piece");
-				//标识未接收到
-				out.write(dataBuf, 0, length);
-				//如果服务器尚未确认包发送成功，则处于等待状态
-				//服务器确认发送成功
-				int time = 0;
-				while(isFinish == 0) {
-					Thread.sleep(5);
-					time += 5;
-					//判断是否超时
-					if(time >= SEND_TIME_OUT) {
-						//结束当前进程
-						errorCode = TIME_OUT;
-						currentThread.interrupt();
-					}
-					continue;
-				}
-				//服务器确认发送错误
-				if(isFinish == 2) {
-					errorCode = THROW_EXCEPTION;
-					currentThread.interrupt();
-				} 
-				if(isFinish == 1) {
-					//删除当前切片
-					mCutFileUtil.removeCurrentFile();
-					isFinish = 0;
-//					mCutFileUtil.removeCurrentFile();
-//					Log.i(TAG, "hased send the paskage!");
-					Message msg = new Message();
-					msg.obj = (Integer)(i  * 100 / total);
-					msg.what = UploadFileActivity.PROGRESS_DIALOG;
-					handler.sendMessage(msg);
-				}
-			}
-
-			//文件上传完,通知界面已经上传好了一个文件
-			handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
-//			mCutFileUtil.removeAllPieceFile();
-			Log.d("TAG", "finish send a file to the server!");
-		}
+		
 	}
 	
 	/** 服务服务器连接是否超时*/
@@ -140,14 +94,14 @@ public class UploadFile {
 		
 		@Override 
 		public void run() {
-			Log.i(TAG, "Start timeOutThread");
+			Log.d(TAG, "Start timeOutThread");
 			try {
 				this.sleep(CONNECT_TIME_OUT);
 				if(isConnect == false) {
 					handler.sendEmptyMessage(TIME_OUT);
 					currentThread.interrupt();
 				}
-				System.out.println("stop timeOutThread");
+				Log.d(TAG, "stop timeOutThread");
 				this.interrupt();
 			} catch (InterruptedException e) {
 				Log.w(TAG, "Send CONNECTION_FAILSE to the handler");
@@ -162,16 +116,51 @@ public class UploadFile {
 			openSocketThread();
 			receiveThread.start();
 			//发送数据给服务器
-			switch(sendType) {
+			synchronized (this) {
+				byte[] dataBuf = new byte[CutFileUtil.pieceSize];
+				int length = 0;
+				//从切片对象中一片片获取文件流，上传到服务器
+				int i = 0;
+				int total = mCutFileUtil.getTotalPieceNum();
+				while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
+					Log.d(TAG, "Start send file of " + ++i + " piece");
+					//标识未接收到
+					out.write(dataBuf, 0, length);
+					//如果服务器尚未确认包发送成功，则处于等待状态
+					//服务器确认发送成功
+					int time = 0;
+					while(isFinish == 0) {
+						Thread.sleep(5);
+						time += 5;
+						//判断是否超时
+						if(time >= SEND_TIME_OUT) {
+							//结束当前进程
+							errorCode = TIME_OUT;
+							currentThread.interrupt();
+						}
+						continue;
+					}
+					//服务器确认发送错误
+					if(isFinish == 2) {
+						errorCode = THROW_EXCEPTION;
+						currentThread.interrupt();
+					} 
+					if(isFinish == 1) {
+						//删除当前切片
+						mCutFileUtil.removeCurrentFile();
+						isFinish = 0;
+//						mCutFileUtil.removeCurrentFile();
+						Log.i(TAG, "hased send the piece file of " + i + " piece!");
+						Message msg = new Message();
+						msg.obj = (Integer)(i  * 100 / total);
+						msg.what = UploadFileActivity.PROGRESS_DIALOG;
+						handler.sendMessage(msg);
+					}
+				}
 
-			//发送单文件给服务器
-			case 1:
-				System.out.println("send file thread run.....");
-				sendFile();
-				break;
-			//发送多文件给服务器
-			default:
-				break;
+				//文件上传完,通知界面已经上传好了一个文件
+				handler.sendEmptyMessage(FINISH_UPLOAD_FILE);
+				Log.d(TAG, "Finish send a file to the server!");
 			}
 		} catch (SocketException e) {
 			e.printStackTrace();
@@ -193,7 +182,6 @@ public class UploadFile {
 				out = null;
 				socket.close();
 			} catch (IOException e) {
-//				handler.sendEmptyMessage(THROW_EXCEPTION);
 				e.printStackTrace();
 			}
 			sendType = -1;
@@ -218,7 +206,6 @@ public class UploadFile {
 							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
 							continue;
 						}
-						Log.i(TAG, "length : " + length);
 						Message msg = new Message();
 						//服务器确定包发送成功
 						if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
@@ -226,25 +213,23 @@ public class UploadFile {
 							handler.sendMessage(msg);
 							//标识包发送成功
 							isFinish = 1;
+							Log.d(TAG, "Receive service replay, answer is ok!");
 							
 						//服务器确定包发送失败
 						} else if(recDataBuf[1] == 0X45 && recDataBuf[2] == 0X52) {
+							Log.w(TAG, "Receive service replay, answer is ERROR!");
 							msg.what = PACKAGE_SEND_FAIL;
 							handler.sendMessage(msg);
 							//标识包发送失败
 							isFinish = 2;
 						}
-						//打印返回的数据
-						for(int i = 1; i < 3; i++){
-							Log.i("recDataBuf["+i+"]=", Integer.toHexString((int)recDataBuf[i]));
-						}
 					}
 				}
+			} catch (InterruptedException e) {
+				//被服务器发送进程打断，不做处理
 			} catch (Exception e) {
-				Log.e(TAG, "throw exception while receive data from server");
-//				Toast.makeText(context, "接收服务端数据出现异常！", Toast.LENGTH_SHORT);
-//				handler.sendEmptyMessage(THROW_EXCEPTION);
 				e.printStackTrace();
+				Log.e(TAG, "Throw exception while receive data from server");
 			} 
 		}
 		
@@ -275,7 +260,7 @@ public class UploadFile {
 			handler.sendEmptyMessage(CONNECTION_SUCCESS);
 		} catch(Exception e) {
 			e.printStackTrace();
-			Log.e(TAG, "file to connect the server");
+			Log.e(TAG, "testServer=> failse to connect the service");
 			handler.sendEmptyMessage(CONNECTION_FAILSE);
 		}
 	}
@@ -290,10 +275,9 @@ public class UploadFile {
 		HOST = p.getHost1IP();
 		PORT = p.getHost1Port();
 		
-		
 		try {
 			timeOutThread.start();
-			System.out.println("start to connect the server!!");
+			Log.d(TAG, "openSocketThread=> start to connect the server!!");
 			socket = new Socket(HOST,PORT);
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
@@ -301,7 +285,7 @@ public class UploadFile {
 			handler.sendEmptyMessage(CONNECTION_SUCCESS);
 		} catch (SocketException e) {
 			e.printStackTrace();
-			Log.e(TAG, "socket exception");
+			Log.e(TAG, "SocketException because of time out!");
 			throw new SocketException("socket timeout exception");
 		} catch(Exception e) {
 			e.printStackTrace();

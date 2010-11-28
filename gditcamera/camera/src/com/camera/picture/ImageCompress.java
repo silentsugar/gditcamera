@@ -8,17 +8,24 @@ import java.util.UUID;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.util.Log;
+
+import com.camera.vo.Constant;
 
 /**
  * 图片压缩灯
  * @author 郑澍璋
  */
 public class ImageCompress {
+	
+	public static final String TAG = "ImageCompress";
 
 	/**压缩目标图像宽度大小*/
-	public static int maxWidth = 400;
+	public static int mMaxWidth = 1024;
 	/**压缩目标图像高度大小*/
-	public static int maxHeight = 400;
+	public static int mMaxHeight = 1024;
+	/** 文件大小多少时压缩 */
+	public static int mImageCompressSize = Constant.IMAGE_COMPRESS_SIZE;
 	
 	/** 图像质量*/
 	private static int quality = 80;
@@ -27,7 +34,32 @@ public class ImageCompress {
 		
 	}
 	
-	public static String compress(String filePath) throws Exception {
+	public static String compressJPG(String filePath) throws Exception {
+		if(!checkIsJPEG(filePath)) {
+			return filePath;
+		}
+		File file = new File(filePath);
+		long length = file.length();
+		while(length >= mImageCompressSize) {
+			filePath = compress(filePath);
+			file = new File(filePath);
+			length = file.length();
+		}
+		return filePath;
+	}
+	
+	private static boolean checkIsJPEG(String filePath) {
+		int index = filePath.lastIndexOf("/");
+		final String suffix = filePath.substring(index + 1).toLowerCase();
+		if(suffix.equals("jpeg") || suffix.equals("jpg")) {
+			Log.d(TAG, "The picture is JPEG suffix, suffix is : " + suffix);
+			return true;
+		}
+		Log.d(TAG, "The picture is not JPEG suffix, suffix is : " + suffix);
+		return false;
+	}
+	
+	private static String compress(String filePath) throws Exception {
 		String destFilePath = null;
 		Bitmap destBitmap;
 		int destWidth = 0;
@@ -40,14 +72,20 @@ public class ImageCompress {
 		int srcHeight = opts.outHeight;
 		//缩放比例
 		double ratio = 0.0;
+		int maxWidth = mMaxWidth;
+		int maxHeight = mMaxHeight;
 		//计算缩放后的图片大小
+		if(srcWidth <= mMaxWidth)
+			maxWidth = srcWidth;
+		if(srcHeight <= mMaxHeight)
+			maxHeight = srcHeight;
 		if (srcWidth > srcHeight) {
-			ratio = srcWidth / maxWidth;
-			destWidth = maxWidth;
+			ratio = srcWidth / mMaxWidth;
+			destWidth = mMaxWidth;
 			destHeight = (int)(srcHeight / ratio);
 		} else {
-			ratio = srcHeight / maxHeight;
-			destHeight = maxHeight;
+			ratio = srcHeight / mMaxHeight;
+			destHeight = mMaxHeight;
 			destWidth = (int)(srcWidth / ratio);
 		}
 		BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -62,7 +100,7 @@ public class ImageCompress {
 		if(destBitmap == null) {
 			throw new Exception("Can not compress the image file!!");
 		}
-		destFilePath = "/mnt/sdcard/" + UUID.randomUUID().toString() + ".jpg";
+		destFilePath = Constant.PIECE_COMPRESS_FOLDER + UUID.randomUUID().toString() + ".jpg";
 		File destFile = new File(destFilePath);
 		OutputStream os = new FileOutputStream(destFile);
 		destBitmap.compress(CompressFormat.JPEG, quality, os);

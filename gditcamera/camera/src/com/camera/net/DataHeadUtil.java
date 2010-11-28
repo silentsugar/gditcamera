@@ -191,7 +191,6 @@ public class DataHeadUtil {
 		tem = int2bytes(dataHead.getDataLength());
 		result[offset1++] = tem[0];
 		result[offset1++] = tem[1];
-		Log.e("10 : ", "10");
 //		for(int i=0;i<result.length;i++){
 //			Log.e("result["+i+"]=", result[i] + "");
 //		}
@@ -210,7 +209,7 @@ public class DataHeadUtil {
 		DataHead d = new DataHead();
 		int offset = 0;
 		try {
-			Log.e("##################PHO=","");
+//			Log.e("##################PHO=","");
 			print(subByteArray(b,offset,4));
 			d.setPho(subByteArray(b,offset,4));
 			offset+=4;
