@@ -70,6 +70,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public static final int FILE_NOT_FIND = 14;
 	/** 开始上传*/
 	public static final int START_UPLOAD = 15;
+	/** 压缩图片*/
+	public static final int COMPRESS_PICTURE = 16;
 	/** 上传多张图片的间隔时间*/
 	public static final int UPLOAD_INTERVAL = 4000;
 	/** 上传图片失败的重新上传延迟时间*/
@@ -124,6 +126,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					mHandler.sendEmptyMessage(START_UPLOAD);
 					String description = mTxtMessage.getText().toString();
 					String imagePath = ImageCompress.compressJPG(mImagePath);
+					mHandler.sendEmptyMessage(COMPRESS_PICTURE);
 					cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath, mHandler, description);
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
@@ -163,8 +166,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "未找到文件 " + mImagePath + " ，请尝试刷新一下！", Toast.LENGTH_SHORT).show();
 				break;
-				
+			case COMPRESS_PICTURE:
+				dialog.setMessage("正在处理图片(切片)....");
+				dialog.setProgress(0);
+				break;
 			case FINISH_CUT_FILE:
+				dialog.setProgress(0);
 				dialog.setMessage("正在连接服务器....");
 				break;
 				
@@ -184,6 +191,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.CONNECTION_SUCCESS:
 //				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
 				dialog.setMessage("正在上传图片....");
+				dialog.setProgress(0);
 				break;
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
@@ -397,7 +405,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		CharSequence message = "当前处理进度";
 		progressDialog = new ProgressDialog(this);
 		progressDialog.setTitle(title);
-		progressDialog.setMessage("正在处理图片（切片）....");
+		progressDialog.setMessage("正在压缩图片....");
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		progressDialog.setButton("后台运行", new Dialog.OnClickListener() {
 			@Override
