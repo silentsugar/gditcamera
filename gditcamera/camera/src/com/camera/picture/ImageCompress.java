@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
+import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
 
 /**
@@ -41,15 +42,17 @@ public class ImageCompress {
 		File file = new File(filePath);
 		long length = file.length();
 		while(length >= mImageCompressSize) {
+			Log.d(TAG, "The image size is:" + length + "; file path is : " + filePath);
 			filePath = compress(filePath);
 			file = new File(filePath);
 			length = file.length();
 		}
+		Log.i(TAG, "The final image size is:" + length + "; file path is : " + filePath);
 		return filePath;
 	}
 	
 	private static boolean checkIsJPEG(String filePath) {
-		int index = filePath.lastIndexOf("/");
+		int index = filePath.lastIndexOf(".");
 		final String suffix = filePath.substring(index + 1).toLowerCase();
 		if(suffix.equals("jpeg") || suffix.equals("jpg")) {
 			Log.d(TAG, "The picture is JPEG suffix, suffix is : " + suffix);
@@ -80,12 +83,12 @@ public class ImageCompress {
 		if(srcHeight <= mMaxHeight)
 			maxHeight = srcHeight;
 		if (srcWidth > srcHeight) {
-			ratio = srcWidth / mMaxWidth;
-			destWidth = mMaxWidth;
+			ratio = srcWidth / maxWidth;
+			destWidth = maxWidth;
 			destHeight = (int)(srcHeight / ratio);
 		} else {
-			ratio = srcHeight / mMaxHeight;
-			destHeight = mMaxHeight;
+			ratio = srcHeight / maxHeight;
+			destHeight = maxHeight;
 			destWidth = (int)(srcWidth / ratio);
 		}
 		BitmapFactory.Options newOpts = new BitmapFactory.Options();
@@ -96,6 +99,7 @@ public class ImageCompress {
 		//设置大小，这个一般是不准确的，是以inSampleSize的为准，但是如果不设置却不能缩放
 		newOpts.outHeight = destHeight;
 		newOpts.outWidth = destWidth;
+		newOpts.inSampleSize = calculateInSampleSize2(filePath);
 		destBitmap = BitmapFactory.decodeFile(filePath, newOpts);
 		if(destBitmap == null) {
 			throw new Exception("Can not compress the image file!!");
@@ -105,6 +109,93 @@ public class ImageCompress {
 		OutputStream os = new FileOutputStream(destFile);
 		destBitmap.compress(CompressFormat.JPEG, quality, os);
 		os.close();
+		if(!destBitmap.isRecycled()) {
+			destBitmap.recycle();
+		}
 		return destFilePath;
+	}
+	
+	/**
+	 * 生成缩略图
+	 * @param filePath 图片路径
+	 * @param width 图片宽度
+	 * @param height 图片高度
+	 * @param quality 图片质量
+	 * @param size 大图还是小图，TRUE为大图
+	 */
+	public static String extractThumbnail(String filePath, int width, 
+			int height, int quality, boolean size) throws Exception {
+		BitmapFactory.Options newOpts = new BitmapFactory.Options();
+		String thumbnailPath = null;
+		int inSampleSize = 0;
+		if(size) {
+			inSampleSize = calculateInSampleSize(filePath);
+			newOpts.inSampleSize = inSampleSize;
+			thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
+		} else {
+			inSampleSize = calculateInSampleSize(filePath) * 2;
+			newOpts.inSampleSize = inSampleSize;
+			thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
+		}
+		newOpts.inJustDecodeBounds = false;
+		//设置大小，这个一般是不准确的，是以inSampleSize的为准，但是如果不设置却不能缩放
+		newOpts.outHeight = width;
+		newOpts.outWidth = height;
+		Bitmap bitmap = BitmapFactory.decodeFile(filePath, newOpts);
+		Log.i(TAG, "InSampleSize is :" + inSampleSize);
+		File bitmapFile = new File(thumbnailPath);
+		if (bitmapFile.exists()) {
+			bitmapFile.delete();
+		}
+		FileOutputStream bitmapWtriter = new FileOutputStream(bitmapFile);
+		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, quality, bitmapWtriter)) {
+			throw new Exception("Can't save the thumbnail file!");
+		}
+		bitmapWtriter.close();
+		return thumbnailPath;
+	}
+	
+	/**
+	 * 生成缩略图时计算读取图片文件要缩小的倍数
+	 */
+	private static int calculateInSampleSize(String filePath) {
+		File file = new File(filePath);
+		long fileSize = file.length();
+		Log.i(TAG, "File size is :" + fileSize);
+		if(fileSize > 4 * 1024 * 1024) {
+			return 30;
+		} else if(fileSize > 2 * 1024 * 1024) {
+			return 22;
+		} else if(fileSize > 1024 * 1024) {
+			return 15;
+		} else if(fileSize > 1024 * 512) { 
+			return 8;
+		} else if(fileSize > 300 * 1024) {
+			return 5;
+		} else if(fileSize > 200 * 1024) {
+			return 3;
+		} else if(fileSize > 100 * 1024) {
+			return 2;
+		}
+		return 1;
+	}
+	
+	/**
+	 * 上传图片压缩时计算读取图片文件要缩小的倍数
+	 */
+	private static int calculateInSampleSize2(String filePath) {
+		File file = new File(filePath);
+		long fileSize = file.length();
+		Log.i(TAG, "File size is :" + fileSize);
+		if(fileSize > 4 * 1024 * 1024) {
+			return 8;
+		} else if(fileSize > 2 * 1024 * 1024) {
+			return 6;
+		} else if(fileSize > 1024 * 1024) {
+			return 4;
+		} else if(fileSize > 1024 * 728) { 
+			return 2;
+		}
+		return 1;
 	}
 }

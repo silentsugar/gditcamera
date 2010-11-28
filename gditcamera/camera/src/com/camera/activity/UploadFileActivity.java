@@ -38,6 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
 import com.camera.picture.CutFileUtil;
+import com.camera.picture.ImageCompress;
 import com.camera.picture.PictureUtil;
 import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
@@ -122,7 +123,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					this.sleep(mInterval);
 					mHandler.sendEmptyMessage(START_UPLOAD);
 					String description = mTxtMessage.getText().toString();
-					cutFileUtil = new CutFileUtil(UploadFileActivity.this, mImagePath, mHandler, description);
+					String imagePath = ImageCompress.compressJPG(mImagePath);
+					cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath, mHandler, description);
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
 					uploadFile.upload(cutFileUtil);
@@ -194,7 +196,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				dialog.dismiss();
 				Toast.makeText(UploadFileActivity.this, "接收服务器数据超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
 				sendNotification("上传失败", "接收服务器数据超时，上传图片 " + mImagePath + " 失败！");
-				uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				uploadNextFile(false, true, REUPLOAD_INTERVAL);
 				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
@@ -316,9 +318,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//获取图片路径
 		PreferencesDAO preferencesDao = new PreferencesDAO(this);
 		PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
-		
 		getComponents();
 		startRefreshFolder();
+		loadPicture();
 		
 	}
 	
@@ -345,17 +347,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 加载图片资源到Gallery
 	 */
 	public void loadPicture() {
-		adapter = new ImageAdapter(this, PICTURE_FOLDER);
-		mGallery.setAdapter(adapter);
-		//默认选中第一项
-		PictureUtil pictureUtil = new PictureUtil();
-		if(adapter.getCount() > 0) {
-			Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(0) + ".big");
-	        mCurrentImg = adapter.getImagePath(0);
-	        mImageView.setImageBitmap(bitmap);
-	        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-	        mGallery.setSelection(0);
-		}
 		mGallery.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView parent, View v, int position, long id) {
 //	            Toast.makeText(UploadFileActivity.this, "" + position, Toast.LENGTH_SHORT).show();
