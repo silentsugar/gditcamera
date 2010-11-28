@@ -60,13 +60,15 @@ public class StringUtil {
 		if(subStation == null || subStation.length()<=0){
 			return "不允许为空";
 		}
-		if(subStation.length()>16){
-			return "不能超过16个字符";
+		if(getByteArrayByLength(subStation, "GB2312", 16)==null){
+			return "你输入的字数过多";
 		}
 		char [] cArray = subStation.toCharArray();
 		for(char c : cArray){
-			if(!isValidateChar(c)){
-				return "请输入数字或英文字母";
+			if(isValidateChar(c) || isValidateChineseChar(c)){
+				continue;
+			}else{
+				return "请输入中文或英文字母";
 			}
 		}
 		return null;
@@ -102,13 +104,15 @@ public class StringUtil {
 		if(surveyStation == null || surveyStation.length()<=0){
 			return "不允许为空";
 		}
-		if(surveyStation.length()>16){
-			return "不能超过16个字符";
+		if(getByteArrayByLength(surveyStation, "GB2312", 16)==null){
+			return "你输入的字数过多";
 		}
 		char [] cArray = surveyStation.toCharArray();
 		for(char c : cArray){
-			if(!isValidateChar(c)){
-				return "请输入数字或英文字母";
+			if(isValidateChar(c) || isValidateChineseChar(c)){
+				continue;
+			}else{
+				return "请输入中文或英文字母";
 			}
 		}
 		return null;
@@ -218,6 +222,19 @@ public class StringUtil {
 	public static final boolean isValidateChar(char c){
 		int asciiCode = (int)c;
 		if( (asciiCode>=48&&asciiCode<=57) || (asciiCode>=65&&asciiCode<=90) || (asciiCode>=97&&asciiCode<=122)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * 根据Unicode编码判断是否中文字符
+	 * @param c
+	 * @return
+	 */
+	public static final boolean isValidateChineseChar(char c){
+		if(((int)c)>0x4e00 && ((int)c)<0x9fbb){
 			return true;
 		}else{
 			return false;
