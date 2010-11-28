@@ -52,6 +52,7 @@ import com.camera.vo.UploadFileList;
 public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public static final String TAG = "UploadFileActivity";
+	
 	public static final int ACTIVITY_REQUEST_CODE = 1;
 	private static int NOTIFICATION_ID = 1;
 	
@@ -153,7 +154,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			switch(msg.what) {
 			//更新图片进度
 			case PROGRESS_DIALOG:
-				System.out.println((Integer)msg.obj);
 				((ProgressDialog)dialog).setProgress((Integer)msg.obj);
 				break;
 			
@@ -280,10 +280,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		mImagePath = (String)mUploadFileList.get(0);
 //		System.out.println("---------------------" + mImagePath + "----------------------------");
 		showDialog();
-		System.out.println("--------------------------send file-----------------------------");
+		Log.i(TAG, "--------------uploadNextFile:Send next picture-----------------");
 		dialog.dismiss();
 		mUploadOnePicThread = new UploadThread(delay);
-		Log.e(TAG, "send next picture; mUploadFileList size :" + mUploadFileList.size());
+		Log.w(TAG, "Send next picture; mUploadFileList size : " + mUploadFileList.size());
 		mUploadOnePicThread.start();
 	}
 	
@@ -318,7 +318,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
 		
 		getComponents();
-		loadPicture();
+		startRefreshFolder();
 		
 	}
 	
@@ -390,7 +390,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			}
 			mUploadFileList = new UploadFileList();
 			for(int i = 0; i < size; i ++) {
-				System.out.println(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
 				mUploadFileList.add(StringUtil.convertBackFolderPath(adapter.getImagePath(i)));
 			}
 			showDialog();
@@ -436,8 +435,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case R.id.menuNotification:
-			
+//		case R.id.menuNotification:
+//			
 		//刷新目录图片
 		case R.id.menuRefresh:
 			startRefreshFolder();

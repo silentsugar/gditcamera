@@ -146,7 +146,7 @@ public class PictureUtil {
 		String thumbnailFolderPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(folderPath);
 		for(File file : files) {
 			String path = file.getAbsolutePath();
-			Log.d(TAG, "file path : " + path);
+//			Log.d(TAG, "file path : " + path);
 			if(path.contains(thumbnailFolderPath) && !path.contains(".big")) {
 				filePaths.add(path);
 			}

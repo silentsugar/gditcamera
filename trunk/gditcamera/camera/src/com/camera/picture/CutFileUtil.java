@@ -25,7 +25,7 @@ public class CutFileUtil {
 	public static final String TAG = "CutFileUtil";
 	
 	/** 切片的大小*/
-	public static final int pieceSize = 10000;
+	public static final int pieceSize = 30000;
 	/** 包头信息*/
 	private static byte[] packageHead;
 	
@@ -126,7 +126,6 @@ public class CutFileUtil {
 			int dataSize = 0;
 			while(true) {
 				if((dataSize = in.read(buf, 0, pieceSize - 90)) > 0) {
-					Log.d(TAG, "dataSize " + dataSize);
 					packagePiece(buf, pieceNum, dataSize);
 					pieceNum ++ ;
 					continue;
@@ -150,22 +149,19 @@ public class CutFileUtil {
 	 */
 	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
 		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  pieceNum;
-		Log.i(TAG, "piece file name : " + pieceName);
+		Log.v(TAG, "piece file name : " + pieceName);
 		FileOutputStream out = new FileOutputStream(pieceName);
 		pieceFiles.add(pieceName);
-		System.out.println("dataSize:" + dataSize);
-		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize" + dataSize);
+		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize " + dataSize);
 		try {
 			if(isFirst) {
-				System.out.println("isFirst : aaaaaaaaaaa " + isFirst);
 				packageHead = DataHeadUtil.getBytesHeadData(context, description, pieceNum, totalPieceNum, dataSize, false);
 				isFirst = false;
 			} else {
 				packageHead = DataHeadUtil.getBytesHeadData(context, "", pieceNum, totalPieceNum, dataSize, true);
-				System.out.println("isFirst : " + isFirst);
 			}
 		} catch (Exception e) {
-			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT);
+//			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
 		out.write(packageHead);

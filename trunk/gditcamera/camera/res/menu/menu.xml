@@ -5,9 +5,6 @@
    <item android:id="@+id/menuConfig"
           android:title="配置"
           android:icon="@android:drawable/ic_menu_preferences" />
-   <item android:id="@+id/menuNotification"
-          android:title="查看通知"
-          android:icon="@android:drawable/ic_menu_info_details" />
    <item android:id="@+id/menuExit"
           android:title="退出"
           android:icon="@android:drawable/ic_menu_set_as" />
