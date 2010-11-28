@@ -7,7 +7,7 @@ import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+import android.graphics.BitmapFactory.Options;
 
 import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
@@ -122,15 +122,25 @@ public class PictureUtil {
 	 * @param path 图片资源路径
 	 * @return 如果获取不到图片，则返回NULL
 	 */
-	public Bitmap getBitmap(String path) {
-		Bitmap bitmap = null;
+	public Options getImageOptions(String path) {
 		if(path == null)
-			return bitmap;
+			return null;
 		File file = new File(path);
 		if(!file.exists())
-			return bitmap;
-		bitmap = BitmapFactory.decodeFile(path);
-		return bitmap;
+			return null;
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, opts);
+		return opts;
+	}
+	
+	public Bitmap getBitmap(String path) {
+		if(path == null)
+			return null;
+		File file = new File(path);
+		if(!file.exists())
+			return null;
+		return BitmapFactory.decodeFile(path);
 	}
 	
 	/**
@@ -194,36 +204,17 @@ public class PictureUtil {
 	 */
 	private String createThumbnail(String filePath) throws Exception {
 		String thumbnailPath = null;
-		Bitmap bitmap = this.getBitmap(filePath);
-		if (bitmap == null) 
+		Options options = this.getImageOptions(filePath);
+		if (options == null) 
 			throw new Exception("Can't get the file!");
 		//创建缩略
-		this.calculateThumbnailSize(bitmap.getWidth(), bitmap.getHeight(), thumbnailWidth, thumbnailHeight);
-		Bitmap bitmap1 = ThumbnailUtils.extractThumbnail(bitmap, mTagetWidth, mTagetHeight);
+		this.calculateThumbnailSize(options.outHeight, options.outHeight, thumbnailWidth, thumbnailHeight);
+		//生成大的缩略图
+		ImageCompress.extractThumbnail(filePath, mTagetWidth, mTagetHeight, 10, false);
+		this.calculateThumbnailSize(options.outHeight, options.outHeight, thumbnailWidth2, thumbnailHeight2);
+		//生成小的缩略图
+		thumbnailPath = ImageCompress.extractThumbnail(filePath, mTagetWidth, mTagetHeight, 70, true);
 		//保存小的缩略图到指定目录
-		thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
-		File bitmapFile = new File(thumbnailPath);
-		if (bitmapFile.exists()) {
-			bitmapFile.delete();
-		}
-		FileOutputStream bitmapWtriter = new FileOutputStream(bitmapFile);
-		if (!bitmap1.compress(Bitmap.CompressFormat.JPEG, 20, bitmapWtriter)) {
-			throw new Exception("Can't save the thumbnail file!");
-		}
-		bitmapWtriter.close();
-		//保存大的缩略图到指定目录
-		this.calculateThumbnailSize(bitmap.getWidth(), bitmap.getHeight(), thumbnailWidth2, thumbnailHeight2);
-		Bitmap bitmap2 = ThumbnailUtils.extractThumbnail(bitmap, mTagetWidth, mTagetHeight);
-		String thumbnailPath2 = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
-		File bitmapFile2 = new File(thumbnailPath2);
-		if (bitmapFile2.exists()) {
-			bitmapFile2.delete();
-		}
-		bitmapWtriter = new FileOutputStream(bitmapFile2);
-		if (!bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, bitmapWtriter)) {
-			throw new Exception("Can't save the thumbnail file!");
-		}
-		bitmapWtriter.close();
 		return thumbnailPath;
 			
 	}
