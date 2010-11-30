@@ -4,7 +4,6 @@ import android.os.Environment;
 
 /**
  * 存放常量值
- * @author tian
  *
  */
 public class Constant {
