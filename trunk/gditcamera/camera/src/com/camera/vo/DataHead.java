@@ -5,7 +5,6 @@ import java.util.Date;
 
 /**
  * 分片上传数据的数据头
- * @author tian
  *
  */
 public class DataHead implements Serializable{

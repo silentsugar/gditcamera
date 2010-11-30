@@ -15,7 +15,6 @@ import com.camera.vo.DataHead;
 
 /**
  * 把数据头信息转换成byte数组的工具
- * @author tian
  *
  */
 public class DataHeadUtil { 

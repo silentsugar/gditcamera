@@ -6,7 +6,6 @@ import android.util.Log;
 
 /**
  * 配置信息实体
- * @author yaotian
  *
  */
 public class Preferences {
