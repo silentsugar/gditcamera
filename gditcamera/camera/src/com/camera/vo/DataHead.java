@@ -15,19 +15,19 @@ public class DataHead implements Serializable{
 	private String id;
 	/**$PHO ASCII码(4byte)*/
 	private byte [] pho;
-	/**分局名称(16byte)*/
+	/**分局名称(16byte)--归第一包*/
 	private String subStation;
-	/**测站名称(16byte)*/
+	/**测站名称(16byte)--归第一包*/
 	private String surveyStation;
-	/**照片描述,Unicode(32char=64byte)*/
+	/**照片描述,Unicode(32char=64byte)--归第一包*/
 	private String phoDesc;
-	/**站码(8byte)*/
+	/**站码(8byte)--4字节*/
 	private String stationCode;
-	/**口令(16byte)*/
+	/**口令(16byte)--4字节*/
 	private String command;
 	/**时间(7byte)*/
 	private Date dataTime;
-	/**摄像头ID(1byte)*/
+	/**摄像头ID(1byte)--归第一包*/
 	private byte cameraId;
 	/**当前包数(2byte)*/
 	private int currentPackage;
