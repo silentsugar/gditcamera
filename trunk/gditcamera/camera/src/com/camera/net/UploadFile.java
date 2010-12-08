@@ -18,6 +18,9 @@ import com.camera.vo.Preferences;
 
 public class UploadFile {
 	
+	public static final int FIRST_FILE = 1;
+	public static final int SECOND_FILE = 2;
+	
 	public static final String TAG = "UploadFile";
 	
 	//服务器信息
@@ -27,6 +30,8 @@ public class UploadFile {
 	public static final int THROW_EXCEPTION = 3;
 	public static final int CONNECTION_FAILSE = 4;
 	public static final int CONNECTION_SUCCESS = 5;
+	public static final int FINISH_SEND_FIRST_SERVER = 7;
+	public static final int DISMISS_DIALOG = 8;
 	
 	/** 连接服务器超时*/
 	public static final int TIME_OUT = 6;
@@ -43,6 +48,10 @@ public class UploadFile {
 	private static final String tag = "ServerActivity";
 	private static String HOST = "112.125.33.161";
 	private static int PORT = 10808;
+	
+	private ServiceRecThread receiveThread;
+	
+	public static int CURRENT_FILE_INDEX = FIRST_FILE;
 	
 	/** 客户端SOCKET对象*/
 	private Socket socket;
@@ -66,7 +75,9 @@ public class UploadFile {
 	/** UI传过来的线程*/
 	private Thread currentThread;
 	/** 标识服务器是否连接成功*/
-	private boolean isConnect = false;
+
+	
+	private TimeOutThread timeOutThread;
 	
 	/** 上传错误代码*/
 	private int errorCode;
@@ -75,28 +86,22 @@ public class UploadFile {
 	
 
 	public UploadFile(Context context, Handler handler, Thread thread){
+		CURRENT_FILE_INDEX = FIRST_FILE;
 		this.currentThread = thread;
 		this.context = context;
 		this.handler = handler;
 	}
 	
-
-	/**
-	 * 发送单文件
-	 * @throws Exception
-	 */
-	private void sendFile() throws Exception {
-		
-	}
-	
 	/** 服务服务器连接是否超时*/
-	private Thread timeOutThread = new Thread() {
+	private class TimeOutThread extends Thread {
+		
+		public boolean isConnect = false;
 		
 		@Override 
 		public void run() {
 			Log.d(TAG, "Start timeOutThread");
 			try {
-				this.sleep(CONNECT_TIME_OUT);
+				Thread.sleep(CONNECT_TIME_OUT);
 				if(isConnect == false) {
 					handler.sendEmptyMessage(TIME_OUT);
 					currentThread.interrupt();
@@ -114,6 +119,7 @@ public class UploadFile {
 	public void uploadFile() throws SocketException {
 		try {
 			openSocketThread();
+			receiveThread = new ServiceRecThread();
 			receiveThread.start();
 			//发送数据给服务器
 			synchronized (this) {
@@ -122,7 +128,7 @@ public class UploadFile {
 				//从切片对象中一片片获取文件流，上传到服务器
 				int i = 0;
 				int total = mCutFileUtil.getTotalPieceNum();
-				while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
+				while((length = mCutFileUtil.getNextPiece(dataBuf, CURRENT_FILE_INDEX)) != -1) {
 					Log.d(TAG, "Start send file of " + ++i + " piece");
 					//标识未接收到
 					out.write(dataBuf, 0, length);
@@ -147,7 +153,7 @@ public class UploadFile {
 					} 
 					if(isFinish == 1) {
 						//删除当前切片
-						mCutFileUtil.removeCurrentFile();
+						mCutFileUtil.removeCurrentFile(CURRENT_FILE_INDEX);
 						isFinish = 0;
 //						mCutFileUtil.removeCurrentFile();
 						Log.i(TAG, "hased send the piece file of " + i + " piece!");
@@ -163,7 +169,6 @@ public class UploadFile {
 				Log.d(TAG, "Finish send a file to the server!");
 			}
 		} catch (SocketException e) {
-			e.printStackTrace();
 			throw new SocketException();
 		} catch(InterruptedException e) {
 			e.printStackTrace();
@@ -191,7 +196,7 @@ public class UploadFile {
 	/**
 	 * 套接字接收线程
 	 */
-	private Thread receiveThread = new Thread() {
+	private class ServiceRecThread extends Thread {
 		@Override
 		public void run(){
 			try {
@@ -203,7 +208,7 @@ public class UploadFile {
 						if(in == null)
 							break;
 						if((length = in.read(recDataBuf)) == -1) {
-							this.sleep(RECEIVE_THREAD_SLEEP_TIME);
+							Thread.sleep(RECEIVE_THREAD_SLEEP_TIME);
 							continue;
 						}
 						Message msg = new Message();
@@ -227,6 +232,7 @@ public class UploadFile {
 				}
 			} catch (InterruptedException e) {
 				//被服务器发送进程打断，不做处理
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(TAG, "Throw exception while receive data from server");
@@ -239,10 +245,24 @@ public class UploadFile {
 	 * 上传文件
 	 * @param cutFileUtil 文件切片对象
 	 */
-	public void upload(CutFileUtil cutFileUtil) throws SocketException {
+	public void upload(CutFileUtil cutFileUtil) {
 		this.mCutFileUtil = cutFileUtil;
 		sendType = 1;
-		this.uploadFile();
+		CURRENT_FILE_INDEX = FIRST_FILE;
+		try {
+			uploadFile();
+		} catch(SocketException e) {}
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+		}
+		handler.sendEmptyMessage(FINISH_SEND_FIRST_SERVER);
+		CURRENT_FILE_INDEX = SECOND_FILE;
+		cutFileUtil.nCurrentPiece = 0;
+		try {
+			uploadFile();
+		} catch(SocketException e) {}
+		
 	}
 	
 	
@@ -253,10 +273,11 @@ public class UploadFile {
 	 */
 	public void testServer(String ip, int port) {
 		try {
+			timeOutThread = new TimeOutThread();
 			timeOutThread.start();
 			Socket socket = new Socket(ip, port);
 			socket.close();
-			this.isConnect = true;
+			timeOutThread.isConnect = true;
 			handler.sendEmptyMessage(CONNECTION_SUCCESS);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -272,16 +293,31 @@ public class UploadFile {
 		//获取服务器地址跟端口
 		PreferencesDAO preferencesDao = new PreferencesDAO(context);
 		Preferences p = preferencesDao.getPreferences();
-		HOST = p.getHost1IP();
-		PORT = p.getHost1Port();
+		if(CURRENT_FILE_INDEX == FIRST_FILE) {
+			HOST = p.getHost1IP();
+			PORT = p.getHost1Port();
+			Log.e(TAG, "HOST1:" + HOST + "; PORT2:" + PORT);
+		} else if(CURRENT_FILE_INDEX == SECOND_FILE){
+			HOST = "112.125.33.161";
+			PORT = 10808;
+			Log.e(TAG, "HOST2:" + HOST + "; PORT2:" + PORT);
+		}
+		
+		if(HOST == null || HOST.equals("")) {
+			if(CURRENT_FILE_INDEX == SECOND_FILE) {
+				handler.sendEmptyMessage(DISMISS_DIALOG);
+			}
+			throw new SocketException("socket host is null exception");
+		}
 		
 		try {
+			timeOutThread = new TimeOutThread();
 			timeOutThread.start();
 			Log.d(TAG, "openSocketThread=> start to connect the server!!");
 			socket = new Socket(HOST,PORT);
+			timeOutThread.isConnect = true;
 			in = socket.getInputStream();
 			out = socket.getOutputStream();
-			isConnect = true;
 			handler.sendEmptyMessage(CONNECTION_SUCCESS);
 		} catch (SocketException e) {
 			e.printStackTrace();
