@@ -128,7 +128,7 @@ public class DataImageInfo {
 		strb.append(";");
 		strb.append("0x"+Integer.toHexString(totalPackage)+"; ");
 		
-		return super.toString();
+		return strb.toString();
 	}
 	
 	/**
