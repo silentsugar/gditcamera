@@ -6,12 +6,12 @@ import java.net.SocketException;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,12 +28,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.camera.adapter.ImageAdapter;
 import com.camera.net.UploadFile;
@@ -159,7 +159,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			switch(msg.what) {
 			//更新图片进度
 			case PROGRESS_DIALOG:
-				((ProgressDialog)dialog).setProgress((Integer)msg.obj);
+				if(dialog.isShowing())
+					((ProgressDialog)dialog).setProgress((Integer)msg.obj);
 				break;
 			
 			case FILE_NOT_FIND:
@@ -172,7 +173,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				break;
 			case FINISH_CUT_FILE:
 				dialog.setProgress(0);
-				dialog.setMessage("正在连接服务器....");
+				dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ":正在连接服务器....");
 				break;
 				
 			case START_UPLOAD:
@@ -181,43 +182,66 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				}
 				break;
 				
+			case UploadFile.FINISH_SEND_FIRST_SERVER:
+				if(!dialog.isShowing()) {
+					dialog.show();
+					dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 开始上传图片  " + mImagePath + "到服务器 ");
+				}
+				break;
+				
+			case UploadFile.DISMISS_DIALOG:
+				if(dialog.isShowing()) {
+					dialog.dismiss();
+				}
+				break;
+				
 			case UploadFile.TIME_OUT:
-				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "连接服务器超时，上传图片 " + mImagePath + " 失败！");
-				uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImagePath + " 失败！");
+				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
+					dialog.dismiss();
+					uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				}
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
 //				Toast.makeText(UploadFileActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
-				dialog.setMessage("正在上传图片....");
+				dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 正在上传图片到服务器....");
 				dialog.setProgress(0);
 				break;
 			case UploadFile.CONNECTION_FAILSE:
-				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "连接服务器失败！");
-				uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ":连接服务器 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器失败！");
+				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
+					dialog.dismiss();
+					uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				}
 				break;
 				
 			case UploadFile.CONNECT_TIME_OUT:
-				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "接收服务器数据超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "接收服务器数据超时，上传图片 " + mImagePath + " 失败！");
-				uploadNextFile(false, true, REUPLOAD_INTERVAL);
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImagePath + " 失败！");
+				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
+					dialog.dismiss();
+					uploadNextFile(false, true, REUPLOAD_INTERVAL);
+				}
 				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
-				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传成功", "成功上传图片  " + mImagePath + " ！");
-				uploadNextFile(true, false, UPLOAD_INTERVAL);
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传成功", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImagePath + "到服务器！");
+				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
+					dialog.dismiss();
+					uploadNextFile(true, false, UPLOAD_INTERVAL);
+				}
 				break;
 			case UploadFile.THROW_EXCEPTION:
-				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "上传图片 " + mImagePath + " 时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "上传图片 " + mImagePath + " 时出现异常，上传失败！");
-				uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImagePath + " 到服务器时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImagePath + " 到服务器时出现异常，上传失败！");
+				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
+					dialog.dismiss();
+					uploadNextFile(false, false, REUPLOAD_INTERVAL);
+				}
 				break;
 			//正在刷新目录
 			case REFRESH_FOLDER_SUCCESS:
@@ -502,7 +526,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
 			PictureUtil pictureUtil = new PictureUtil();
 			pictureUtil.clearThumbnail(PICTURE_FOLDER);
-			pictureUtil.createThumbnails(PICTURE_FOLDER);
+			pictureUtil.createThumbnails(this, PICTURE_FOLDER);
 			pictureUtil.clearImagePieces();
 		} catch (Exception e) {
 			Log.e(TAG, "throw a exception while refresh the picture folder!");

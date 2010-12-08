@@ -1,10 +1,14 @@
 package com.camera.picture;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -57,10 +61,7 @@ public class PictureUtil {
 			if(file.isDirectory()) {
 				continue;
 			}
-			//检测文件是否是图片文件
-			if(isImage(file)) {
-				filePaths.add(file.getAbsolutePath());
-			}
+			filePaths.add(file.getAbsolutePath());
 		}
 		return filePaths;
 	}
@@ -179,7 +180,7 @@ public class PictureUtil {
 	 * @return 缩略图路径列表
 	 * @throws Exception
 	 */
-	public List<String> createThumbnails(String folderPath) throws Exception {
+	public List<String> createThumbnails(Context context, String folderPath) throws Exception {
 		List<String> thumbnailPaths = null;
 		List<String> paths = getFilePathsFromFolder(folderPath);
 		if(paths == null) {
@@ -188,7 +189,7 @@ public class PictureUtil {
 		if(paths.size() > 0)
 			thumbnailPaths = new ArrayList<String>();
 		for(String filePath : paths) {
-			String targetPath = createThumbnail(filePath);
+			String targetPath = createThumbnail(context, filePath);
 			thumbnailPaths.add(targetPath);
 		}
 		return thumbnailPaths;
@@ -202,7 +203,27 @@ public class PictureUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	private String createThumbnail(String filePath) throws Exception {
+	private String createThumbnail(Context context, String filePath) throws Exception {
+		//检测文件是否是图片文件
+		File file = new File(filePath);
+		if(!isImage(file)) {
+			// TODO 
+			String smallFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(file.getPath());
+			String bigFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(file.getPath()) + ".big";
+			File smallFile = new File(smallFileName);
+			File bigFile = new File(bigFileName);
+			InputStream in = context.getAssets().open("file.jpg");
+			OutputStream smallOut = new FileOutputStream(smallFile);
+			OutputStream bigOut = new FileOutputStream(bigFile);
+			byte[] buffer = new byte[in.available()];
+			in.read(buffer);
+			smallOut.write(buffer);
+			bigOut.write(buffer);
+			bigOut.close();
+			smallOut.close();
+			in.close();
+			return smallFileName;
+		}
 		String thumbnailPath = null;
 		Options options = this.getImageOptions(filePath);
 		if (options == null) 

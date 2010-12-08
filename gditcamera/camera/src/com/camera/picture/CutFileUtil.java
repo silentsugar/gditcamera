@@ -45,7 +45,7 @@ public class CutFileUtil {
 	private int fileSize;
 	
 	/** 当前获取的文件切片坐标*/
-	private int nCurrentPiece = 0;
+	public int nCurrentPiece = 0;
 	
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
@@ -150,7 +150,8 @@ public class CutFileUtil {
 	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
 		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  pieceNum;
 		Log.v(TAG, "piece file name : " + pieceName);
-		FileOutputStream out = new FileOutputStream(pieceName);
+		FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
+		FileOutputStream out2 = new FileOutputStream(pieceName + "_2");
 		pieceFiles.add(pieceName);
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize " + dataSize);
 		try {
@@ -164,9 +165,12 @@ public class CutFileUtil {
 //			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
-		out.write(packageHead);
-		out.write(buf, 0, dataSize);
-		out.close();
+		out1.write(packageHead);
+		out1.write(buf, 0, dataSize);
+		out1.close();
+		out2.write(packageHead);
+		out2.write(buf, 0, dataSize);
+		out2.close();
 		Message msg = new Message();
 		msg.obj = (Integer)(pieceNum  * 100 / totalPieceNum);
 		msg.what = UploadFileActivity.PROGRESS_DIALOG;
@@ -179,11 +183,11 @@ public class CutFileUtil {
 	 * @return -1表示文件已经读取完,否则返回读取buf的大小
 	 * @throws IOException 
 	 */
-	public int getNextPiece(byte[] buf) {
+	public int getNextPiece(byte[] buf, int i) {
 		//如果文件名不存在，说明已经读完，则返回-1
 		if(nCurrentPiece >= pieceFiles.size())
 			return -1;
-		String fileName = pieceFiles.get(nCurrentPiece);
+		String fileName = pieceFiles.get(nCurrentPiece) + "_" + i;
 		
 		FileInputStream in;
 		int pieceSizeTmp = 0;
@@ -206,8 +210,8 @@ public class CutFileUtil {
 	 * @return -1表示文件已经读取完,否则返回读取buf的大小
 	 * @throws IOException 
 	 */
-	public int getCurrentPiece(byte[] buf) throws IOException {
-		String fileName = pieceFiles.get(nCurrentPiece - 1);
+	public int getCurrentPiece(byte[] buf, int i) throws IOException {
+		String fileName = pieceFiles.get(nCurrentPiece - 1) + "_" + i;
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return -1;
@@ -221,8 +225,8 @@ public class CutFileUtil {
 	 * 删除当前已读取好的文件
 	 * @return
 	 */
-	public boolean removeCurrentFile() {
-		String fileName = pieceFiles.get(nCurrentPiece - 1);
+	public boolean removeCurrentFile(int i) {
+		String fileName = pieceFiles.get(nCurrentPiece - 1) + "_" + i;
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return false;
@@ -230,12 +234,12 @@ public class CutFileUtil {
 		return file.delete();
 	}
 	
-	public void removeAllPieceFile() {
-		for(String filePath : pieceFiles) {
-			File file = new File(filePath);
-			file.delete();
-		}
-	}
+//	public void removeAllPieceFile() {
+//		for(String filePath : pieceFiles) {
+//			File file = new File(filePath);
+//			file.delete();
+//		}
+//	}
 
 	public int getTotalPieceNum() {
 		return totalPieceNum;
