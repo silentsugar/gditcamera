@@ -1,7 +1,7 @@
 package com.camera.vo;
 
 /**
- * 第一部分--描述信息
+ * 第一部分--描述信息(超过1字节的数都是：低字节在前，高字节在后)
  * @author tian
  *
  */
@@ -90,7 +90,7 @@ public class DataDesc {
 	 * 把该对象转换成字节数组返回
 	 * @return
 	 */
-	public byte [] toBytes(){
+	public byte [] getBytes(){
 		return new byte[0];
 	}
 }
