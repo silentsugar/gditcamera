@@ -29,7 +29,7 @@ public class ImageCompress {
 	public static int mImageCompressSize = Constant.IMAGE_COMPRESS_SIZE;
 	
 	/** ÕºœÒ÷ ¡ø*/
-	private static int quality = 80;
+	private static int quality = 65;
 	
 	public ImageCompress() {
 		

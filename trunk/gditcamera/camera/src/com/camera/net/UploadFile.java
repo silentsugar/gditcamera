@@ -123,7 +123,7 @@ public class UploadFile {
 			receiveThread.start();
 			//发送数据给服务器
 			synchronized (this) {
-				byte[] dataBuf = new byte[CutFileUtil.pieceSize];
+				byte[] dataBuf = new byte[mCutFileUtil.pieceSize];
 				int length = 0;
 				//从切片对象中一片片获取文件流，上传到服务器
 				int i = 0;
