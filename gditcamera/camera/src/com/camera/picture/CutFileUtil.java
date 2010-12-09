@@ -25,7 +25,7 @@ public class CutFileUtil {
 	public static final String TAG = "CutFileUtil";
 	
 	/** 切片的大小*/
-	public static final int pieceSize = 30000;
+	public int pieceSize = 1000;
 	/** 包头信息*/
 	private static byte[] packageHead;
 	
@@ -72,6 +72,7 @@ public class CutFileUtil {
 		if(!file.exists()) {
 			throw new FileNotFoundException("File not exist!");
 		}
+		pieceSize = calculatePieceSize(file);
 		pieceFiles = new ArrayList<String>();
 		//检测图片是否已经有切片
 //		if(isExistPieces()) {
@@ -211,10 +212,11 @@ public class CutFileUtil {
 	 * @throws IOException 
 	 */
 	public int getCurrentPiece(byte[] buf, int i) throws IOException {
-		String fileName = pieceFiles.get(nCurrentPiece - 1) + "_" + i;
+		String fileName = pieceFiles.get(nCurrentPiece - 1);
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return -1;
+		fileName = fileName  + "_" + i;
 		FileInputStream in = new FileInputStream(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
@@ -226,10 +228,11 @@ public class CutFileUtil {
 	 * @return
 	 */
 	public boolean removeCurrentFile(int i) {
-		String fileName = pieceFiles.get(nCurrentPiece - 1) + "_" + i;
+		String fileName = pieceFiles.get(nCurrentPiece - 1);
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return false;
+		fileName += fileName + "_" + i;
 		File file = new File(fileName);
 		return file.delete();
 	}
@@ -247,6 +250,35 @@ public class CutFileUtil {
 
 	public void setTotalPieceNum(int totalPieceNum) {
 		this.totalPieceNum = totalPieceNum;
+	}
+	
+	/**
+	 * 根据文件大小计算文件切片的大小
+	 */
+	private int calculatePieceSize(File file) {
+		long fileSize = file.length();
+		if(fileSize > 4 * 1024 * 1024) {
+			return 80000;
+		} else if(fileSize > 2 * 1024 * 1024) {
+			return 50000;
+		} else if(fileSize > 1024 * 1024) {
+			return 40000;
+		} else if(fileSize > 1024 * 512) { 
+			return 15000;
+		} else if(fileSize > 1024 * 100) { 
+			return 10000;
+		} else if(fileSize > 1024 * 50) {
+			return 8000;
+		} else if(fileSize > 1024 * 30) {
+			return 5000;
+		} else if(fileSize > 1024 * 20) {
+			return 3000;
+		} else if(fileSize > 1024 * 10) {
+			return 2000;
+		} else if(fileSize > 1024 * 5) {
+			return 1000;
+		}
+		return 1000;
 	}
 	
 	
