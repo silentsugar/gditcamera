@@ -9,7 +9,7 @@ import android.os.Environment;
 public class Constant {
 
 	/** TRUE就是第一个版本，FALSE就是第二个版本*/
-	public static final boolean VERSION = true;
+	public static final boolean VERSION = false;
 	
 	/** SDCARD路径*/
 	public static final String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
