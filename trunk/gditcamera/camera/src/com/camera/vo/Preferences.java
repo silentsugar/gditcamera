@@ -4,8 +4,6 @@ import java.util.Map;
 
 import com.camera.util.StringUtil;
 
-import android.util.Log;
-
 /**
  * 配置信息实体
  *
@@ -87,7 +85,12 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return null;
 		}
-		return StringUtil.getIpByHostAdd(this.hostList.get(Constant.HOST_1));
+		String address = this.hostList.get(Constant.HOST_1);
+		if(null!=address){
+			return StringUtil.getIpByHostAdd(address);
+		}else{
+			return null;
+		}
 	}
 	
 	public int getHost1Port(){
@@ -98,7 +101,12 @@ public class Preferences {
 			return -1;
 		}
 		
-		return StringUtil.getPortByHostAdd(this.hostList.get(Constant.HOST_1));
+		String address = this.hostList.get(Constant.HOST_1);
+		if(null!=address){
+			return StringUtil.getPortByHostAdd(address);
+		}else{
+			return -1;
+		}
 	}
 	
 	public String getHost2IP(){
@@ -108,7 +116,12 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return null;
 		}
-		return StringUtil.getIpByHostAdd(this.hostList.get(Constant.HOST_2));
+		String address = this.hostList.get(Constant.HOST_2);
+		if(null!=address){
+			return StringUtil.getIpByHostAdd(address);
+		}else{
+			return null;
+		}
 	}
 	
 	public int getHost2Port(){
@@ -119,7 +132,12 @@ public class Preferences {
 			return -1;
 		}
 
-		return StringUtil.getPortByHostAdd(this.hostList.get(Constant.HOST_2));
+		String address = this.hostList.get(Constant.HOST_2);
+		if(null!=address){
+			return StringUtil.getPortByHostAdd(address);
+		}else{
+			return -1;
+		}
 	}
 	
 }
