@@ -8,8 +8,12 @@ import android.os.Environment;
  */
 public class Constant {
 
+	/** TRUE就是第一个版本，FALSE就是第二个版本*/
+	public static final boolean VERSION = true;
+	
 	/** SDCARD路径*/
 	public static final String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+	
 	
 	/**每个包头大小*/
 	public static final int DATA_HEAD_SIZE = 138;
