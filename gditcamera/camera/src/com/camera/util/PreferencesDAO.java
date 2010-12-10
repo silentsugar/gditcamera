@@ -29,12 +29,11 @@ public class PreferencesDAO {
     static final Preferences defaultPref;
     static{
 		defaultPref = new Preferences();
-		Map<String,Integer> hosts = new HashMap<String,Integer>();
-		hosts.put("112.125.33.161",10808);
-//		hosts.put("192.168.1.2",8080);
+		Map<String,String> hosts = new HashMap<String,String>();
+		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
+//		hosts.put(Constant.HOST_2,"http://1.1.1.1:8080");
 		defaultPref.setHostList(hosts);
 		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
-		File f = new File(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
 		defaultPref.setSubStation("中国水文");
 		defaultPref.setSurveyStation("应急监测");
 		defaultPref.setStationCode("1090999");
@@ -62,19 +61,17 @@ public class PreferencesDAO {
 			p.setSurveyStation(sp.getString(Constant.STATION_SURVEY, ""));
 			p.setStationCode(sp.getString(Constant.STATION_CODE, ""));
 			//主机列表
-			Map<String,Integer> m = new HashMap<String, Integer>();
-			String host1Add = sp.getString("host_1",null);
-			String host2Add = sp.getString("host_2",null);
+			Map<String,String> m = new HashMap<String, String>();
+			String host1Add = sp.getString(Constant.HOST_1,null);
+			String host2Add = sp.getString(Constant.HOST_2,null);
 
 			if(host1Add!=null){
-				m.put(StringUtil.getIpByHostAdd(host1Add),StringUtil.getPortByHostAdd(host1Add));
-			}else{
-				return p;
+				m.put(Constant.HOST_1,host1Add);
+			}
+			if(host2Add!=null){
+				m.put(Constant.HOST_2,host2Add);
 			}
 			
-			if(host2Add!=null){
-				m.put(StringUtil.getIpByHostAdd(host2Add),StringUtil.getPortByHostAdd(host2Add));
-			}
 			p.setHostList(m);
 			return p;
 		}
@@ -111,21 +108,14 @@ public class PreferencesDAO {
 			return defaultPref.getSubStation();
 		}else if(key.equals(Constant.STATION_SURVEY)){
 			return defaultPref.getSurveyStation();
-		}else if(key.equals("host_1")){
-			Map<String,Integer> m = defaultPref.getHostList();
+		}else if(key.equals(Constant.HOST_1)){
+			Map<String,String> m = defaultPref.getHostList();
 			final Set<String> keySet = m.keySet();
-			for(final String hostAdd : keySet){
-				return hostAdd+m.get(hostAdd);
-			}
-		}else if(key.equals("host_2")){
-			Map<String,Integer> m = defaultPref.getHostList();
+			return m.get(keySet);
+		}else if(key.equals(Constant.HOST_2)){
+			Map<String,String> m = defaultPref.getHostList();
 			final Set<String> keySet = m.keySet();
-			int i=0;
-			for(final String hostAdd : keySet){
-				if(i++<1)
-					continue;
-				return hostAdd+m.get(hostAdd);
-			}
+			return m.get(keySet);
 		}
 		return null;
 	}
@@ -141,19 +131,10 @@ public class PreferencesDAO {
 		spEdit.putString(Constant.STATION_SUB, p.getSubStation());
 		spEdit.putString(Constant.COMMAND, p.getCommand());
 		spEdit.putString(Constant.STATION_SURVEY, p.getSurveyStation());
-		Map<String,Integer> hostList = p.getHostList();
+		Map<String,String> hostList = p.getHostList();
 		if(null!=hostList){
-			int i=0;
-			for(String hostAdd : hostList.keySet()){
-				if(i<1){
-					spEdit.putString(Constant.HOST_1, "http://"+hostAdd+":"+hostList.get(hostAdd));
-				}else if(i<2){
-					spEdit.putString(Constant.HOST_2, "http://"+hostAdd+":"+hostList.get(hostAdd));
-				}else{
-					spEdit.putString("host_"+i, "http://"+hostAdd+":"+hostList.get(hostAdd));
-				}
-				i++;
-			}
+			for(String key : hostList.keySet())
+				spEdit.putString(key, hostList.get(key));
 		}
 		return spEdit.commit();
 	}
