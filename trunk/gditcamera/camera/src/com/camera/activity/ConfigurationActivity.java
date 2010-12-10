@@ -171,6 +171,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				setModifyEnable(true);
 			}else{
 				Preferences defaultPref = dao.getDefaultPreferences();
+				dao.save(defaultPref);
 				setModifyEnable(false);
 				
 				btnBrowse.getEditText().setText(defaultPref.getDefaultImgDir());
