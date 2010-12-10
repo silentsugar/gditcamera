@@ -1,11 +1,14 @@
 package com.camera.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.camera.vo.Constant;
 import com.camera.vo.Preferences;
@@ -29,7 +32,9 @@ public class PreferencesDAO {
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
 		hosts.put("http://112.125.33.161",10808);
 //		hosts.put("http://192.168.1.2",8080);
-		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA/");
+		defaultPref.setHostList(hosts);
+		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
+		File f = new File(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
 		defaultPref.setSubStation("中国水文");
 		defaultPref.setSurveyStation("应急监测");
 		defaultPref.setStationCode("1090999");
