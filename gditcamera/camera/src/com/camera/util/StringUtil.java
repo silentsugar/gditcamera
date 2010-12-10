@@ -23,6 +23,14 @@ public class StringUtil {
 	}
 	
 	/**
+	 * 根据文件路径获取文件名
+	 * @param filePath 文件名
+	 */
+	public static String getFileName(String filePath) {
+		return filePath.substring(filePath.lastIndexOf("/") + 1);
+	}
+	
+	/**
 	 * 把缩略图片路径转换成原图片路径
 	 * @param filePath 缩略图路径
 	 * @return

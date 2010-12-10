@@ -47,6 +47,7 @@ public class BluetoothUtil {
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null) {
         	Toast.makeText(mContext, "您的设备不支持蓝牙功能！", Toast.LENGTH_SHORT).show();
+        	return;
         } else {
         	if (!mBluetoothAdapter.isEnabled()) {
         		Builder builder = new Builder(mContext);
@@ -84,6 +85,8 @@ public class BluetoothUtil {
 	 * @return 已匹配的蓝牙设备
 	 */
 	public Set<BluetoothDevice> getPairedDevices() {
+		if(mBluetoothAdapter == null)
+			return null;
 		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
 		return pairedDevices;
 	}

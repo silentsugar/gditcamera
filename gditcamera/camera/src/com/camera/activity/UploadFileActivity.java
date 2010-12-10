@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.SocketException;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.Notification;
@@ -33,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.camera.adapter.ImageAdapter;
@@ -88,10 +88,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private Gallery mGallery;
 	/** 图片适配器*/
 	private ImageAdapter adapter;
+	/** 文件路径*/
+	private TextView mTxtFilePath;
 	/** 对话框*/
 	private ProgressDialog dialog;
 	/** 当前选中图片的文件名*/
 	private String mCurrentImg;
+	private String mCurrentFileName;
 	private UploadFile uploadFile;
 	private CutFileUtil cutFileUtil;
 	
@@ -101,6 +104,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private UploadFileList mUploadFileList = new UploadFileList();
 	
 	private String mImagePath;
+	private String mImageName;
 	
 	
 	Thread mUploadOnePicThread = new UploadThread();
@@ -165,7 +169,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			
 			case FILE_NOT_FIND:
 				dialog.dismiss();
-				Toast.makeText(UploadFileActivity.this, "未找到文件 " + mImagePath + " ，请尝试刷新一下！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(UploadFileActivity.this, "未找到文件 " + mImageName + " ，请尝试刷新一下！", Toast.LENGTH_SHORT).show();
 				break;
 			case COMPRESS_PICTURE:
 				dialog.setMessage("正在处理图片(切片)....");
@@ -185,7 +189,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.FINISH_SEND_FIRST_SERVER:
 				if(!dialog.isShowing()) {
 					dialog.show();
-					dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 开始上传图片  " + mImagePath + "到服务器 ");
+					dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 开始上传图片  " + mImageName + "到服务器 ");
 				}
 				break;
 				
@@ -195,9 +199,28 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				}
 				break;
 				
+			case CutFileUtil.MSG_EXIST_PIECE:
+				Builder builder = new Builder(UploadFileActivity.this);
+				builder.setTitle("提示").setMessage("系统检测到您该图片未上传完，是否继续上传上次未完成的任务！");
+				builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						cutFileUtil.isSendLastPiece = false;
+						mUploadOnePicThread.interrupt();
+					}
+				});
+				builder.setNeutralButton("确定", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						cutFileUtil.isSendLastPiece = true;
+						mUploadOnePicThread.interrupt();
+					}
+				});
+				break;
+				
 			case UploadFile.TIME_OUT:
-				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImagePath + " 失败！");
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImageName + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 连接服务器超时，上传图片 " + mImageName + " 失败！");
 				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
 					dialog.dismiss();
 					uploadNextFile(false, false, REUPLOAD_INTERVAL);
@@ -219,8 +242,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				break;
 				
 			case UploadFile.CONNECT_TIME_OUT:
-				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImagePath + " 失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImagePath + " 失败！");
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImageName + " 失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 接收服务器回复超时，上传图片 " + mImageName + " 失败！");
 				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
 					dialog.dismiss();
 					uploadNextFile(false, true, REUPLOAD_INTERVAL);
@@ -228,16 +251,16 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				break;
 			
 			case UploadFile.FINISH_UPLOAD_FILE:
-				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImagePath + " ！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传成功", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImagePath + "到服务器！");
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImageName + " ！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传成功", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 成功上传图片  " + mImageName + "到服务器！");
 				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
 					dialog.dismiss();
 					uploadNextFile(true, false, UPLOAD_INTERVAL);
 				}
 				break;
 			case UploadFile.THROW_EXCEPTION:
-				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImagePath + " 到服务器时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
-				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImagePath + " 到服务器时出现异常，上传失败！");
+				Toast.makeText(UploadFileActivity.this, "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImageName + " 到服务器时出现异常，上传失败！", Toast.LENGTH_SHORT).show();
+				sendNotification("上传失败", "服务器" + UploadFile.CURRENT_FILE_INDEX + ": 上传图片 " + mImageName + " 到服务器时出现异常，上传失败！");
 				if(UploadFile.CURRENT_FILE_INDEX == UploadFile.SECOND_FILE) {
 					dialog.dismiss();
 					uploadNextFile(false, false, REUPLOAD_INTERVAL);
@@ -254,6 +277,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				if(adapter.getCount() > 0) {
 					Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(0) + ".big");
 			        mCurrentImg = adapter.getImagePath(0);
+			        mCurrentFileName = StringUtil.convertBackFolderPath(mCurrentImg);
+			        mCurrentFileName = StringUtil.getFileName(mCurrentFileName);
+			        mTxtFilePath.setText("文件名：" + mCurrentFileName);
 			        mImageView.setImageBitmap(bitmap);
 			        mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			        mGallery.setSelection(0);
@@ -312,6 +338,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		if(mUploadFileList.size() < 1)
 			return;
 		mImagePath = (String)mUploadFileList.get(0);
+		mImageName = StringUtil.getFileName(mImagePath);
 //		System.out.println("---------------------" + mImagePath + "----------------------------");
 		showDialog();
 		Log.i(TAG, "--------------uploadNextFile:Send next picture-----------------");
@@ -365,6 +392,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * 获取控件
 	 */
 	public void getComponents() {
+		mTxtFilePath = (TextView)this.findViewById(R.id.txtFilePath);
 		mTxtMessage = (EditText)this.findViewById(R.id.txtMessage);
 		mBtnUpload = (Button)this.findViewById(R.id.btnUpload);
 		mBtnUploadAll = (Button)this.findViewById(R.id.btnUploadAll);
@@ -385,8 +413,12 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	            PictureUtil pictureUtil = new PictureUtil();
 	            Bitmap bitmap = pictureUtil.getBitmap(adapter.getImagePath(position) + ".big");
 	            mCurrentImg = adapter.getImagePath(position);
+	            mCurrentFileName = StringUtil.convertBackFolderPath(mCurrentImg);
+	            mCurrentFileName = StringUtil.getFileName(mCurrentFileName);
 	            mImageView.setImageBitmap(bitmap);
 	            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+	            mTxtFilePath.setText("文件名：" + mCurrentFileName);
+	            mTxtFilePath.setSelected(true);
 	        }
 	    });
 	}
@@ -400,6 +432,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//上传一张图片
 		case R.id.btnUpload:
 			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
+			mImageName = StringUtil.getFileName(mImagePath);
 			mUploadFileList = new UploadFileList();
 			mUploadFileList.add(mImagePath);
 			showDialog();
@@ -410,6 +443,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			int size = adapter.getCount();
 			if(size > 0) {
 				mImagePath = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
+				mImageName = StringUtil.getFileName(mImagePath);
 			}
 			mUploadFileList = new UploadFileList();
 			for(int i = 0; i < size; i ++) {
@@ -424,7 +458,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	
 	public void showDialog() {
 		ProgressDialog progressDialog = new ProgressDialog(this);
-		CharSequence title = "正在上传图片 " + mImagePath;
+		CharSequence title = "正在上传图片 " + mImageName;
 		// CharSequence message = getString(R.string.xxx);
 		CharSequence message = "当前处理进度";
 		progressDialog = new ProgressDialog(this);
@@ -470,6 +504,11 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			intent.setClass(this, ConfigurationActivity.class);
 			this.startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
 			break;
+		case R.id.menuBluetoothSend:
+			Intent intent2 = new Intent();
+			intent2.setClass(this, BluetoothActivity.class);
+			this.startActivity(intent2);
+			break;
 		//退出系统
 		case R.id.menuExit:
 			exit();
@@ -488,8 +527,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		builder.setPositiveButton("确定", new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				ActivityManager activityMgr= (ActivityManager) UploadFileActivity.this.getSystemService(ACTIVITY_SERVICE);
-				activityMgr.restartPackage(getPackageName());
+				android.os.Process.killProcess(android.os.Process.myPid());
 			}
 		});
 		builder.show();

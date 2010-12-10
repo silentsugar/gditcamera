@@ -37,6 +37,20 @@
 			android:layout_marginTop="35dip"
 			android:layout_marginBottom="40dip">
 			
+			<TextView
+				android:id="@+id/txtFilePath"
+				android:layout_width="fill_parent"
+				android:layout_height="25dip"
+				android:background="#E5E5D5"
+				android:layout_alignParentTop="true"
+				android:paddingLeft="5dip"
+				android:text="正在加载图片..." 
+				android:ellipsize="marquee"
+				android:singleLine="true"
+				android:textSize="15sp"
+				android:gravity="center_vertical"
+				android:textColor="#63696B"/>
+			
 			<ImageView
 				android:id="@+id/img"
 				android:layout_alignParentTop="true"
@@ -44,7 +58,7 @@
 				android:layout_height="fill_parent"
 				android:padding="5dip"
 				android:layout_gravity="center_horizontal"
-				android:layout_marginTop="0dip"
+				android:layout_marginTop="25dip"
 			    android:layout_marginBottom="85dip"
 				/>
 			
