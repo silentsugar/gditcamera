@@ -1,14 +1,11 @@
 package com.camera.util;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.camera.vo.Constant;
 import com.camera.vo.Preferences;
