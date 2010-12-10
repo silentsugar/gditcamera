@@ -205,17 +205,18 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						cutFileUtil.isSendLastPiece = false;
+						CutFileUtil.IS_SEND_LAST_PIECE = false;
 						mUploadOnePicThread.interrupt();
 					}
 				});
 				builder.setNeutralButton("确定", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						cutFileUtil.isSendLastPiece = true;
+						CutFileUtil.IS_SEND_LAST_PIECE = true;
 						mUploadOnePicThread.interrupt();
 					}
 				});
+				builder.show();
 				break;
 				
 			case UploadFile.TIME_OUT:
@@ -565,7 +566,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			PictureUtil pictureUtil = new PictureUtil();
 			pictureUtil.clearThumbnail(PICTURE_FOLDER);
 			pictureUtil.createThumbnails(this, PICTURE_FOLDER);
-			pictureUtil.clearImagePieces();
+//			pictureUtil.clearImagePieces();
 		} catch (Exception e) {
 			Log.e(TAG, "throw a exception while refresh the picture folder!");
 			e.printStackTrace();

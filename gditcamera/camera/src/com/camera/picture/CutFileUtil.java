@@ -49,6 +49,7 @@ public class CutFileUtil {
 	
 	/** 当前获取的文件切片坐标*/
 	private int nCurrentPiece = 0;
+	private int nSecCurrentPiece = 0;
 	
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
@@ -67,9 +68,10 @@ public class CutFileUtil {
 	private Context context;
 	
 	/** 当有切片存在的情况下，是否使用上面的切片继续发给服务器*/
-	public boolean isSendLastPiece = true;
+	public static boolean IS_SEND_LAST_PIECE = true;
 	
 	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws FileNotFoundException {
+		IS_SEND_LAST_PIECE = true;
 		this.description = description;
 		this.handler = handler;
 		this.context = context;
@@ -86,9 +88,10 @@ public class CutFileUtil {
 			try {
 				Thread.sleep(1000000000);
 			} catch (InterruptedException e) {
-				if(isSendLastPiece) {
+				if(IS_SEND_LAST_PIECE) {
 					return;
 				}
+				pieceFiles = null;
 			}
 		}
 		cutFile();
@@ -117,8 +120,9 @@ public class CutFileUtil {
 				i = Integer.parseInt(fileName.substring(length - 1));
 				j = Integer.parseInt(fileName.substring(length - 3, length - 2));
 				if(i == 1) {
-					if(j <= min1)
+					if(j <= min1) {
 						min1 = j;
+					}
 					count ++;
 				} else if(i == 2) {
 					if(j <= min2)
@@ -133,14 +137,14 @@ public class CutFileUtil {
 		if(count > 0) {
 			totalPieceNum = count;
 			for(i = min1; i <= count; i ++) {
-				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_1");
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName);
 				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
 			}
 		}
 		if(count2 > 0) {
 			secondTotalPieceNum = count2;
 			for(i = min2; i <= count2; i ++) {
-				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_2");
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName);
 				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
 			}
 		}
@@ -159,6 +163,7 @@ public class CutFileUtil {
 			//计算切片总数
 			int count = fileSize / pieceSize;
 			totalPieceNum = (fileSize % pieceSize == 0) ? count : count + 1;
+			secondTotalPieceNum = totalPieceNum;
 			Log.d(TAG, "total piece count : " + totalPieceNum + "; fileSize = " + fileSize);
 			
 			byte[] buf = new byte[pieceSize];
