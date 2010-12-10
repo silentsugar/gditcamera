@@ -1,5 +1,7 @@
 package com.camera.activity;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -19,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.Toast;
 import com.camera.net.UploadFile;
+import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
@@ -103,6 +106,12 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		try {
+			IniControl.initConfiguration(this);
+		} catch (IOException e) {
+			Toast.makeText(this, "≥ı ºªØ“Ï≥£", 200).show();
+			e.printStackTrace();
+		}
 
 		mLayoutSubStation = (RelativeLayout) findViewById(R.id.layoutSubStation);
 		mLayoutCommand = (RelativeLayout) findViewById(R.id.layoutCommand);
@@ -158,7 +167,37 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				mBtnTest2.setEnabled(true);
 			}
 		}else{
-			setModifyEnable(true);
+			if(Constant.VERSION){
+				setModifyEnable(true);
+			}else{
+				Preferences defaultPref = dao.getDefaultPreferences();
+				setModifyEnable(false);
+				
+				btnBrowse.getEditText().setText(defaultPref.getDefaultImgDir());
+				etSubStation.setText(defaultPref.getSubStation());
+				etCommand.setText(defaultPref.getCommand());
+				etSurveyStation.setText(defaultPref.getSurveyStation());
+				etStationCode.setText(defaultPref.getStationCode());
+				String ip1 = defaultPref.getHost1IP();
+				String ip2 = defaultPref.getHost2IP();
+				int port1 = defaultPref.getHost1Port();
+				int port2 = defaultPref.getHost2Port();
+				
+				if(ip1!=null){
+					etHost1Ip.setText(ip1);
+					etHost1Port.setText(port1+"");
+					setModifyEnable(false, 1);
+				}else{
+					mBtnTest1.setEnabled(true);
+				}
+				if(ip2!=null){
+					etHost2Ip.setText(ip2);
+					etHost2Port.setText(port2+"");
+					setModifyEnable(false, 2);
+				}else{
+					mBtnTest2.setEnabled(true);
+				}
+			}
 		}
 	}
 

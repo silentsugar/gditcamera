@@ -24,23 +24,23 @@ public class IniControl {
 	public static boolean initConfiguration(Context context) throws IOException {
 		File file = new File(Constant.APP_FOLDER);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		file = new File(Constant.PIECE_FOLDER);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		file = new File(Constant.THUMBNAIL_FOLDER);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		file = new File(Constant.DEFAULT_IMAGE_FOLDER);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		file = new File(Constant.PIECE_COMPRESS_FOLDER);
 		if(!file.exists()) {
-			file.mkdir();
+			file.mkdirs();
 		}
 		return true;
 	}
