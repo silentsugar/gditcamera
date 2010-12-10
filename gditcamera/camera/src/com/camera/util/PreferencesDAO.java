@@ -28,11 +28,12 @@ public class PreferencesDAO {
 		defaultPref = new Preferences();
 		Map<String,Integer> hosts = new HashMap<String,Integer>();
 		hosts.put("http://112.125.33.161",10808);
-		hosts.put("http://192.168.1.2",8080);
+//		hosts.put("http://192.168.1.2",8080);
 		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA/");
-		defaultPref.setSubStation("changzhou");
-		defaultPref.setSurveyStation("xiaohezhan");
-		defaultPref.setStationCode("00033001");
+		defaultPref.setSubStation("中国水文");
+		defaultPref.setSurveyStation("应急监测");
+		defaultPref.setStationCode("1090999");
+		defaultPref.setCommand("1090999");
     }
 
 	public PreferencesDAO(Context c){
