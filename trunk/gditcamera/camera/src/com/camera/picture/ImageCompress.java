@@ -6,8 +6,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.camera.util.StringUtil;
@@ -22,14 +22,14 @@ public class ImageCompress {
 	public static final String TAG = "ImageCompress";
 
 	/**压缩目标图像宽度大小*/
-	public static int mMaxWidth = 1024;
+	public static int mMaxWidth = 700;
 	/**压缩目标图像高度大小*/
-	public static int mMaxHeight = 1024;
+	public static int mMaxHeight = 700;
 	/** 文件大小多少时压缩 */
 	public static int mImageCompressSize = Constant.IMAGE_COMPRESS_SIZE;
 	
 	/** 图像质量*/
-	private static int quality = 40;
+	private static final int quality = 80;
 	
 	public ImageCompress() {
 		
@@ -41,8 +41,8 @@ public class ImageCompress {
 		}
 		File file = new File(filePath);
 		long length = file.length();
-		while(length >= mImageCompressSize) {
-			Log.d(TAG, "The image size is:" + length + "; file path is : " + filePath);
+		boolean flag = true;
+		while(length >= 10) {
 			filePath = compress(filePath);
 			file = new File(filePath);
 			length = file.length();
@@ -62,7 +62,7 @@ public class ImageCompress {
 		return false;
 	}
 	
-	private static String compress(String filePath) throws Exception {
+	private static String compress_backup(String filePath) throws Exception {
 		String destFilePath = null;
 		Bitmap destBitmap;
 		int destWidth = 0;
@@ -93,12 +93,13 @@ public class ImageCompress {
 		}
 		BitmapFactory.Options newOpts = new BitmapFactory.Options();
 		//缩放的比例，缩放是很难按准备的比例进行缩放的，目前我只发现只能通过inSampleSize来进行缩放，其值表明缩放的倍数，SDK中建议其值是2的指数值
-		newOpts.inSampleSize = (int) ratio + 1;
+//		newOpts.inSampleSize = (int) ratio + 1;
 		//inJustDecodeBounds设为false表示把图片读进内存中
 		newOpts.inJustDecodeBounds = false;
 		//设置大小，这个一般是不准确的，是以inSampleSize的为准，但是如果不设置却不能缩放
 		newOpts.outHeight = destHeight;
 		newOpts.outWidth = destWidth;
+		Log.e(TAG, "destHeight:" + destHeight + "; destWidth:" + destWidth);
 		newOpts.inSampleSize = calculateInSampleSize2(filePath);
 		destBitmap = BitmapFactory.decodeFile(filePath, newOpts);
 		if(destBitmap == null) {
@@ -112,6 +113,28 @@ public class ImageCompress {
 		if(!destBitmap.isRecycled()) {
 			destBitmap.recycle();
 		}
+		File file = new File(filePath);
+		file.delete();
+		return destFilePath;
+	}
+	
+
+	private static String compress(String filePath) throws Exception {
+		BitmapFactory.Options newOpts = new BitmapFactory.Options();
+		newOpts.inSampleSize = 1;
+		Bitmap destBitmap = BitmapFactory.decodeFile(filePath, newOpts);
+		if(destBitmap == null) {
+			throw new Exception("Can not compress the image file!!");
+		}
+		String destFilePath = Constant.PIECE_COMPRESS_FOLDER + UUID.randomUUID().toString() + ".jpg";
+		File destFile = new File(destFilePath);
+		OutputStream os = new FileOutputStream(destFile);
+		destBitmap.compress(CompressFormat.JPEG, 1, os);
+		os.close();
+		if(!destBitmap.isRecycled()) {
+			destBitmap.recycle();
+		}
+		Log.e(TAG, "File size:" + destFile.length());
 		return destFilePath;
 	}
 	
