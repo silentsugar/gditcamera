@@ -2,6 +2,8 @@ package com.camera.vo;
 
 import java.util.Map;
 
+import com.camera.util.StringUtil;
+
 import android.util.Log;
 
 /**
@@ -26,7 +28,7 @@ public class Preferences {
 	 * 服务器地址列表，
 	 * 格式:Map<"192.168.1.1",8080> 或 Map<"www.baidu.com",8080>
 	 */
-	private Map<String,Integer> hostList;
+	private Map<String,String> hostList;
 	
 	public String getDefaultImgDir() {
 		return defaultImgDir;
@@ -52,10 +54,10 @@ public class Preferences {
 	public void setStationCode(String stationCode) {
 		this.stationCode = stationCode;
 	}
-	public Map<String,Integer> getHostList() {
+	public Map<String,String> getHostList() {
 		return hostList;
 	}
-	public void setHostList(Map<String,Integer> hostList) {
+	public void setHostList(Map<String,String> hostList) {
 		this.hostList = hostList;
 	}
 	
@@ -85,10 +87,7 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return null;
 		}
-		for(String ip : this.hostList.keySet()){
-			return ip;
-		}
-		return null;
+		return StringUtil.getIpByHostAdd(this.hostList.get(Constant.HOST_1));
 	}
 	
 	public int getHost1Port(){
@@ -99,10 +98,7 @@ public class Preferences {
 			return -1;
 		}
 		
-		for(String ip : this.hostList.keySet()){
-			return this.hostList.get(ip);
-		}
-		return -1;
+		return StringUtil.getPortByHostAdd(this.hostList.get(Constant.HOST_1));
 	}
 	
 	public String getHost2IP(){
@@ -112,15 +108,7 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return null;
 		}
-		Log.e("Host List Size", this.hostList.keySet().size()+"");
-		int i = 1;
-		for(String ip : this.hostList.keySet()){
-			if(i==2){
-				return ip;
-			}
-			i++;
-		}
-		return null;
+		return StringUtil.getIpByHostAdd(this.hostList.get(Constant.HOST_2));
 	}
 	
 	public int getHost2Port(){
@@ -130,14 +118,8 @@ public class Preferences {
 		if(this.hostList.size()<=0){
 			return -1;
 		}
-		
-		int i = 1;
-		for(String ip : this.hostList.keySet()){
-			if(i==2)
-				return this.hostList.get(ip);
-			i++;
-		}
-		return -1;
+
+		return StringUtil.getPortByHostAdd(this.hostList.get(Constant.HOST_2));
 	}
 	
 }
