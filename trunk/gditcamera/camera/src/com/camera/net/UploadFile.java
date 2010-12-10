@@ -258,7 +258,7 @@ public class UploadFile {
 		}
 		handler.sendEmptyMessage(FINISH_SEND_FIRST_SERVER);
 		CURRENT_FILE_INDEX = SECOND_FILE;
-		cutFileUtil.nCurrentPiece = 0;
+		cutFileUtil.changeNext();
 		try {
 			uploadFile();
 		} catch(SocketException e) {}

@@ -24,6 +24,8 @@ public class CutFileUtil {
 	
 	public static final String TAG = "CutFileUtil";
 	
+	public static final int MSG_EXIST_PIECE = 30;
+	
 	/** 切片的大小*/
 	public int pieceSize = 1000;
 	/** 包头信息*/
@@ -40,12 +42,13 @@ public class CutFileUtil {
 	
 	/** 切片总数*/
 	private int totalPieceNum = 0;
+	private int secondTotalPieceNum = 0;
 	
 	/** 文件大小,单位为byte*/
 	private int fileSize;
 	
 	/** 当前获取的文件切片坐标*/
-	public int nCurrentPiece = 0;
+	private int nCurrentPiece = 0;
 	
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
@@ -63,6 +66,9 @@ public class CutFileUtil {
 	/** Context对象*/
 	private Context context;
 	
+	/** 当有切片存在的情况下，是否使用上面的切片继续发给服务器*/
+	public boolean isSendLastPiece = true;
+	
 	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws FileNotFoundException {
 		this.description = description;
 		this.handler = handler;
@@ -75,9 +81,16 @@ public class CutFileUtil {
 		pieceSize = calculatePieceSize(file);
 		pieceFiles = new ArrayList<String>();
 		//检测图片是否已经有切片
-//		if(isExistPieces()) {
-//			return;
-//		}
+		if(isExistPieces()) {
+			handler.sendEmptyMessage(MSG_EXIST_PIECE);
+			try {
+				Thread.sleep(1000000000);
+			} catch (InterruptedException e) {
+				if(isSendLastPiece) {
+					return;
+				}
+			}
+		}
 		cutFile();
 	}
 	
@@ -88,25 +101,51 @@ public class CutFileUtil {
 	public boolean isExistPieces() {
 		String pieceName = StringUtil.convertFolderPath(filePath) + "_";
 		int count = 0;
+		int count2 = 0;
 		Log.i(TAG, "Conver to piece name :" + pieceName);
 		File folder = new File(Constant.PIECE_FOLDER);
 		File[] files = folder.listFiles();
 		String fileName = null;
-		for(File file : files) {
-			fileName = file.getName();
-			if(fileName.contains(pieceName)) {
-				count ++;
-				Log.i(TAG, "Find exist piece file : " + file.getName());
+		int i, j, min1 = 10000000, min2 = 1000000;
+		try {
+			for(File file : files) {
+				fileName = file.getName();
+				int length = fileName.length();
+				if(!fileName.contains(pieceName)) {
+					continue;
+				}
+				i = Integer.parseInt(fileName.substring(length - 1));
+				j = Integer.parseInt(fileName.substring(length - 3, length - 2));
+				if(i == 1) {
+					if(j <= min1)
+						min1 = j;
+					count ++;
+				} else if(i == 2) {
+					if(j <= min2)
+						min2 = j;
+					count2 ++;
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 		if(count > 0) {
 			totalPieceNum = count;
-			for(int i = 1; i <= count; i ++) {
-				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i);
+			for(i = min1; i <= count; i ++) {
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_1");
 				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
 			}
-			return true;
 		}
+		if(count2 > 0) {
+			secondTotalPieceNum = count2;
+			for(i = min2; i <= count2; i ++) {
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_2");
+				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
+			}
+		}
+		if(count > 0 || count2 > 0)
+			return true;
 		return false;
 	}
 	
@@ -281,6 +320,12 @@ public class CutFileUtil {
 		return 1000;
 	}
 	
-	
+	/**
+	 * 开始发送切片到下一个服务器
+	 */
+	public void changeNext() {
+		this.nCurrentPiece = 0;
+		this.totalPieceNum = this.secondTotalPieceNum;
+	}
 	
 }

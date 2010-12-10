@@ -24,6 +24,9 @@
         <activity
         	android:name=".ConfigurationActivity" 
         	android:configChanges="keyboardHidden|orientation"/> 
+        <activity
+        	android:name=".BluetoothActivity" 
+        	android:configChanges="keyboardHidden|orientation"/> 
         
         <!--选择文件夹Activity-->
        <activity

@@ -2,6 +2,7 @@ package com.camera.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import com.camera.adapter.DeviceListAdapter;
 import com.camera.bluetooth.BluetoothUtil;
 
-public class BluetoolthActivity extends Activity implements OnClickListener {
+public class BluetoothActivity extends Activity implements OnClickListener {
 	
 	public static final int STOP_SCAN = 1;
 	
@@ -91,7 +92,9 @@ public class BluetoolthActivity extends Activity implements OnClickListener {
     	
     	mBtnTool = new BluetoothUtil(this);
         mBtnTool.initEnvironment();
-        mDevicesList = new ArrayList<BluetoothDevice>(mBtnTool.getPairedDevices());
+        Set<BluetoothDevice> devicesList = mBtnTool.getPairedDevices();
+    	if(devicesList != null)
+    		mDevicesList = new ArrayList<BluetoothDevice>();
         mAdapter = new DeviceListAdapter(this, mDevicesList);
         mLstDeviceList.setAdapter(mAdapter);
         
@@ -142,7 +145,9 @@ public class BluetoolthActivity extends Activity implements OnClickListener {
 		        	mBtnTool.initEnvironment();
 		        } else {
 		        	mDevicesList.clear();
-		        	mDevicesList = new ArrayList<BluetoothDevice>(mBtnTool.getPairedDevices());
+		        	Set<BluetoothDevice> devicesList = mBtnTool.getPairedDevices();
+		        	if(devicesList != null)
+		        		mDevicesList = new ArrayList<BluetoothDevice>();
 		        	mAdapter.notifyDataSetChanged();
 			        mBtnScan.setText(STOP_SCAN_TEXT);
 			        mTxtScanTitle.setText("正在扫描蓝牙设备...");
