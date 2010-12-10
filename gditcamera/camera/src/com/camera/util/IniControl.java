@@ -42,9 +42,12 @@ public class IniControl {
 		if(!file.exists()) {
 			file.mkdirs();
 		}
+		//Çå¿ÕÍ¼Æ¬Ñ¹ËõÄ¿Â¼
+		File folder = new File(Constant.PIECE_COMPRESS_FOLDER);
+		File[] files = folder.listFiles();
+		for(File f : files) {
+			f.delete();
+		}
 		return true;
 	}
-	
-
-	
 }
