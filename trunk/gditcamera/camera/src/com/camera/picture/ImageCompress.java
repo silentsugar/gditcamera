@@ -14,7 +14,7 @@ import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
 
 /**
- * 图片压缩灯
+ * 图片压缩工具
  * @author 郑澍璋
  */
 public class ImageCompress {
@@ -29,12 +29,18 @@ public class ImageCompress {
 	public static int mImageCompressSize = Constant.IMAGE_COMPRESS_SIZE;
 	
 	/** 图像质量*/
-	private static final int quality = 80;
+	private static final int quality = 65;
 	
 	public ImageCompress() {
 		
 	}
 	
+	/**
+	 * 压缩图片，当图片大于指定大小时才会进行压缩，且只能压缩JPG图片
+	 * @param filePath 图片路径
+	 * @return
+	 * @throws Exception 找不到文件时抛出异常
+	 */
 	public static String compressJPG(String filePath) throws Exception {
 		if(!checkIsJPEG(filePath)) {
 			return filePath;
@@ -42,7 +48,7 @@ public class ImageCompress {
 		File file = new File(filePath);
 		long length = file.length();
 		boolean flag = true;
-		while(length >= 10) {
+		while(length >= mImageCompressSize) {
 			filePath = compress(filePath);
 			file = new File(filePath);
 			length = file.length();
@@ -51,6 +57,11 @@ public class ImageCompress {
 		return filePath;
 	}
 	
+	/**
+	 * 检测是否是JPEG图片
+	 * @param filePath 图片路径
+	 * @return
+	 */
 	private static boolean checkIsJPEG(String filePath) {
 		int index = filePath.lastIndexOf(".");
 		final String suffix = filePath.substring(index + 1).toLowerCase();
@@ -121,7 +132,7 @@ public class ImageCompress {
 
 	private static String compress(String filePath) throws Exception {
 		BitmapFactory.Options newOpts = new BitmapFactory.Options();
-		newOpts.inSampleSize = 1;
+		newOpts.inSampleSize = calculateInSampleSize2(filePath);
 		Bitmap destBitmap = BitmapFactory.decodeFile(filePath, newOpts);
 		if(destBitmap == null) {
 			throw new Exception("Can not compress the image file!!");
@@ -129,7 +140,7 @@ public class ImageCompress {
 		String destFilePath = Constant.PIECE_COMPRESS_FOLDER + UUID.randomUUID().toString() + ".jpg";
 		File destFile = new File(destFilePath);
 		OutputStream os = new FileOutputStream(destFile);
-		destBitmap.compress(CompressFormat.JPEG, 1, os);
+		destBitmap.compress(CompressFormat.JPEG, quality, os);
 		os.close();
 		if(!destBitmap.isRecycled()) {
 			destBitmap.recycle();
@@ -141,31 +152,30 @@ public class ImageCompress {
 	/**
 	 * 生成缩略图
 	 * @param filePath 图片路径
-	 * @param width 图片宽度
-	 * @param height 图片高度
-	 * @param quality 图片质量
 	 * @param size 大图还是小图，TRUE为大图
 	 */
-	public static String extractThumbnail(String filePath, int width, 
-			int height, int quality, boolean size) throws Exception {
-		BitmapFactory.Options newOpts = new BitmapFactory.Options();
-		String thumbnailPath = null;
-		int inSampleSize = 0;
-		if(size) {
-			inSampleSize = calculateInSampleSize(filePath);
-			newOpts.inSampleSize = inSampleSize;
-			thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
+	public static String extractThumbnail(String filePath) throws Exception {
+		Bitmap destBitmap;
+		int destWidth = 0;
+		int destHeight = 0;
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filePath, opts);
+		
+		int srcWidth = opts.outWidth;
+		int srcHeight = opts.outHeight;
+		//缩放比例
+		double ratio = 0.0;
+		if(srcWidth > srcHeight) {
+			ratio = srcWidth / Constant.THUMBNAIL_BIG_SIZE;
 		} else {
-			inSampleSize = calculateInSampleSize(filePath) * 2;
-			newOpts.inSampleSize = inSampleSize;
-			thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
+			ratio = srcHeight / Constant.THUMBNAIL_SMALL_SIZE;
 		}
-		newOpts.inJustDecodeBounds = false;
-		//设置大小，这个一般是不准确的，是以inSampleSize的为准，但是如果不设置却不能缩放
-		newOpts.outHeight = width;
-		newOpts.outWidth = height;
-		Bitmap bitmap = BitmapFactory.decodeFile(filePath, newOpts);
-		Log.i(TAG, "InSampleSize is :" + inSampleSize);
+		opts.inJustDecodeBounds = false;
+		opts.inSampleSize = (int)ratio + 1;
+		Bitmap bitmap = BitmapFactory.decodeFile(filePath, opts);
+		Log.i(TAG, "InSampleSize is :" + opts.inSampleSize);
+		String thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
 		File bitmapFile = new File(thumbnailPath);
 		if (bitmapFile.exists()) {
 			bitmapFile.delete();
@@ -176,6 +186,15 @@ public class ImageCompress {
 		}
 		bitmapWtriter.close();
 		return thumbnailPath;
+	}
+	
+	public static void printFileInfo(String filePath) {
+		File file = new File(filePath);
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filePath, opts);
+		Log.e(TAG, "Image file size is: " + file.length() 
+				+ "; Image size is :" + opts.outWidth + " * " + opts.outHeight);
 	}
 	
 	/**
@@ -210,15 +229,6 @@ public class ImageCompress {
 		File file = new File(filePath);
 		long fileSize = file.length();
 		Log.i(TAG, "File size is :" + fileSize);
-		if(fileSize > 4 * 1024 * 1024) {
-			return 8;
-		} else if(fileSize > 2 * 1024 * 1024) {
-			return 6;
-		} else if(fileSize > 1024 * 1024) {
-			return 4;
-		} else if(fileSize > 1024 * 728) { 
-			return 2;
-		}
-		return 1;
+		return (int)(Math.sqrt((double)fileSize / 100000) + 1);
 	}
 }
