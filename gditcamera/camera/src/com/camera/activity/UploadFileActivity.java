@@ -45,6 +45,7 @@ import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
 import com.camera.vo.UploadFileList;
+import com.camera.vo.VersionVo;
 
 /**
  * 图片上传管理模块
@@ -58,8 +59,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private static int NOTIFICATION_ID = 1;
 	
 	private static String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
-	/** 刷新目录成功*/
-	private static final int REFRESH_FOLDER_SUCCESS = 10;
 	/** 刷新目录失败*/
 	private static final int REFRESH_FOLDER_ERR = 11;
 	/** 切片成功*/
@@ -72,6 +71,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	public static final int START_UPLOAD = 15;
 	/** 压缩图片*/
 	public static final int COMPRESS_PICTURE = 16;
+	/** 刷新目录成功*/
+	private static final int REFRESH_FOLDER_SUCCESS = 20;
 	/** 上传多张图片的间隔时间*/
 	public static final int UPLOAD_INTERVAL = 4000;
 	/** 上传图片失败的重新上传延迟时间*/
@@ -244,6 +245,13 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					dialog.dismiss();
 					uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				}
+				break;
+				
+			case UploadFile.FINISH_SEND:
+				if(dialog.isShowing()) {
+					dialog.dismiss();
+				}
+				uploadNextFile(false, false, REUPLOAD_INTERVAL);
 				break;
 				
 			case UploadFile.CONNECT_TIME_OUT:
@@ -525,6 +533,23 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			Intent intent2 = new Intent();
 			intent2.setClass(this, BluetoothActivity.class);
 			this.startActivity(intent2);
+			break;
+		case R.id.menuAbout:
+			Builder builder = new Builder(UploadFileActivity.this);
+			builder.setTitle("关于");
+			String msg = "";
+			msg += "当前版本： " + VersionVo.VERSION_NAME + "\n";
+			if(VersionVo.CURRENT_VERSION == VersionVo.VERSION1) {
+				msg += "版本类别： 第一版本\n";
+			} else if(VersionVo.CURRENT_VERSION == VersionVo.VERSION2) {
+				msg += "版本类别： 第二版本\n";
+			}
+			msg += "发布日期： " + VersionVo.PUBLIC_DATE + "\n";
+			msg += "新版本修改： \n";
+			msg += VersionVo.UPLOAD_INFO;
+			builder.setMessage(msg);
+			builder.setNegativeButton("确定", null);
+			builder.show();
 			break;
 		//退出系统
 		case R.id.menuExit:

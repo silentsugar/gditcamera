@@ -8,6 +8,9 @@
    <item android:id="@+id/menuBluetoothSend"
           android:title="蓝牙发送"
           android:icon="@android:drawable/stat_sys_data_bluetooth" />
+   <item android:id="@+id/menuAbout"
+          android:title="关于"
+          android:icon="@android:drawable/ic_menu_info_details" />
    <item android:id="@+id/menuExit"
           android:title="退出"
           android:icon="@android:drawable/ic_menu_set_as" />

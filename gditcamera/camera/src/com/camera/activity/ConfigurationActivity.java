@@ -20,12 +20,14 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.Toast;
+
 import com.camera.net.UploadFile;
 import com.camera.util.IniControl;
 import com.camera.util.PreferencesDAO;
 import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
 import com.camera.vo.Preferences;
+import com.camera.vo.VersionVo;
 import com.camera.widget.CEditTextButton;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
@@ -167,7 +169,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				mBtnTest2.setEnabled(true);
 			}
 		}else{
-			if(Constant.CURRENT_VERSION == Constant.VERSION1){
+			if(VersionVo.CURRENT_VERSION == VersionVo.VERSION1){
 				setModifyEnable(true);
 			}else{
 				Preferences defaultPref = dao.getDefaultPreferences();
@@ -434,7 +436,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 			mLayoutBtnSave.addView(mBtnSave);
 		}
 		btnBrowse.setEnabled(enabled);
-		if(Constant.CURRENT_VERSION == Constant.VERSION1){
+		if(VersionVo.CURRENT_VERSION == VersionVo.VERSION1){
 			etSubStation.setEnabled(enabled);
 			etCommand.setEnabled(enabled);
 			etSurveyStation.setEnabled(enabled);
