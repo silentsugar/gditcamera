@@ -32,6 +32,7 @@ public class UploadFile {
 	public static final int CONNECTION_SUCCESS = 5;
 	public static final int FINISH_SEND_FIRST_SERVER = 7;
 	public static final int DISMISS_DIALOG = 8;
+	public static final int FINISH_SEND = 10;
 	
 	/** 连接服务器超时*/
 	public static final int TIME_OUT = 6;
@@ -258,6 +259,7 @@ public class UploadFile {
 		handler.sendEmptyMessage(FINISH_SEND_FIRST_SERVER);
 		//如果切片已经发送完，则返回，如果还没发送完，则发给第二个服务器
 		if(!cutFileUtil.changeNext()) {
+			handler.sendEmptyMessage(FINISH_SEND);
 			return;
 		}
 		CURRENT_FILE_INDEX = cutFileUtil.whichService;
@@ -307,7 +309,7 @@ public class UploadFile {
 		
 		if(HOST == null || HOST.equals("")) {
 			if(CURRENT_FILE_INDEX == SECOND_FILE) {
-				handler.sendEmptyMessage(DISMISS_DIALOG);
+				handler.sendEmptyMessage(FINISH_SEND);
 			}
 			throw new SocketException("socket host is null exception");
 		}
