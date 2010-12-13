@@ -167,7 +167,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				mBtnTest2.setEnabled(true);
 			}
 		}else{
-			if(Constant.VERSION){
+			if(Constant.CURRENT_VERSION == Constant.VERSION1){
 				setModifyEnable(true);
 			}else{
 				Preferences defaultPref = dao.getDefaultPreferences();
@@ -433,20 +433,36 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 			mBtnSave.setText("ÐÞ¸Ä");
 			mLayoutBtnSave.addView(mBtnSave);
 		}
-		
 		btnBrowse.setEnabled(enabled);
-		etSubStation.setEnabled(enabled);
-		etCommand.setEnabled(enabled);
-		etSurveyStation.setEnabled(enabled);
-		etStationCode.setEnabled(enabled);
-		etSubStation.setFocusable(enabled);
-		etCommand.setFocusable(enabled);
-		etSurveyStation.setFocusable(enabled);
-		etStationCode.setFocusable(enabled);
-		etSubStation.setFocusableInTouchMode(enabled);
-		etCommand.setFocusableInTouchMode(enabled);
-		etSurveyStation.setFocusableInTouchMode(enabled);
-		etStationCode.setFocusableInTouchMode(enabled);
+		if(Constant.CURRENT_VERSION == Constant.VERSION1){
+			etSubStation.setEnabled(enabled);
+			etCommand.setEnabled(enabled);
+			etSurveyStation.setEnabled(enabled);
+			etStationCode.setEnabled(enabled);
+			
+			etSubStation.setFocusable(enabled);
+			etCommand.setFocusable(enabled);
+			etSurveyStation.setFocusable(enabled);
+			etStationCode.setFocusable(enabled);
+			etSubStation.setFocusableInTouchMode(enabled);
+			etCommand.setFocusableInTouchMode(enabled);
+			etSurveyStation.setFocusableInTouchMode(enabled);
+			etStationCode.setFocusableInTouchMode(enabled);
+		}else{
+			etSubStation.setEnabled(false);
+			etCommand.setEnabled(false);
+			etSurveyStation.setEnabled(false);
+			etStationCode.setEnabled(false);
+			
+			etSubStation.setFocusable(false);
+			etCommand.setFocusable(false);
+			etSurveyStation.setFocusable(false);
+			etStationCode.setFocusable(false);
+			etSubStation.setFocusableInTouchMode(false);
+			etCommand.setFocusableInTouchMode(false);
+			etSurveyStation.setFocusableInTouchMode(false);
+			etStationCode.setFocusableInTouchMode(false);
+		}
 	}
 	
 	/**
