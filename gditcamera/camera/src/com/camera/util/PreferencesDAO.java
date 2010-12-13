@@ -27,7 +27,7 @@ public class PreferencesDAO {
     static{
 		defaultPref = new Preferences();
 		Map<String,String> hosts = new HashMap<String,String>();
-		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
+//		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
 //		hosts.put(Constant.HOST_2,"http://1.1.1.1:8080");
 		defaultPref.setHostList(hosts);
 		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
