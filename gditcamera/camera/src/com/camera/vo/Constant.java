@@ -8,8 +8,15 @@ import android.os.Environment;
  */
 public class Constant {
 
-	/** TRUE就是第一个版本，FALSE就是第二个版本*/
-	public static final boolean VERSION = false;
+	/** 版本标识*/
+	/** 版本一*/
+	public static final int VERSION1 = 1;
+	/** 版本二*/
+	public static final int VERSION2 = 2;
+	/** 标识当前版本*/
+	public static final int CURRENT_VERSION = VERSION1;
+
+	
 	
 	/** SDCARD路径*/
 	public static final String SDCARD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -23,19 +30,21 @@ public class Constant {
 	public static final String  PERFERENCES_FILE_PATH = "/shared_prefs/perferences.xml";
 	/** 文件大小多少时压缩 */
 	public static final int IMAGE_COMPRESS_SIZE = 100000;
+	public static final int THUMBNAIL_BIG_SIZE = 300;
+	public static final int THUMBNAIL_SMALL_SIZE = 80;
 	
 	/** 应用程序目录*/
-	public static final String APP_FOLDER = SDCARD_PATH + "/ImageUploader/";
+	public static final String APP_FOLDER = SDCARD_PATH + "/hband/";
 	/** 应用程序图片切片目录*/
-	public static final String PIECE_FOLDER = SDCARD_PATH + "/ImageUploader/wUpload/";
+	public static final String PIECE_FOLDER = SDCARD_PATH + "/hband/wUpload/";
 	/** 应用程序图片压缩目录*/
-	public static final String PIECE_COMPRESS_FOLDER = SDCARD_PATH + "/ImageUploader/compress/";
+	public static final String PIECE_COMPRESS_FOLDER = SDCARD_PATH + "/hband/compress/";
 	/** 图片的格式*/
 	public static final String IMAGE_SUFFIX = "BMP;PCX;TIFF;GIF;JPEG;JPG;TGA;EXIF;FPX;SVG;PSD;CDR;PCD;DXF;UFO;EPS;PNG;";
 	
 	
 	/** 缩略图保存目录*/
-	public static final String THUMBNAIL_FOLDER = SDCARD_PATH + "/ImageUploader/thumbnail/";
+	public static final String THUMBNAIL_FOLDER = SDCARD_PATH + "/hband/thumbnail/";
 	/** 目录默认目录*/
 	public static final String DEFAULT_IMAGE_FOLDER = SDCARD_PATH + "/DCIM/100MEDIA/";
 	/** 文件名*/
