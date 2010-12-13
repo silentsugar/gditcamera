@@ -26,6 +26,11 @@ public class CutFileUtil {
 	
 	public static final int MSG_EXIST_PIECE = 30;
 	
+	/**
+	 * 标识当前切片是发送给哪个服务器
+	 */
+	public int whichService = 0;
+	
 	/** 切片的大小*/
 	public int pieceSize = 1000;
 	/** 包头信息*/
@@ -42,20 +47,20 @@ public class CutFileUtil {
 	
 	/** 切片总数*/
 	private int totalPieceNum = 0;
-	private int secondTotalPieceNum = 0;
 	
 	/** 文件大小,单位为byte*/
 	private int fileSize;
 	
 	/** 当前获取的文件切片坐标*/
 	private int nCurrentPiece = 0;
-	private int nSecCurrentPiece = 0;
 	
 	/** 文件切片名集合*/
 	private List<String> pieceFiles;
+	private List<String> secPieceFiles;
 	
 	/** 标识是否第一次组装包*/
 	private boolean isFirst = true;
+	
 	
 	private Handler handler;
 	
@@ -81,7 +86,6 @@ public class CutFileUtil {
 			throw new FileNotFoundException("File not exist!");
 		}
 		pieceSize = calculatePieceSize(file);
-		pieceFiles = new ArrayList<String>();
 		//检测图片是否已经有切片
 		if(isExistPieces()) {
 			handler.sendEmptyMessage(MSG_EXIST_PIECE);
@@ -91,10 +95,22 @@ public class CutFileUtil {
 				if(IS_SEND_LAST_PIECE) {
 					return;
 				}
+				//删除已存在的切片文件
+				String pieceName = StringUtil.convertFolderPath(filePath) + "_";
+				File folder = new File(Constant.PIECE_FOLDER);
+				File[] files = folder.listFiles();
+				for(File file : files) {
+					if(file.getName().contains(pieceName) && !file.isDirectory()) {
+						file.delete();
+					}
+				}
+				whichService = 1;
 				pieceFiles = null;
+				secPieceFiles = null;
 			}
 		}
 		cutFile();
+		whichService = 1;
 	}
 	
 	/**
@@ -118,7 +134,9 @@ public class CutFileUtil {
 					continue;
 				}
 				i = Integer.parseInt(fileName.substring(length - 1));
-				j = Integer.parseInt(fileName.substring(length - 3, length - 2));
+				int k = fileName.indexOf("_", fileName.length() - 5) + 1;
+				j = Integer.parseInt(fileName.substring(k, length - 2));
+				Log.e(TAG, "i :" + i + "; j : " + j);
 				if(i == 1) {
 					if(j <= min1) {
 						min1 = j;
@@ -130,26 +148,39 @@ public class CutFileUtil {
 					count2 ++;
 				}
 			}
+			Log.i(TAG, "min1 : " + min1 + "; min2:" + min2);
+			Log.i(TAG, "count : " + count + "; count2:" + count2);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		if(count > 0) {
+			pieceFiles = new ArrayList<String>();
 			totalPieceNum = count;
-			for(i = min1; i <= count; i ++) {
-				pieceFiles.add(Constant.PIECE_FOLDER + pieceName);
-				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
+			for(i = min1; i <= count + min1 - 1; i ++) {
+				pieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_1");
+				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i + "_1");
 			}
 		}
 		if(count2 > 0) {
-			secondTotalPieceNum = count2;
-			for(i = min2; i <= count2; i ++) {
-				pieceFiles.add(Constant.PIECE_FOLDER + pieceName);
-				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i);
+			secPieceFiles = new ArrayList<String>();
+			for(i = min2; i <= count2 + min2 - 1; i ++) {
+				secPieceFiles.add(Constant.PIECE_FOLDER + pieceName + i + "_2");
+				Log.i(TAG, "pieceFiles[" + i + "] :" + Constant.PIECE_FOLDER + pieceName + i + "_2");
 			}
 		}
-		if(count > 0 || count2 > 0)
+		if(count > 0 || count2 > 0) {
+			if(count > 0) {
+				this.totalPieceNum = count;
+				whichService = 1;
+			} else {
+				this.totalPieceNum = count2;
+				this.pieceFiles = this.secPieceFiles;
+				this.secPieceFiles = null;
+				whichService = 2;
+			}
 			return true;
+		}
 		return false;
 	}
 	
@@ -163,12 +194,13 @@ public class CutFileUtil {
 			//计算切片总数
 			int count = fileSize / pieceSize;
 			totalPieceNum = (fileSize % pieceSize == 0) ? count : count + 1;
-			secondTotalPieceNum = totalPieceNum;
 			Log.d(TAG, "total piece count : " + totalPieceNum + "; fileSize = " + fileSize);
 			
 			byte[] buf = new byte[pieceSize];
 			int pieceNum = 1;
 			int dataSize = 0;
+			pieceFiles = new ArrayList<String>();
+			secPieceFiles = new ArrayList<String>(); 
 			while(true) {
 				if((dataSize = in.read(buf, 0, pieceSize - 90)) > 0) {
 					packagePiece(buf, pieceNum, dataSize);
@@ -197,7 +229,8 @@ public class CutFileUtil {
 		Log.v(TAG, "piece file name : " + pieceName);
 		FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
 		FileOutputStream out2 = new FileOutputStream(pieceName + "_2");
-		pieceFiles.add(pieceName);
+		pieceFiles.add(pieceName + "_1");
+		secPieceFiles.add(pieceName + "_2");
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize " + dataSize);
 		try {
 			if(isFirst) {
@@ -228,11 +261,11 @@ public class CutFileUtil {
 	 * @return -1表示文件已经读取完,否则返回读取buf的大小
 	 * @throws IOException 
 	 */
-	public int getNextPiece(byte[] buf, int i) {
+	public int getNextPiece(byte[] buf) {
 		//如果文件名不存在，说明已经读完，则返回-1
 		if(nCurrentPiece >= pieceFiles.size())
 			return -1;
-		String fileName = pieceFiles.get(nCurrentPiece) + "_" + i;
+		String fileName = pieceFiles.get(nCurrentPiece);
 		
 		FileInputStream in;
 		int pieceSizeTmp = 0;
@@ -260,7 +293,6 @@ public class CutFileUtil {
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return -1;
-		fileName = fileName  + "_" + i;
 		FileInputStream in = new FileInputStream(fileName);
 		int pieceSize = in.available();
 		in.read(buf);
@@ -271,14 +303,18 @@ public class CutFileUtil {
 	 * 删除当前已读取好的文件
 	 * @return
 	 */
-	public boolean removeCurrentFile(int i) {
+	public boolean removeCurrentFile() {
 		String fileName = pieceFiles.get(nCurrentPiece - 1);
 		//如果文件不存在，说明已经读完，则返回-1
 		if(fileName == null)
 			return false;
-		fileName += fileName + "_" + i;
 		File file = new File(fileName);
-		return file.delete();
+		if(file.exists()) {
+			Log.v(TAG, "Success to delete piece file, file name is:" + fileName);
+			return file.delete();
+		}
+		Log.e(TAG, "Cant not find the piece file, remove is failure!! file name is:" + fileName);
+		return false;
 	}
 	
 //	public void removeAllPieceFile() {
@@ -328,9 +364,15 @@ public class CutFileUtil {
 	/**
 	 * 开始发送切片到下一个服务器
 	 */
-	public void changeNext() {
+	public boolean changeNext() {
 		this.nCurrentPiece = 0;
-		this.totalPieceNum = this.secondTotalPieceNum;
+		if(secPieceFiles != null && secPieceFiles.size() > 0) {
+			this.totalPieceNum = secPieceFiles.size();
+			this.pieceFiles = this.secPieceFiles;
+			whichService = 2;
+			return true;
+		}
+		return false;
 	}
 	
 }

@@ -229,11 +229,8 @@ public class PictureUtil {
 		if (options == null) 
 			throw new Exception("Can't get the file!");
 		//生成缩略图
-		ImageCompress.extractThumbnail(filePath);
-		this.calculateThumbnailSize(options.outHeight, options.outHeight, thumbnailWidth2, thumbnailHeight2);
-		//生成小的缩略图
+		thumbnailPath = ImageCompress.extractThumbnail(filePath);
 		return thumbnailPath;
-			
 	}
 	
 	/**
