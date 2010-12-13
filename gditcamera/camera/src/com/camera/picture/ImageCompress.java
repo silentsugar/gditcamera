@@ -8,6 +8,7 @@ import java.util.UUID;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 
 import com.camera.util.StringUtil;
@@ -155,36 +156,46 @@ public class ImageCompress {
 	 * @param size 大图还是小图，TRUE为大图
 	 */
 	public static String extractThumbnail(String filePath) throws Exception {
-		Bitmap destBitmap;
-		int destWidth = 0;
-		int destHeight = 0;
-		BitmapFactory.Options opts = new BitmapFactory.Options();
-		opts.inJustDecodeBounds = true;
-		BitmapFactory.decodeFile(filePath, opts);
-		
-		int srcWidth = opts.outWidth;
-		int srcHeight = opts.outHeight;
-		//缩放比例
-		double ratio = 0.0;
-		if(srcWidth > srcHeight) {
-			ratio = srcWidth / Constant.THUMBNAIL_BIG_SIZE;
-		} else {
-			ratio = srcHeight / Constant.THUMBNAIL_SMALL_SIZE;
-		}
-		opts.inJustDecodeBounds = false;
-		opts.inSampleSize = (int)ratio + 1;
+		//生成大缩略图
+		Log.i(TAG, "SRC Image Info:");
+//		printFileInfo(filePath);
+		Options opts = getBitmapOptions(filePath, Constant.THUMBNAIL_BIG_SIZE);
 		Bitmap bitmap = BitmapFactory.decodeFile(filePath, opts);
 		Log.i(TAG, "InSampleSize is :" + opts.inSampleSize);
-		String thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
-		File bitmapFile = new File(thumbnailPath);
+		String thumbnailPathBig = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath) + ".big";
+		File bitmapFile = new File(thumbnailPathBig);
 		if (bitmapFile.exists()) {
 			bitmapFile.delete();
 		}
 		FileOutputStream bitmapWtriter = new FileOutputStream(bitmapFile);
-		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, quality, bitmapWtriter)) {
+		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bitmapWtriter)) {
 			throw new Exception("Can't save the thumbnail file!");
 		}
 		bitmapWtriter.close();
+		if(!bitmap.isRecycled()) {
+			bitmap.recycle();
+		}
+		Log.i(TAG, "BIG Image Info:");
+//		printFileInfo(thumbnailPathBig);
+		
+		//生成小缩略图
+		opts = getBitmapOptions(thumbnailPathBig, Constant.THUMBNAIL_SMALL_SIZE);
+		bitmap = BitmapFactory.decodeFile(thumbnailPathBig, opts);
+		String thumbnailPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
+		File bitmapSmallFile = new File(thumbnailPath);
+		if (bitmapSmallFile.exists()) {
+			bitmapSmallFile.delete();
+		}
+		bitmapWtriter = new FileOutputStream(bitmapSmallFile);
+		if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bitmapWtriter)) {
+			throw new Exception("Can't save the thumbnail file!");
+		}
+		bitmapWtriter.close();
+		if(!bitmap.isRecycled()) {
+			bitmap.recycle();
+		}
+		Log.i(TAG, "SMALL Image Info:");
+//		printFileInfo(thumbnailPath);
 		return thumbnailPath;
 	}
 	
@@ -193,33 +204,33 @@ public class ImageCompress {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(filePath, opts);
-		Log.e(TAG, "Image file size is: " + file.length() 
+		Log.v(TAG, "Image file size is: " + file.length() 
 				+ "; Image size is :" + opts.outWidth + " * " + opts.outHeight);
 	}
 	
 	/**
 	 * 生成缩略图时计算读取图片文件要缩小的倍数
 	 */
-	private static int calculateInSampleSize(String filePath) {
-		File file = new File(filePath);
-		long fileSize = file.length();
-		Log.i(TAG, "File size is :" + fileSize);
-		if(fileSize > 4 * 1024 * 1024) {
-			return 30;
-		} else if(fileSize > 2 * 1024 * 1024) {
-			return 22;
-		} else if(fileSize > 1024 * 1024) {
-			return 15;
-		} else if(fileSize > 1024 * 512) { 
-			return 8;
-		} else if(fileSize > 300 * 1024) {
-			return 5;
-		} else if(fileSize > 200 * 1024) {
-			return 3;
-		} else if(fileSize > 100 * 1024) {
-			return 2;
+	private static Options getBitmapOptions(String filePath, int imageSize) {
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filePath, opts);
+		
+		int srcWidth = opts.outWidth;
+		int srcHeight = opts.outHeight;
+		//缩放比例
+		int ratio = 0;
+		if(srcWidth > srcHeight) {
+			int k = srcWidth / imageSize;
+			ratio = (srcWidth % imageSize == 0) ? k : k + 1;
+		} else {
+			int k = srcHeight / imageSize;
+			ratio = (srcWidth % imageSize == 0) ? k : k + 1;
 		}
-		return 1;
+		Log.e(TAG, "inSampleSize is :" + ratio);
+		opts.inJustDecodeBounds = false;
+		opts.inSampleSize = ratio;
+		return opts;
 	}
 	
 	/**

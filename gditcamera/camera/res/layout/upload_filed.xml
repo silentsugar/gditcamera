@@ -41,7 +41,7 @@
 				android:id="@+id/txtFilePath"
 				android:layout_width="fill_parent"
 				android:layout_height="25dip"
-				android:background="#E5E5D5"
+				android:background="@drawable/separate_bg_normal"
 				android:layout_alignParentTop="true"
 				android:paddingLeft="5dip"
 				android:text="正在加载图片..." 

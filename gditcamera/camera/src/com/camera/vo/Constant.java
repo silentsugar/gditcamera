@@ -9,13 +9,14 @@ import android.os.Environment;
 public class Constant {
 
 	/** 版本标识*/
+	public static final boolean VERSION = false;
 	/** 版本一*/
 	public static final int VERSION1 = 1;
 	/** 版本二*/
 	public static final int VERSION2 = 2;
 	/** 标识当前版本*/
 	public static final int CURRENT_VERSION = VERSION1;
-
+	
 	
 	
 	/** SDCARD路径*/

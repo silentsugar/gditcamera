@@ -51,7 +51,7 @@ public class UploadFile {
 	
 	private ServiceRecThread receiveThread;
 	
-	public static int CURRENT_FILE_INDEX = FIRST_FILE;
+	public static int CURRENT_FILE_INDEX;
 	
 	/** 客户端SOCKET对象*/
 	private Socket socket;
@@ -128,7 +128,7 @@ public class UploadFile {
 				//从切片对象中一片片获取文件流，上传到服务器
 				int i = 0;
 				int total = mCutFileUtil.getTotalPieceNum();
-				while((length = mCutFileUtil.getNextPiece(dataBuf, CURRENT_FILE_INDEX)) != -1) {
+				while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
 					Log.d(TAG, "Start send file of " + ++i + " piece");
 					//标识未接收到
 					out.write(dataBuf, 0, length);
@@ -153,7 +153,7 @@ public class UploadFile {
 					} 
 					if(isFinish == 1) {
 						//删除当前切片
-						mCutFileUtil.removeCurrentFile(CURRENT_FILE_INDEX);
+						mCutFileUtil.removeCurrentFile();
 						isFinish = 0;
 //						mCutFileUtil.removeCurrentFile();
 						Log.i(TAG, "hased send the piece file of " + i + " piece!");
@@ -247,8 +247,7 @@ public class UploadFile {
 	 */
 	public void upload(CutFileUtil cutFileUtil) {
 		this.mCutFileUtil = cutFileUtil;
-		sendType = 1;
-		CURRENT_FILE_INDEX = FIRST_FILE;
+		CURRENT_FILE_INDEX = cutFileUtil.whichService;
 		try {
 			uploadFile();
 		} catch(SocketException e) {}
@@ -257,8 +256,11 @@ public class UploadFile {
 		} catch (InterruptedException e) {
 		}
 		handler.sendEmptyMessage(FINISH_SEND_FIRST_SERVER);
-		CURRENT_FILE_INDEX = SECOND_FILE;
-		cutFileUtil.changeNext();
+		//如果切片已经发送完，则返回，如果还没发送完，则发给第二个服务器
+		if(!cutFileUtil.changeNext()) {
+			return;
+		}
+		CURRENT_FILE_INDEX = cutFileUtil.whichService;
 		try {
 			uploadFile();
 		} catch(SocketException e) {}
@@ -298,8 +300,8 @@ public class UploadFile {
 			PORT = p.getHost1Port();
 			Log.e(TAG, "HOST1:" + HOST + "; PORT2:" + PORT);
 		} else if(CURRENT_FILE_INDEX == SECOND_FILE){
-			HOST = "112.125.33.161";
-			PORT = 10808;
+			HOST = p.getHost2IP();
+			PORT = p.getHost2Port();
 			Log.e(TAG, "HOST2:" + HOST + "; PORT2:" + PORT);
 		}
 		

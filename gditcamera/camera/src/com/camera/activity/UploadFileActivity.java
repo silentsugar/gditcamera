@@ -98,6 +98,9 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private UploadFile uploadFile;
 	private CutFileUtil cutFileUtil;
 	
+	/** 标识是否正在上传*/
+	private boolean isUploading = false;
+	
 	private NotificationManager mNotificationManager;
 	
 	/** 上传文件列表*/
@@ -126,6 +129,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		public void run() {
 			synchronized (this) {
 				try {
+					isUploading = true;
 					this.sleep(mInterval);
 					mHandler.sendEmptyMessage(START_UPLOAD);
 					String description = mTxtMessage.getText().toString();
@@ -189,7 +193,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case UploadFile.FINISH_SEND_FIRST_SERVER:
 				if(!dialog.isShowing()) {
 					dialog.show();
-					dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 开始上传图片  " + mImageName + "到服务器 ");
+					dialog.setMessage("服务器" + UploadFile.CURRENT_FILE_INDEX + ": 开始上传图片  " + mImageName + " ");
 				}
 				break;
 				
@@ -201,7 +205,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				
 			case CutFileUtil.MSG_EXIST_PIECE:
 				Builder builder = new Builder(UploadFileActivity.this);
-				builder.setTitle("提示").setMessage("系统检测到您该图片未上传完，是否继续上传上次未完成的任务！");
+				builder.setTitle("提示").setMessage("系统检测到该文件上次未上传完，是否继续上传上次未完成的任务？");
 				builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -324,8 +328,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	 * @param delay 延迟发送秒数
 	 */
 	public void uploadNextFile(boolean isLastSuccess, boolean isReSend, int delay) {
-		if(mUploadFileList.size() < 1)
+		if(mUploadFileList.size() < 1) {
+			isUploading = false;
 			return;
+		}
 		Object item = mUploadFileList.get(0);
 		if(isLastSuccess) {
 			mUploadFileList.addSuccess(item);
@@ -336,8 +342,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 				mUploadFileList.remove(item);
 			}
 		}
-		if(mUploadFileList.size() < 1)
+		if(mUploadFileList.size() < 1) {
+			isUploading = false;
 			return;
+		}
 		mImagePath = (String)mUploadFileList.get(0);
 		mImageName = StringUtil.getFileName(mImagePath);
 //		System.out.println("---------------------" + mImagePath + "----------------------------");
@@ -432,6 +440,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		switch(view.getId()) {
 		//上传一张图片
 		case R.id.btnUpload:
+			if(isUploading) {
+				Toast.makeText(this, "当前有上传任务正在执行，请等待任务完成后再上传！", 4000).show();
+				return;
+			}
 			mImagePath = StringUtil.convertBackFolderPath(mCurrentImg);
 			mImageName = StringUtil.getFileName(mImagePath);
 			mUploadFileList = new UploadFileList();
@@ -441,6 +453,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			mUploadOnePicThread.start();
 			break;
 		case R.id.btnUploadAll:
+			if(isUploading) {
+				Toast.makeText(this, "当前有上传任务正在执行，请等待任务完成后再上传！", 4000).show();
+				return;
+			}
 			int size = adapter.getCount();
 			if(size > 0) {
 				mImagePath = StringUtil.convertBackFolderPath(adapter.getImagePath(0));
@@ -528,7 +544,29 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		builder.setPositiveButton("确定", new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				android.os.Process.killProcess(android.os.Process.myPid());
+				if(isUploading) {
+					Builder builder = new Builder(UploadFileActivity.this);
+					builder.setTitle("提示").setMessage("当前有上传任务正在运行，是否停止上传任务并退出系统？");
+					builder.setNegativeButton("后台运行", new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent i = new Intent(Intent.ACTION_MAIN);
+							i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+							i.addCategory(Intent.CATEGORY_HOME);
+							startActivity(i);
+						}
+					});
+					builder.setNeutralButton("退出", new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							android.os.Process.killProcess(android.os.Process.myPid());
+						}
+					});
+					builder.show();
+					return;
+				} else {
+					android.os.Process.killProcess(android.os.Process.myPid());
+				}
 			}
 		});
 		builder.show();
