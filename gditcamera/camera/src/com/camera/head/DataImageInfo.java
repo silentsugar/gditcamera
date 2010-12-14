@@ -1,4 +1,4 @@
-package com.camera.vo;
+package com.camera.head;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
