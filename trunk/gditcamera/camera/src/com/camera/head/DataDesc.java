@@ -1,4 +1,4 @@
-package com.camera.vo;
+package com.camera.head;
 
 /**
  * 第一部分--描述信息(超过1字节的数都是：低字节在前，高字节在后)
@@ -8,7 +8,7 @@ package com.camera.vo;
 public class DataDesc {
 
 	/**起始段*/
-	private String startId;
+	private byte[] startId;
 	/**设备编号*/
 	private int deviceCode;
 	/**口令*/
@@ -23,6 +23,10 @@ public class DataDesc {
 	private String desc;
 	/**结束*/
 	private String endId;
+	
+	public DataDesc() {
+		startId = new byte[4];
+	}
 	
 	public String getStartId() {
 		return startId;

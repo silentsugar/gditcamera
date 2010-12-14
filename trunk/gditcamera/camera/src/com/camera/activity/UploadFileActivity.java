@@ -529,11 +529,6 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			intent.setClass(this, ConfigurationActivity.class);
 			this.startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
 			break;
-		case R.id.menuBluetoothSend:
-			Intent intent2 = new Intent();
-			intent2.setClass(this, BluetoothActivity.class);
-			this.startActivity(intent2);
-			break;
 		case R.id.menuAbout:
 			Builder builder = new Builder(UploadFileActivity.this);
 			builder.setTitle("¹ØÓÚ");

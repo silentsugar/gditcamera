@@ -5,9 +5,6 @@
    <item android:id="@+id/menuConfig"
           android:title="配置"
           android:icon="@android:drawable/ic_menu_preferences" />
-   <item android:id="@+id/menuBluetoothSend"
-          android:title="蓝牙发送"
-          android:icon="@android:drawable/stat_sys_data_bluetooth" />
    <item android:id="@+id/menuAbout"
           android:title="关于"
           android:icon="@android:drawable/ic_menu_info_details" />
