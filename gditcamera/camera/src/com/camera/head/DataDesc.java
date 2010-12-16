@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.util.Log;
+
 
 
 /**
@@ -150,7 +152,6 @@ public class DataDesc {
 		try {
 			return new String(desc, "GB2312");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -169,18 +170,44 @@ public class DataDesc {
 	 * @return
 	 */
 	public byte [] getBytes(){
-		return new byte[0];
+		int n = startId.length + deviceCode.length + command.length 
+			+ time.length + unitName.length + surveyStation.length
+			+ 1 + desc.length + endId.length + 8;
+		byte[] headBytes = new byte[n];
+		int offset = 0;
+		
+		offset = addBytes(headBytes, startId, offset, false);
+		offset = addBytes(headBytes, deviceCode, offset, false);
+		offset = addBytes(headBytes, command, offset, false);
+		offset = addBytes(headBytes, time, offset, false);
+		offset = addBytes(headBytes, unitName, offset, false);
+		offset = addBytes(headBytes, surveyStation, offset, false);
+		headBytes[offset ++] = cameraId;
+		headBytes[offset ++] = 0x3B;
+		offset = addBytes(headBytes, desc, offset, false);
+		offset = addBytes(headBytes, endId, offset, true);
+		
+		
+		return headBytes;
 	}
 	
-	public static void main(String[] args) {
-		DataDesc data = new DataDesc();
-		data.setDeviceCode(1111111111L);
-		data.setCommand(2222222222L);
-		data.setDesc("我是郑澍璋");
-		data.setSurveyStation("测站");
-		data.setCameraId(10);
-		data.setTime(new Date());
-		data.setUnitName("单位名");
+	private int addBytes(byte[] headBytes, byte[] bytes, int offset, boolean isEnd) {
+		for(int i = 0; i < bytes.length; i ++) {
+			headBytes[offset ++] = bytes[i];
+		}
+		if(!isEnd)
+			headBytes[offset ++] = 0x3B;
+		return offset;
+	}
+	
+	private static void printf(DataDesc data) {
+//		data.setDeviceCode(1111111111L);
+//		data.setCommand(2222222222L);
+//		data.setDesc("我是郑澍璋");
+//		data.setSurveyStation("测站");
+//		data.setCameraId(10);
+//		data.setTime(new Date());
+//		data.setUnitName("单位名");
 		
 		String strPrint = "StartId:" + data.getStartId() + "\n";
 		strPrint += "DeviceCide:" + data.getDeviceCode() + "\n";
@@ -194,9 +221,4 @@ public class DataDesc {
 		System.out.println(strPrint);
 	}
 	
-	public static class Log {
-		public static void e(String tag, String info) {
-			System.out.println(tag + ":" + info);
-		}
-	}
 }

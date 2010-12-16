@@ -68,4 +68,17 @@ public class CodeUtil {
 		return str;
 	}
 	
+	/**
+	 * 反转BYTE数组
+	 */
+	public static byte[] reversalBytes(byte[] bytes) {
+		byte tmp;
+		for(int i = 0; i <= bytes.length / 2; i ++) {
+			tmp = bytes[bytes.length - 1];
+			bytes[bytes.length - 1] = bytes[i];
+			bytes[i] = tmp;
+		}
+		return bytes;
+	}
+	
 }
