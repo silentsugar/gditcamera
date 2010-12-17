@@ -1,5 +1,9 @@
 package com.camera.head;
 
+import java.io.UnsupportedEncodingException;
+
+import android.util.Log;
+
 
 public class CodeUtil {
 
@@ -79,6 +83,27 @@ public class CodeUtil {
 			bytes[i] = tmp;
 		}
 		return bytes;
+	}
+	
+	/**
+	 * 把字符串按照特定的编码转换成特定长度的字节数组，字符串的字节数组超出指定的长度时返回null,少于指定长度补0
+	 * @param str 要转换的字符串
+	 * @param encoding 转换编码
+	 * @param len 所要转成的byte数组的长度
+	 * @return byte []
+	 */
+	public static final byte [] getGB2312ByteArray(String str){
+		byte [] tmp;
+		int tmpLen = 0;
+		try {
+			tmp = str.getBytes("GB2312");
+			tmpLen = tmp.length;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return tmp;
+		
 	}
 	
 }
