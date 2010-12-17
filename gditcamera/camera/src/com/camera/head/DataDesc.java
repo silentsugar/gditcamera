@@ -50,24 +50,16 @@ public class DataDesc {
 		return CodeUtil.bytes2int(deviceCode);
 	}
 	
-	public void setDeviceCode(long deviceCode) {
-		if(deviceCode < 0 || deviceCode > 4294967295L) {
-			Log.e(TAG, "DeviceCode is out of rang! deviceCode will be set default value 0");
-			deviceCode = 0;
-		}
-		this.deviceCode = CodeUtil.int2bytesMax(deviceCode);
+	public void setDeviceCode(String deviceCode) {
+		this.deviceCode = CodeUtil.getGB2312ByteArray(deviceCode);
 	}
 	
 	public long getCommand() {
 		return CodeUtil.bytes2int(command);
 	}
 	
-	public void setCommand(long command) {
-		if(command < 0 || command > 4294967295L) {
-			Log.e(TAG, "Command is out of rang! command will be set default value 0");
-			command = 0;
-		}
-		this.command = CodeUtil.int2bytesMax(command);
+	public void setCommand(String command) {
+		this.command = CodeUtil.getGB2312ByteArray(command);;
 	}
 	
 	public String getTime() {
@@ -168,7 +160,7 @@ public class DataDesc {
 	}
 	
 	public void setDesc(String desc) {
-		this.desc = desc.getBytes();
+		this.desc = CodeUtil.getGB2312ByteArray(desc);
 	}
 	
 	public String getEndId() {
