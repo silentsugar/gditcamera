@@ -133,6 +133,7 @@ public class UploadFile {
 					Log.d(TAG, "Start send file of " + ++i + " piece");
 					//标识未接收到
 					out.write(dataBuf, 0, length);
+					Log.e(TAG, "HAS WRITEING------------------------");
 					//如果服务器尚未确认包发送成功，则处于等待状态
 					//服务器确认发送成功
 					int time = 0;
@@ -213,6 +214,14 @@ public class UploadFile {
 							continue;
 						}
 						Message msg = new Message();
+						
+						Log.e(TAG, "-----------------------------------------");
+						for(int i = 0; i < recDataBuf.length; i ++) {
+							System.out.printf("0x%x", recDataBuf[i]);
+							System.out.println();
+						}
+						Log.e(TAG, "-----------------------------------------");
+						
 						//服务器确定包发送成功
 						if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
 							msg.what = PACKAGE_SEND_SUCCESS;

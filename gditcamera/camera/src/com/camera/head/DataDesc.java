@@ -11,7 +11,7 @@ import android.util.Log;
 
 /**
  * 第一部分--描述信息(超过1字节的数都是：低字节在前，高字节在后)
- * @author tian
+ * @author 
  *
  */
 public class DataDesc {
@@ -25,7 +25,7 @@ public class DataDesc {
 	/**口令*/
 	private byte[] command;
 	/**时间格式：年-月-日x时:分:秒*/
-	private byte[] time = new byte[7];
+	private byte[] time = new byte[12];
 	/**单位名*/
 	private byte[] unitName;
 	/**测站名*/
@@ -93,17 +93,27 @@ public class DataDesc {
 		tem = CodeUtil.int2bytes(year2);
 		time[offset++] = tem[1];
 		
+		time[offset++] = '-';
+		
 		tem = CodeUtil.int2bytes(month);
 		time[offset++] = tem[1];
+		
+		time[offset++] = '-';
 		
 		tem = CodeUtil.int2bytes(day);
 		time[offset++] = tem[1];
 		
+		time[offset++] = ' ';
+		
 		tem = CodeUtil.int2bytes(hour);
 		time[offset++] = tem[1];
 		
+		time[offset++] = ':';
+		
 		tem = CodeUtil.int2bytes(minute);
 		time[offset++] = tem[1];
+		
+		time[offset++] = ':';
 		
 		tem = CodeUtil.int2bytes(second);
 		time[offset++] = tem[1];
@@ -187,6 +197,7 @@ public class DataDesc {
 		offset = addBytes(headBytes, desc, offset, false);
 		offset = addBytes(headBytes, endId, offset, true);
 		
+		printf(this);
 		
 		return headBytes;
 	}
@@ -218,7 +229,7 @@ public class DataDesc {
 		strPrint += "UnitName:" + data.getUnitName() + "\n";
 		strPrint += "End:" + data.getEndId() + "\n";
 		
-		System.out.println(strPrint);
+		Log.i(TAG, strPrint);
 	}
 	
 }

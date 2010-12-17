@@ -24,6 +24,7 @@ public class PreferencesDAO {
      * 默认的配置参数实体
      */
     static final Preferences defaultPref;
+    
     static{
 		defaultPref = new Preferences();
 		Map<String,String> hosts = new HashMap<String,String>();

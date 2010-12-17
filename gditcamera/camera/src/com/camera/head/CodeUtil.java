@@ -75,7 +75,7 @@ public class CodeUtil {
 		byte tmp;
 		for(int i = 0; i <= bytes.length / 2; i ++) {
 			tmp = bytes[bytes.length - 1];
-			bytes[bytes.length - 1] = bytes[i];
+			bytes[bytes.length - i] = bytes[i];
 			bytes[i] = tmp;
 		}
 		return bytes;

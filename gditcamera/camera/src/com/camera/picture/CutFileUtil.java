@@ -6,15 +6,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.camera.activity.UploadFileActivity;
+import com.camera.head.HeadTool;
 import com.camera.net.DataHeadUtil;
 import com.camera.util.StringUtil;
 import com.camera.vo.Constant;
@@ -71,6 +72,8 @@ public class CutFileUtil {
 	
 	/** Context对象*/
 	private Context context;
+	
+	private HeadTool headTool;
 	
 	/** 当有切片存在的情况下，是否使用上面的切片继续发给服务器*/
 	public static boolean IS_SEND_LAST_PIECE = true;
@@ -201,6 +204,20 @@ public class CutFileUtil {
 			int dataSize = 0;
 			pieceFiles = new ArrayList<String>();
 			secPieceFiles = new ArrayList<String>(); 
+			
+			//生成描述包头文件
+			headTool = new HeadTool(context, new Date(), description, totalPieceNum);
+			packageHead = headTool.getDataDesc();
+			String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  1;
+			FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
+			FileOutputStream out2 = new FileOutputStream(pieceName + "_2");
+			pieceFiles.add(pieceName + "_1");
+			secPieceFiles.add(pieceName + "_2");
+			out1.write(packageHead);
+			out1.close();
+			out2.write(packageHead);
+			out2.close();
+			
 			while(true) {
 				if((dataSize = in.read(buf, 0, pieceSize - 90)) > 0) {
 					packagePiece(buf, pieceNum, dataSize);
@@ -225,7 +242,7 @@ public class CutFileUtil {
 	 * @throws IOException
 	 */
 	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
-		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  pieceNum;
+		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  (pieceNum + 1);
 		Log.v(TAG, "piece file name : " + pieceName);
 		FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
 		FileOutputStream out2 = new FileOutputStream(pieceName + "_2");
@@ -233,14 +250,8 @@ public class CutFileUtil {
 		secPieceFiles.add(pieceName + "_2");
 		Log.i(TAG, "totalPieceNum : " + totalPieceNum + "; pieceNum" + pieceNum + "; dataSize " + dataSize);
 		try {
-			if(isFirst) {
-				packageHead = DataHeadUtil.getBytesHeadData(context, description, pieceNum, totalPieceNum, dataSize, false);
-				isFirst = false;
-			} else {
-				packageHead = DataHeadUtil.getBytesHeadData(context, "", pieceNum, totalPieceNum, dataSize, true);
-			}
+			packageHead = headTool.getDataImage(pieceNum, dataSize);
 		} catch (Exception e) {
-//			Toast.makeText(context, "转换包头信息出错！", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
 		out1.write(packageHead);
