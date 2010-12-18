@@ -9,15 +9,14 @@ import com.camera.vo.Preferences;
 
 public class HeadTool {
 	
-	private long deviceCode;
-	private long command;
+	private String deviceCode;
+	private String command;
 	private Date date;
 	private String unitName;
 	private String surveyStation;
 	private int cameraId;
 	private String desc;
-	private long stationCode;
-	private long currentPage;
+	private String stationCode;
 	private int totalPackage;
 
 	/**
@@ -37,13 +36,13 @@ public class HeadTool {
 	public void getConfigValue(Context context) {
 		PreferencesDAO dao = new PreferencesDAO(context);
 		Preferences vo = dao.getPreferences();
-		command = Long.parseLong(vo.getCommand());
+		command = vo.getCommand();
+		deviceCode = vo.getCommand();
 		unitName = vo.getSubStation();
 		surveyStation = vo.getSurveyStation();
-		stationCode = Long.parseLong(vo.getStationCode());
+		stationCode = vo.getStationCode();
 		
 		cameraId = 1;
-		deviceCode = 1;
 	}
 	
 	public byte[] getDataDesc() {
@@ -60,8 +59,8 @@ public class HeadTool {
 	
 	public byte[] getDataImage(int currentPackage, int dataLength) {
 		DataImage data = new DataImage();
-		data.setCode(stationCode);
-		data.setCommand(command);
+		data.setCode(Long.parseLong(stationCode));
+		data.setCommand(Long.parseLong(command));
 		data.setTime(date);
 		data.setCurrentPackage(currentPackage);
 		data.setTotalPackage(totalPackage);
