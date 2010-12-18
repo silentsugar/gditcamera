@@ -129,12 +129,11 @@ public class UploadFile {
 				//从切片对象中一片片获取文件流，上传到服务器
 				int i = 0;
 				int total = mCutFileUtil.getTotalPieceNum();
+				int times = 0;
 				while((length = mCutFileUtil.getNextPiece(dataBuf)) != -1) {
 					Log.d(TAG, "Start send file of " + ++i + " piece");
 					//标识未接收到
 					out.write(dataBuf, 0, length);
-					Log.e(TAG, "HAS WRITEING------------------------");
-					//如果服务器尚未确认包发送成功，则处于等待状态
 					//服务器确认发送成功
 					int time = 0;
 					while(isFinish == 0) {
@@ -150,8 +149,14 @@ public class UploadFile {
 					}
 					//服务器确认发送错误
 					if(isFinish == 2) {
-						errorCode = THROW_EXCEPTION;
-						currentThread.interrupt();
+						if(times >= 4) {
+							errorCode = THROW_EXCEPTION;
+							throw new InterruptedException("Has receive 5 ERR message from service!!");
+						}
+						i --;
+						times ++;
+						mCutFileUtil.minusCurrentPiece();
+						continue;
 					} 
 					if(isFinish == 1) {
 						//删除当前切片
@@ -205,7 +210,7 @@ public class UploadFile {
 				synchronized (this) {
 					while(true) {
 						//服务端数据
-						byte[] recDataBuf = new byte[14];
+						byte[] recDataBuf = new byte[30];
 						int length = 0;
 						if(in == null)
 							break;
@@ -215,15 +220,9 @@ public class UploadFile {
 						}
 						Message msg = new Message();
 						
-						Log.e(TAG, "-----------------------------------------");
-						for(int i = 0; i < recDataBuf.length; i ++) {
-							System.out.printf("0x%x", recDataBuf[i]);
-							System.out.println();
-						}
-						Log.e(TAG, "-----------------------------------------");
 						
 						//服务器确定包发送成功
-						if(recDataBuf[1] == 0x4F && recDataBuf[2] == 0x4B) {
+						if(recDataBuf[24] == 0x4F && recDataBuf[25] == 0x4B) {
 							msg.what = PACKAGE_SEND_SUCCESS;
 							handler.sendMessage(msg);
 							//标识包发送成功
@@ -231,7 +230,7 @@ public class UploadFile {
 							Log.d(TAG, "Receive service replay, answer is ok!");
 							
 						//服务器确定包发送失败
-						} else if(recDataBuf[1] == 0X45 && recDataBuf[2] == 0X52) {
+						} else if(recDataBuf[24] == 0X45 && recDataBuf[25] == 0X52) {
 							Log.w(TAG, "Receive service replay, answer is ERROR!");
 							msg.what = PACKAGE_SEND_FAIL;
 							handler.sendMessage(msg);

@@ -3,6 +3,8 @@ package com.camera.head;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.util.Log;
+
 
 
 /**
@@ -14,8 +16,6 @@ public class DataImage {
 	
 	public static final String TAG = "DataImage";
 
-	/**该数据头总长度*/
-	private static final int LENGTH = 25;
 	
 	/**图像包识别字符串(ASCII半角)*/
 	private byte [] startId;
@@ -41,12 +41,9 @@ public class DataImage {
 	}
 	
 	public long getCode() {
-		for(int i = 0; i < code.length; i ++) {
-			System.out.printf("0x%x", code[i]);
-			System.out.println();
-		}
 		return CodeUtil.bytes2int(code);
 	}
+	
 	public void setCode(long code) {
 		if(code < 0 || code > 4294967295L) {
 			Log.e(TAG, "DeviceCode is out of rang! deviceCode will be set default value 0");
@@ -110,36 +107,36 @@ public class DataImage {
 		return CodeUtil.bytes2int(currentPackage);
 	}
 	
-	public void setCurrentPackage(long currentPackage) {
+	public void setCurrentPackage(int currentPackage) {
 		if(currentPackage < 0 || currentPackage > 4294967295L) {
 			Log.e(TAG, "CurrentPackage is out of rang! deviceCode will be set default value 0");
 			currentPackage = 0;
 		}
-		this.currentPackage = CodeUtil.int2bytesMax(currentPackage);
+		this.currentPackage = CodeUtil.reversalBytes(CodeUtil.int2bytes(currentPackage));
 	}
 	
 	public long getTotalPackage() {
 		return CodeUtil.bytes2int(totalPackage);
 	}
 	
-	public void setTotalPackage(long totalPackage) {
+	public void setTotalPackage(int totalPackage) {
 		if(totalPackage < 0 || totalPackage > 4294967295L) {
 			Log.e(TAG, "TotalPackage is out of rang! deviceCode will be set default value 0");
 			totalPackage = 0;
 		}
-		this.totalPackage = CodeUtil.int2bytesMax(totalPackage);
+		this.totalPackage = CodeUtil.reversalBytes(CodeUtil.int2bytes(totalPackage));
 	}
 	
 	public long getDataLength() {
 		return CodeUtil.bytes2int(dataLength);
 	}
 	
-	public void setDataLength(long dataLength) {
+	public void setDataLength(int dataLength) {
 		if(dataLength < 0 || dataLength > 4294967295L) {
 			Log.e(TAG, "DataLength is out of rang! deviceCode will be set default value 0");
 			dataLength = 0;
 		}
-		this.dataLength = CodeUtil.int2bytesMax(dataLength);
+		this.dataLength = CodeUtil.reversalBytes(CodeUtil.int2bytes(dataLength));
 	}
 	
 	/**
@@ -191,12 +188,6 @@ public class DataImage {
 		
 		System.out.println(strPrint);
 	}
-	
-	public static class Log {
-		public static void e(String tag, String info) {
-			System.out.println(tag + ":" + info);
-		}
-	}
-	
+
 	
 }

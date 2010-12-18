@@ -77,9 +77,9 @@ public class CodeUtil {
 	 */
 	public static byte[] reversalBytes(byte[] bytes) {
 		byte tmp;
-		for(int i = 0; i <= bytes.length / 2; i ++) {
-			tmp = bytes[bytes.length - 1];
-			bytes[bytes.length - i] = bytes[i];
+		for(int i = 0; i < bytes.length / 2; i ++) {
+			tmp = bytes[bytes.length - i - 1];
+			bytes[bytes.length - i - 1] = bytes[i];
 			bytes[i] = tmp;
 		}
 		return bytes;
@@ -94,10 +94,8 @@ public class CodeUtil {
 	 */
 	public static final byte [] getGB2312ByteArray(String str){
 		byte [] tmp;
-		int tmpLen = 0;
 		try {
 			tmp = str.getBytes("GB2312");
-			tmpLen = tmp.length;
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

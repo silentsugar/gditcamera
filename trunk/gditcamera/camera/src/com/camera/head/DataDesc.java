@@ -67,48 +67,9 @@ public class DataDesc {
 	}
 	
 	public void setTime(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-		String [] arr = dateFormat.format(date).split("-");
-		int year1 = Integer.parseInt(arr[0].substring(0,2));
-		int year2 = Integer.parseInt(arr[0].substring(2,4));
-		int month = Integer.parseInt(arr[1]);
-		int day = Integer.parseInt(arr[2]);
-		int hour = Integer.parseInt(arr[3]);
-		int minute = Integer.parseInt(arr[4]);
-		int second = Integer.parseInt(arr[5]);
-		
-		byte[] tem;
-		int offset = 0;
-		tem = CodeUtil.int2bytes(year1);
-		time[offset++] = tem[1];
-		
-		tem = CodeUtil.int2bytes(year2);
-		time[offset++] = tem[1];
-		
-		time[offset++] = '-';
-		
-		tem = CodeUtil.int2bytes(month);
-		time[offset++] = tem[1];
-		
-		time[offset++] = '-';
-		
-		tem = CodeUtil.int2bytes(day);
-		time[offset++] = tem[1];
-		
-		time[offset++] = ' ';
-		
-		tem = CodeUtil.int2bytes(hour);
-		time[offset++] = tem[1];
-		
-		time[offset++] = ':';
-		
-		tem = CodeUtil.int2bytes(minute);
-		time[offset++] = tem[1];
-		
-		time[offset++] = ':';
-		
-		tem = CodeUtil.int2bytes(second);
-		time[offset++] = tem[1];
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String strDate = dateFormat.format(date);
+		this.time = CodeUtil.getGB2312ByteArray(strDate);
 	}
 	
 	public String getUnitName() {
@@ -121,7 +82,7 @@ public class DataDesc {
 		return null;
 	}
 	public void setUnitName(String unitName) {
-		this.unitName = unitName.getBytes();
+		this.unitName = CodeUtil.getGB2312ByteArray(unitName);
 	}
 	
 	public String getSurveyStation() {
@@ -135,7 +96,7 @@ public class DataDesc {
 	}
 	
 	public void setSurveyStation(String surveyStation) {
-		this.surveyStation = surveyStation.getBytes();
+		this.surveyStation = CodeUtil.getGB2312ByteArray(surveyStation);
 	}
 	
 	public int getCameraId() {

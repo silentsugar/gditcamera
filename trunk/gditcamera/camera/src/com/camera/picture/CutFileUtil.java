@@ -293,6 +293,10 @@ public class CutFileUtil {
 		return pieceSizeTmp;
 	}
 	
+	public void minusCurrentPiece() {
+		nCurrentPiece -- ;
+	}
+	
 	/**
 	 * 重新获取切片文件字节流
 	 * @param buf 为NULL既可，内部将为buf自动分配内存空间
@@ -346,10 +350,10 @@ public class CutFileUtil {
 	/**
 	 * 根据文件大小计算文件切片的大小
 	 */
-	private int calculatePieceSize(File file) {
+	private int calculatePieceSize2(File file) {
 		long fileSize = file.length();
 		if(fileSize > 4 * 1024 * 1024) {
-			return 80000;
+			return 63000;
 		} else if(fileSize > 2 * 1024 * 1024) {
 			return 50000;
 		} else if(fileSize > 1024 * 1024) {
@@ -369,6 +373,10 @@ public class CutFileUtil {
 		} else if(fileSize > 1024 * 5) {
 			return 1000;
 		}
+		return 1000;
+	}
+	
+	private int calculatePieceSize(File file) {
 		return 1000;
 	}
 	
