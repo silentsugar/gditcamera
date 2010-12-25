@@ -56,7 +56,7 @@
 				android:layout_alignParentTop="true"
 				android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:padding="5dip"
+				android:padding="4dip"
 				android:layout_gravity="center_horizontal"
 				android:layout_marginTop="25dip"
 			    android:layout_marginBottom="85dip"
@@ -100,9 +100,10 @@
 	    	
 	    <EditText
 	    	android:id="@+id/txtMessage"
+	    	android:layout_centerVertical="true"
 	    	android:layout_marginLeft="90dip"
 	    	android:layout_marginRight="60dip"
-        	android:background="@drawable/fastlink_dlg_input_bg_normal"
+        	android:background="@drawable/write_input"
         	android:paddingLeft="10dip"
         	android:paddingRight="10dip"
         	android:singleLine="true"

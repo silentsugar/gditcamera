@@ -5,6 +5,9 @@
    <item android:id="@+id/menuConfig"
           android:title="配置"
           android:icon="@android:drawable/ic_menu_preferences" />
+   <item android:id="@+id/menuClear"
+          android:title="清除缓存"
+          android:icon="@android:drawable/ic_menu_delete" />
    <item android:id="@+id/menuAbout"
           android:title="关于"
           android:icon="@android:drawable/ic_menu_info_details" />
