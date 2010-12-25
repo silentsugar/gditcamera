@@ -82,7 +82,7 @@ public class ImageAdapter extends BaseAdapter {
     	ImageView imageView = null;
 		imageView = new ImageView(mContext);
         imageView.setLayoutParams(new Gallery.LayoutParams(100, 100));
-        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         imageView.setBackgroundResource(mGalleryItemBackground);
         
         //获取图片资源

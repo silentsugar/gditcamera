@@ -36,6 +36,7 @@ public class PictureUtil {
 	/** 保存要应用上去的缩略图宽度*/
 	private int mTagetWidth;
 	private String[] imageSuffixs;
+	private List<String> imgFileList;
 	
 	
 	
@@ -65,13 +66,13 @@ public class PictureUtil {
 		return filePaths;
 	}
 	
+	
 	/**
 	 * 检测文件是否是图片资源
 	 * @param file 文件
 	 * @return 是或否
 	 */
-	public boolean isImage(File file) {
-		String fileName = file.getName();
+	public boolean isImage(String fileName) {
 		int point = fileName.lastIndexOf(".");
 		if(point < 0) {
 			return false;
@@ -153,13 +154,24 @@ public class PictureUtil {
 		List<String> filePaths = null;
 		File[] files = getThumbnailFile();
 		filePaths = new ArrayList<String>();
+		imgFileList = new ArrayList<String>(); 
+		String imageSuffix = Constant.IMAGE_SUFFIX;
+		imageSuffixs = imageSuffix.split(";");
 		String thumbnailFolderPath = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(folderPath);
 		for(File file : files) {
 			String path = file.getAbsolutePath();
 //			Log.d(TAG, "file path : " + path);
 			if(path.contains(thumbnailFolderPath) && !path.contains(".big")) {
-				filePaths.add(path);
+				if(isImage(path)) {
+					filePaths.add(path);
+				} else {
+					imgFileList.add(path);
+				}
 			}
+		}
+		//加入非图片路径
+		for(String path : imgFileList) {
+			filePaths.add(path);
 		}
 		return filePaths;
 	}
@@ -185,11 +197,13 @@ public class PictureUtil {
 		if(paths == null) {
 			return thumbnailPaths;
 		}
-		if(paths.size() > 0)
+		if(paths.size() > 0) {
 			thumbnailPaths = new ArrayList<String>();
+		}
 		for(String filePath : paths) {
 			String targetPath = createThumbnail(context, filePath);
-			thumbnailPaths.add(targetPath);
+			if(targetPath != null)
+				thumbnailPaths.add(targetPath);
 		}
 		return thumbnailPaths;
 		
@@ -203,15 +217,21 @@ public class PictureUtil {
 	 * @throws Exception
 	 */
 	private String createThumbnail(Context context, String filePath) throws Exception {
+		//检测是否有已生成的缩略图
+		String smallFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(filePath);
+		File smallFile = new File(smallFileName);
+		if(smallFile.exists()) {
+			return smallFileName;
+		}
 		//检测文件是否是图片文件
 		File file = new File(filePath);
-		if(!isImage(file)) {
+		if(!isImage(file.getPath())) {
 			// TODO 
-			String smallFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(file.getPath());
+			smallFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(file.getPath());
 			String bigFileName = Constant.THUMBNAIL_FOLDER + StringUtil.convertFolderPath(file.getPath()) + ".big";
-			File smallFile = new File(smallFileName);
+			smallFile = new File(smallFileName);
 			File bigFile = new File(bigFileName);
-			InputStream in = context.getAssets().open("file.jpg");
+			InputStream in = context.getAssets().open(Constant.DEFAULT_FILE_JPG);
 			OutputStream smallOut = new FileOutputStream(smallFile);
 			OutputStream bigOut = new FileOutputStream(bigFile);
 			byte[] buffer = new byte[in.available()];

@@ -2,21 +2,26 @@ package com.camera.vo;
 
 public class VersionVo {
 
-	public static final String VERSION_NAME = "hband beta 1.0 版本";
+	public static final String VERSION_NAME = "hband beta 3.0 版本";
 	/** 版本一*/
 	public static final int VERSION1 = 1;
 	/** 版本二*/
 	public static final int VERSION2 = 2;
 	/** 标识当前版本*/
-	public static int CURRENT_VERSION = VERSION1;
+	public static int CURRENT_VERSION = VERSION2;
 	
-	public static final String PUBLIC_DATE = "2010年12月18日";
+	public static String VERSION_DESC = "图片上传D版本";
+	
+	public static final String PUBLIC_DATE = "2010年12月24日";
 	
 	public static final String UPLOAD_INFO = ""
-			+ "1. 修改了程序的发送协议\n" 
-			+ "2. 修改的程序接收到服务器错误回复的处理，如果收到服务器的错误回复信息，将重新发送该切片文件，最多将重新发送5次，如果5次都接到错误的回复信息，将中断上传，提示上传失败\n"
-			+ "\n";
-	
+			+ "1. 修改了程序的图标\n" 
+			+ "2. 优化了程序的图片刷新速度\n"
+			+ "3. 修改了Gallery图像控件的排列方式，图片文件排在前面，非图片文件排在后面\n"
+			+ "4. 修改了Gallery图像控件中图片不能填满控件的缺陷\n"
+			+ "5. 程序菜单中增加了清除缓存功能，可清除切片文件夹，缩略图文件夹下面的所有文件，避免长时间积累占用手机空间\n"
+			+ "6. 修正了程序不兼容android 1.5系统的缺陷，不过配置界面在1.5低版本下看起来比较难看\n"
+			+ "7. 修正上传对话框了后台运行功能，增加了隐藏对话框功能\n";
 	
 	
 	
