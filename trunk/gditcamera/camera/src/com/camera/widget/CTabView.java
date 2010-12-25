@@ -196,8 +196,9 @@ public class CTabView extends RelativeLayout {
 		/**
 		 * …Ë÷√ÕºœÒ
 		 */
-		public void setImageResource(int mImageId) {
+		public CTabViewFactory setImageResource(int mImageId) {
 			this.mImageResource = mImageId;
+			return this;
 		}
 		
 		/**

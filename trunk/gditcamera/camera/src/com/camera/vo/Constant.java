@@ -41,7 +41,7 @@ public class Constant {
 	/** 目录默认目录*/
 	public static final String DEFAULT_IMAGE_FOLDER = SDCARD_PATH + "/DCIM/100MEDIA/";
 	/** 文件名*/
-	public static final String DEFAULT_FILE_JPG = THUMBNAIL_FOLDER + "file.jpg";
+	public static final String DEFAULT_FILE_JPG = "file.png";
 	
 	/**配置文件里面的属性名：图片目录*/
 	public static final String IMAGE_DIR = "ImgDir";
