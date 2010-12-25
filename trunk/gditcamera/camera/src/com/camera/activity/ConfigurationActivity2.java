@@ -32,7 +32,7 @@ import com.camera.widget.CEditTextButton;
 import com.camera.widget.CTabView;
 import com.camera.widget.CTabView.CTabViewFactory;
 
-public class ConfigurationActivity extends TabActivity implements OnClickListener {
+public class ConfigurationActivity2 extends TabActivity implements OnClickListener {
 	
 	private final static int REQUESTCODE_FOLDER = 1;//定义转动选择文件的请求代号
 	
@@ -89,16 +89,16 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 			switch(msg.what) {
 			case UploadFile.TIME_OUT:
 				dialog.dismiss();
-				Toast.makeText(ConfigurationActivity.this, "连接服务器超时,连接失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity2.this, "连接服务器超时,连接失败！", Toast.LENGTH_SHORT).show();
 				break;
 			
 			case UploadFile.CONNECTION_SUCCESS:
 				dialog.dismiss();
-				Toast.makeText(ConfigurationActivity.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity2.this, "连接服务器成功！", Toast.LENGTH_SHORT).show();
 				break;
 			case UploadFile.CONNECTION_FAILSE:
 				dialog.dismiss();
-				Toast.makeText(ConfigurationActivity.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
+				Toast.makeText(ConfigurationActivity2.this, "连接服务器失败！", Toast.LENGTH_SHORT).show();
 				break;
 			}
 		}
@@ -108,6 +108,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
 		mLayoutSubStation = (RelativeLayout) findViewById(R.id.layoutSubStation);
 		mLayoutCommand = (RelativeLayout) findViewById(R.id.layoutCommand);
 		mLayoutSurveyStation = (RelativeLayout) findViewById(R.id.layoutSurveyStation);
@@ -317,7 +318,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 		final Thread t1 = new Thread() {
 			@Override
 			public void run() {
-				UploadFile uploadFile = new UploadFile(ConfigurationActivity.this, hander, this);
+				UploadFile uploadFile = new UploadFile(ConfigurationActivity2.this, hander, this);
 				uploadFile.testServer(testIp, testPort);
 			}
 		};
@@ -499,13 +500,10 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 	    TabHost tabHost = getTabHost();  
 	    TabHost.TabSpec spec;  
 	    
-    	tabHost.setBackgroundColor(Color.parseColor("#10386B"));
-    	CTabViewFactory factory = new CTabViewFactory(this);
-	    CTabView tv1 = factory.setText("上传配置").setImageResource(R.drawable.upload).create();
-	    CTabView tv2 = factory.setText("服务器配置").setImageResource(R.drawable.server).create();
-    	spec = tabHost.newTabSpec("artists").setIndicator(tv1).setContent(R.id.tab_1);
+    	//1.5版本的系统不支持自定义选项卡
+    	spec = tabHost.newTabSpec("artists").setIndicator("", getResources().getDrawable(R.drawable.upload)).setContent(R.id.tab_1);
 	    tabHost.addTab(spec);
-	    spec = tabHost.newTabSpec("albums").setIndicator(tv2).setContent(R.id.tab_2);
+	    spec = tabHost.newTabSpec("albums").setIndicator("", getResources().getDrawable(R.drawable.server)).setContent(R.id.tab_2);
 	    tabHost.addTab(spec);
 	    
 	    tabHost.setCurrentTab(0);
