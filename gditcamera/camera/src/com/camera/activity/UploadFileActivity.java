@@ -61,6 +61,8 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 	private static String PICTURE_FOLDER = Constant.DEFAULT_IMAGE_FOLDER;
 	/** 刷新目录失败*/
 	private static final int REFRESH_FOLDER_ERR = 11;
+	/** 清除缓存*/
+	private static final int CLEAR_BUFFER = 17;
 	/** 切片成功*/
 	private static final int FINISH_CUT_FILE = 12;
 	/** 切换进度对话框进度*/
@@ -170,6 +172,10 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			case PROGRESS_DIALOG:
 				if(dialog.isShowing())
 					((ProgressDialog)dialog).setProgress((Integer)msg.obj);
+				break;
+			case CLEAR_BUFFER:
+				/** 刷新目录失败*/
+				dialog.setMessage("清除缓存成功，正在刷新目录......");
 				break;
 			
 			case FILE_NOT_FIND:
@@ -493,6 +499,15 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		progressDialog.setButton("后台运行", new Dialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				Intent i = new Intent(Intent.ACTION_MAIN);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+				i.addCategory(Intent.CATEGORY_HOME);
+				startActivity(i);
+			}
+		});
+		progressDialog.setButton2("隐藏对话框", new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
 		});
@@ -526,19 +541,43 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 		//跳到配置界面
 		case R.id.menuConfig:
 			Intent intent = new Intent();
-			intent.setClass(this, ConfigurationActivity.class);
+			if(Integer.parseInt(android.os.Build.VERSION.SDK) > 3) {
+				intent.setClass(this, ConfigurationActivity.class);
+			} else {
+				intent.setClass(this, ConfigurationActivity2.class);
+			}
 			this.startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
+			break;
+		case R.id.menuClear:
+			dialog = ProgressDialog.show(this, "请稍候",
+	                "正在清除缓存文件......", true);
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					try {
+						PictureUtil pictureUtil = new PictureUtil();
+						pictureUtil.clearImagePieces();
+						pictureUtil.clearThumbnail(PICTURE_FOLDER);
+						mHandler.sendEmptyMessage(CLEAR_BUFFER);
+						pictureUtil.createThumbnails(UploadFileActivity.this, PICTURE_FOLDER);
+						refreshFolder();
+						mHandler.sendEmptyMessage(REFRESH_FOLDER_SUCCESS);
+					} catch(Exception e ){
+						e.printStackTrace();
+						mHandler.sendEmptyMessage(REFRESH_FOLDER_ERR);
+					}
+					
+				}	
+			};
+			thread.start();
 			break;
 		case R.id.menuAbout:
 			Builder builder = new Builder(UploadFileActivity.this);
 			builder.setTitle("关于");
 			String msg = "";
 			msg += "当前版本： " + VersionVo.VERSION_NAME + "\n";
-			if(VersionVo.CURRENT_VERSION == VersionVo.VERSION1) {
-				msg += "版本类别： 第一版本\n";
-			} else if(VersionVo.CURRENT_VERSION == VersionVo.VERSION2) {
-				msg += "版本类别： 第二版本\n";
-			}
+			msg += "版本名称： " + VersionVo.VERSION_DESC + "\n";
+
 			msg += "发布日期： " + VersionVo.PUBLIC_DATE + "\n";
 			msg += "新版本修改： \n";
 			msg += VersionVo.UPLOAD_INFO;
@@ -576,6 +615,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 							startActivity(i);
 						}
 					});
+					
 					builder.setNeutralButton("退出", new Dialog.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -605,6 +645,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					refreshFolder();
 					mHandler.sendEmptyMessage(REFRESH_FOLDER_SUCCESS);
 				} catch(Exception e ){
+					e.printStackTrace();
 					mHandler.sendEmptyMessage(REFRESH_FOLDER_ERR);
 				}
 				
@@ -622,7 +663,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 			PreferencesDAO preferencesDao = new PreferencesDAO(this);
 			PICTURE_FOLDER = preferencesDao.getPreferencesByKey(Constant.IMAGE_DIR);
 			PictureUtil pictureUtil = new PictureUtil();
-			pictureUtil.clearThumbnail(PICTURE_FOLDER);
+//			pictureUtil.clearThumbnail(PICTURE_FOLDER);
 			pictureUtil.createThumbnails(this, PICTURE_FOLDER);
 //			pictureUtil.clearImagePieces();
 		} catch (Exception e) {
