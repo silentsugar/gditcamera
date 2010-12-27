@@ -28,8 +28,8 @@ public class PreferencesDAO {
     static{
 		defaultPref = new Preferences();
 		Map<String,String> hosts = new HashMap<String,String>();
-//		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
-//		hosts.put(Constant.HOST_2,"http://1.1.1.1:8080");
+		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
+		hosts.put(Constant.HOST_2,"http://219.148.51.76:10808");
 		defaultPref.setHostList(hosts);
 		defaultPref.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
 		defaultPref.setSubStation("中国水文");
@@ -90,6 +90,16 @@ public class PreferencesDAO {
 	 */
 	public static final Preferences getDefaultPreferences(){
 		return defaultPref;
+	}
+	
+	public static final Preferences getDefaultPreferences2(){
+		Preferences defaultPreferences = new Preferences();
+		Map<String,String> hosts = new HashMap<String,String>();
+		hosts.put(Constant.HOST_1,"http://112.125.33.161:10808");
+		hosts.put(Constant.HOST_2,"http://219.148.51.76:10808");
+		defaultPreferences.setHostList(hosts);
+		defaultPreferences.setDefaultImgDir(Constant.SDCARD_PATH + "/DCIM/100MEDIA");
+		return defaultPreferences;
 	}
 	
 	/**

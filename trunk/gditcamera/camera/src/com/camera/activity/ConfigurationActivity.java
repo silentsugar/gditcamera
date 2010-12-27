@@ -163,7 +163,31 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 			}
 		}else{
 			if(VersionVo.CURRENT_VERSION == VersionVo.VERSION1){
+				Preferences defaultPref = dao.getDefaultPreferences2();
+				dao.save(defaultPref);
 				setModifyEnable(true);
+				
+				btnBrowse.getEditText().setText(defaultPref.getDefaultImgDir());
+				String ip1 = defaultPref.getHost1IP();
+				String ip2 = defaultPref.getHost2IP();
+				int port1 = defaultPref.getHost1Port();
+				int port2 = defaultPref.getHost2Port();
+				
+				if(ip1!=null){
+					etHost1Ip.setText(ip1);
+					etHost1Port.setText(port1+"");
+					setModifyEnable(false, 1);
+				}else{
+					mBtnTest1.setEnabled(true);
+				}
+				if(ip2!=null){
+					etHost2Ip.setText(ip2);
+					etHost2Port.setText(port2+"");
+					setModifyEnable(false, 2);
+				}else{
+					mBtnTest2.setEnabled(true);
+				}
+				
 			}else{
 				Preferences defaultPref = dao.getDefaultPreferences();
 				dao.save(defaultPref);
@@ -174,6 +198,7 @@ public class ConfigurationActivity extends TabActivity implements OnClickListene
 				etCommand.setText(defaultPref.getCommand());
 				etSurveyStation.setText(defaultPref.getSurveyStation());
 				etStationCode.setText(defaultPref.getStationCode());
+				
 				String ip1 = defaultPref.getHost1IP();
 				String ip2 = defaultPref.getHost2IP();
 				int port1 = defaultPref.getHost1Port();
