@@ -39,6 +39,8 @@ public class CutFileUtil {
 	
 	/** 文件名*/
 	private String filePath;
+	/** 切片命名时根据的文件路径*/
+	private String realPath;
 	
 	/** 文件路径*/
 	private File file;
@@ -78,9 +80,10 @@ public class CutFileUtil {
 	/** 当有切片存在的情况下，是否使用上面的切片继续发给服务器*/
 	public static boolean IS_SEND_LAST_PIECE = true;
 	
-	public CutFileUtil(Context context, String filePath, Handler handler, String description) throws FileNotFoundException {
+	public CutFileUtil(Context context, String filePath, String realPath, Handler handler, String description) throws FileNotFoundException {
 		IS_SEND_LAST_PIECE = true;
 		this.description = description;
+		this.realPath = realPath;
 		this.handler = handler;
 		this.context = context;
 		this.filePath = filePath;
@@ -99,7 +102,7 @@ public class CutFileUtil {
 					return;
 				}
 				//删除已存在的切片文件
-				String pieceName = StringUtil.convertFolderPath(filePath) + "_";
+				String pieceName = StringUtil.convertFolderPath(realPath) + "_";
 				File folder = new File(Constant.PIECE_FOLDER);
 				File[] files = folder.listFiles();
 				for(File file : files) {
@@ -121,7 +124,7 @@ public class CutFileUtil {
 	 * @return
 	 */
 	public boolean isExistPieces() {
-		String pieceName = StringUtil.convertFolderPath(filePath) + "_";
+		String pieceName = StringUtil.convertFolderPath(realPath) + "_";
 		int count = 0;
 		int count2 = 0;
 		Log.i(TAG, "Conver to piece name :" + pieceName);
@@ -208,7 +211,7 @@ public class CutFileUtil {
 			//生成描述包头文件
 			headTool = new HeadTool(context, new Date(), description, totalPieceNum);
 			packageHead = headTool.getDataDesc();
-			String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  1;
+			String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(realPath) + "_" +  1;
 			FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
 			FileOutputStream out2 = new FileOutputStream(pieceName + "_2");
 			pieceFiles.add(pieceName + "_1");
@@ -242,7 +245,7 @@ public class CutFileUtil {
 	 * @throws IOException
 	 */
 	private void packagePiece(byte[] buf, int pieceNum, int dataSize) throws IOException {
-		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(filePath) + "_" +  (pieceNum + 1);
+		String pieceName = Constant.PIECE_FOLDER + StringUtil.convertFolderPath(realPath) + "_" +  (pieceNum + 1);
 		Log.v(TAG, "piece file name : " + pieceName);
 		FileOutputStream out1 = new FileOutputStream(pieceName + "_1");
 		FileOutputStream out2 = new FileOutputStream(pieceName + "_2");

@@ -8,7 +8,7 @@ public class VersionVo {
 	/** 版本二*/
 	public static final int VERSION2 = 2;
 	/** 标识当前版本*/
-	public static int CURRENT_VERSION = VERSION2;
+	public static int CURRENT_VERSION = VERSION1;
 	
 	public static String VERSION_DESC = "图片上传D版本";
 	

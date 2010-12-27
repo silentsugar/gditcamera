@@ -138,7 +138,7 @@ public class UploadFileActivity extends Activity implements OnClickListener {
 					String description = mTxtMessage.getText().toString();
 					String imagePath = ImageCompress.compressJPG(mImagePath);
 					mHandler.sendEmptyMessage(COMPRESS_PICTURE);
-					cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath, mHandler, description);
+					cutFileUtil = new CutFileUtil(UploadFileActivity.this, imagePath, mImagePath, mHandler, description);
 					mHandler.sendEmptyMessage(FINISH_CUT_FILE);
 					uploadFile = new UploadFile(UploadFileActivity.this, mHandler, this);
 					uploadFile.upload(cutFileUtil);
